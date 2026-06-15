@@ -46,31 +46,26 @@ b = [128; 128];
 
 source.p_mask = zeros(Nx, Ny); % Source Mask
 
-num_elements = 8;
+num_elements = 25;
 
-x_pos = 10;
+element_spacing_m = 0.15; 
 
-y_positions = round(linspace(round(Ny*0.3), round(Ny*0.7), num_elements));
+% Calculate total array length in meters and the start point 
+total_array_length_m = (num_elements - 1) * element_spacing_m;
+grid_center_y_m = (Ny / 2) * dy; 
+start_y_m = grid_center_y_m - (total_array_length_m / 2);
 
-for i = 1:num_elements
-    source.p_mask(x_pos, y_positions(i)) = 1;
-end
+% Define horizontal line array position
+x_pos = 20;
+x_positions = x_pos * ones(1, num_elements);
 
-%==========================================================================
-%% Source signal (What's Emmitted)
-
-f0 = 1000;
-
-source.p = zeros(num_elements, length(kgrid.t_array));
-
-A = 1; % Scaling coeff for emitter signals
+% Generate physical positions in meters, then convert to closest grid index
+y_positions_m = start_y_m + (0:num_elements-1) * element_spacing_m;
+y_positions = round(y_positions_m / dy);
 
 for i = 1:num_elements
-    source.p(i, :) = A * sin(2*pi*f0*kgrid.t_array);
+    source.p_mask(x_positions(i), y_positions(i)) = 1;
 end
-
-% Ensure correct mapping behaviour 
-source.p_mode = 'additive';
 
 %==========================================================================
 %% Sensor
@@ -79,26 +74,23 @@ sensor.mask = ones(Nx, Ny);
 sensor.record = {'p'};
 %==========================================================================
 %% Apply Beamformer
-[beamformer_output] = zeros(num_elements, length(kgrid.t_array));
 
-% DAS Narrowband
-% DAS Wideband
-% FAS Narrowband#
-% FAS Wideband
-% MVDR Narrowband
-% MVDR Wideband
+[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, Nx, ...
+                              Ny, b, x_positions, y_positions, dx, dy, Fs);
 
-%source.p = beamformer_output;
+source.p = beamformer_output;
 %==========================================================================
 %% Run Simulation
-sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+
+plot_scale = [-0.25, 0.25]; 
+
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, ...
+                                 'PlotSim', true, ...
+                                 'PlotScale', plot_scale, ...
+                                 'PlotLayout', false, ...
+                                 'DisplayMask', source.p_mask);
 %==========================================================================
 %% Plotting
-
-% Setting animation name to "none" results in single image
-%fieldAnimation(sensor_data, b, "none", Nx, Ny, num_elements, dx, dy, f0, num_elements); % Jack's Function
-%fieldAnimation(sensor_data, b, "none", Nx, Ny, dx, dy);
-
 %plotRMSPressureField(sensor_data.p, Nx, Ny, b, true);
 plotPressureField(sensor_data.p, Nx, Ny, b, 'end', true);
 %==========================================================================

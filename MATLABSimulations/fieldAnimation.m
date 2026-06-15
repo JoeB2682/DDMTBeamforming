@@ -90,7 +90,7 @@ else
     % Plot field
     figure();
     hold on;
-    pcolor(y_vec, x_vec, sensor_data.p_final);
+    pcolor(y_vec, x_vec, sensor_data.p);
     
     % Add bright point marker NB k-wave convention has x and y axes swapped
     for i=1:1
