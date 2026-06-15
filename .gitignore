@@ -1,0 +1,48 @@
+# ==========================================
+# JUCE / Projucer Ignores
+# ==========================================
+**/Builds/
+**/JuceLibraryCode/
+
+# ==========================================
+# OS / IDE Junk
+# ==========================================
+.DS_Store
+Thumbs.db
+*.suo
+*.user
+*.userosscache
+*.sln
+*.vcxproj
+*.filters
+.vs/
+.vscode/
+
+# ==========================================
+# MATLAB Ignores
+# ==========================================
+*.asv
+*.mex*
+*.mat
+log/
+
+# ==========================================
+# Python / Machine Learning Ignores
+# ==========================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.ipynb_checkpoints/
+
+# Big Data/Weights (Adjust as needed later)
+*.wav
+*.mp3
+*.dataset
+*.pth
+*.h5
+*.onnx
