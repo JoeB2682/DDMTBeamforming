@@ -27,22 +27,50 @@ Thumbs.db
 log/
 
 # ==========================================
-# Python / Machine Learning Ignores
+# Python / Virtual Environments
 # ==========================================
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
+
 .Python
-env/
+.venv/
 venv/
+env/
 ENV/
+
+# Jupyter
 .ipynb_checkpoints/
 
-# Big Data/Weights (Adjust as needed later)
-*.wav
-*.mp3
-*.dataset
+# ==========================================
+# Build / Packaging
+# ==========================================
+*.egg-info/
+dist/
+build/
+*.eggs/
+
+# ==========================================
+# Testing / Caching
+# ==========================================
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# ML Models 
+# ==========================================
 *.pth
+*.pt
 *.h5
 *.onnx
+
+# ==========================================
+# OS / Editor junk
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

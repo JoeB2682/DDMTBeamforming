@@ -1,6 +1,6 @@
 # Project Name
 
-> DDMTBeamforming (Data-Driven-Motion-Tracked Beamforminng).
+> DDMTBeamforming (Data-Driven-Motion-Tracked Beamforming).
 
 ---
 
