@@ -30,9 +30,6 @@ kgrid = kWaveGrid(Nx, dx, Ny, dy);
 
 % Define medium
 medium.sound_speed = 343; % sos in air
-medium.sound_speed = 343;
-medium.alpha_coeff = 0.75;
-medium.alpha_power = 1.5;
 medium.density = 1.225 * ones(Nx, Ny);
 
 % Time array (k-Wave)
@@ -42,7 +39,7 @@ kgrid.makeTime(medium.sound_speed, [], t_end);
 % Bright Point b (Constructive interfereance focal point), Sound at listener
 % pos replace for X, Y of listener (Eventually motion capture) to measure
 % effectiveness of beamforming to the motion captured listener.
-b = [211; 23];
+b = [128; 128];
 
 %==========================================================================
 %% Construct Speaker Array (Source)
@@ -51,7 +48,7 @@ source.p_mask = zeros(Nx, Ny); % Source Mask
 
 num_elements = 8;
 
-x_pos = 1;
+x_pos = 10;
 
 y_positions = round(linspace(round(Ny*0.3), round(Ny*0.7), num_elements));
 
@@ -66,8 +63,10 @@ f0 = 1000;
 
 source.p = zeros(num_elements, length(kgrid.t_array));
 
+A = 1; % Scaling coeff for emitter signals
+
 for i = 1:num_elements
-    source.p(i, :) = sin(2*pi*f0*kgrid.t_array);
+    source.p(i, :) = A * sin(2*pi*f0*kgrid.t_array);
 end
 
 % Ensure correct mapping behaviour 
@@ -75,48 +74,31 @@ source.p_mode = 'additive';
 
 %==========================================================================
 %% Sensor
-
-%{
-% Basic Uniform Linear Sensor Array
-
-sensor.mask = zeros(Nx, Ny);
-sensor.mask(end-5, :) = 1;   
+% Full field (records pressure at all grid points)
+sensor.mask = ones(Nx, Ny);
 sensor.record = {'p'};
-%}
+%==========================================================================
+%% Apply Beamformer
+[beamformer_output] = zeros(num_elements, length(kgrid.t_array));
 
+% DAS Narrowband
+% DAS Wideband
+% FAS Narrowband#
+% FAS Wideband
+% MVDR Narrowband
+% MVDR Wideband
 
-% Senses on the specified bright point
-
-% Number of sensor positions
-num_sensor_points = width(b);
-
-% Make sensor array
-sensor.mask = zeros(Nx, Ny);
-for n = 1:num_sensor_points
-    sensor.mask(b(1,n), b(2,n)) = 1;
-end
-sensor.record = {'p', 'p_final'};
-
+%source.p = beamformer_output;
 %==========================================================================
 %% Run Simulation
 sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor);
 %==========================================================================
 %% Plotting
-%{
-imagesc(sensor_data.p);
-axis image;
-colorbar;
-title('Beamforming Pressure Record');
-%}
 
 % Setting animation name to "none" results in single image
-fieldAnimation(sensor_data, b, "none", Nx, Ny, num_elements, dx, dy, f0, num_elements); % Jack's Function
+%fieldAnimation(sensor_data, b, "none", Nx, Ny, num_elements, dx, dy, f0, num_elements); % Jack's Function
 %fieldAnimation(sensor_data, b, "none", Nx, Ny, dx, dy);
 
-% Plot amplitudes at receiver positions
- figure();
- hold on;
- for i = 1:width(b)
-     plot(sensor_data.p(i,:));
- end
+%plotRMSPressureField(sensor_data.p, Nx, Ny, b, true);
+plotPressureField(sensor_data.p, Nx, Ny, b, 'end', true);
 %==========================================================================
