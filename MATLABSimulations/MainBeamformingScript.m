@@ -91,6 +91,6 @@ sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, ...
                                  'DisplayMask', source.p_mask);
 %==========================================================================
 %% Plotting
-%plotRMSPressureField(sensor_data.p, Nx, Ny, b, true);
-plotPressureField(sensor_data.p, Nx, Ny, b, 'end', true);
+plotRMSPressureField(sensor_data.p, Nx, Ny, b, true);
+%plotPressureField(sensor_data.p, Nx, Ny, b, 'end', true);
 %==========================================================================

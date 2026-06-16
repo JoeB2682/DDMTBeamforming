@@ -1,7 +1,7 @@
 %==========================================================================
 %% Narrowband Delay and Sum Beamformer
 %
-% Time domain DAS implementation for narrowband signals
+% Time domain DAS implementation for narrowband signals.
 %
 % Created By: Joseph Adam Bozzo
 %==========================================================================
@@ -32,7 +32,7 @@ function [source_output] = DASNarrowTD(N, f, A, grid, Nx, Ny, b, d_x, ...
     % distance array (to focal point)
     source_distances = zeros(1, N);
 
-    % time array
+    % time array (displacement vector)
     tau = zeros(1, N);
 
     for i = 1:N
