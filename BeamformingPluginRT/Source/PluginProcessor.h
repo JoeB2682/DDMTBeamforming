@@ -1,7 +1,14 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "ParameterHelper.h"
 
+//==================================================================================
+// Chainsettings keeps track of parameter states 
+struct ChainSettings {
+
+    float Gain{ 0.0f };
+};
 //==================================================================================
 class BeamformingRTPluginAudioProcessor  : public juce::AudioProcessor
 {
@@ -43,7 +50,18 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    void getChainSettings(ChainSettings& settings);
+
+    static juce::AudioProcessorValueTreeState::ParameterLayout
+        createParameterLayout();
+    juce::AudioProcessorValueTreeState apvts
+        {*this, nullptr, "Parameters", createParameterLayout()};
+
+    ChainSettings chainsettings;
+
 private:
+
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)
 };

@@ -101,13 +101,13 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    getChainSettings(chainsettings);
 
+    float gain = chainsettings.Gain;
+   
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
-
 
     }
 }
@@ -121,8 +121,21 @@ juce::AudioProcessorEditor* BeamformingRTPluginAudioProcessor::createEditor()
 //==============================================================================
 void BeamformingRTPluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData){}
 void BeamformingRTPluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes){}
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+
+void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings)
 {
-    return new BeamformingRTPluginAudioProcessor();
+    // Load Parameters into chainsettings
+    settings.Gain = apvts.getRawParameterValue("Gain")->load();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout
+BeamformingRTPluginAudioProcessor::createParameterLayout()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    ParameterHelper::addParameters(layout);
+
+    return layout;
 }
 //==============================================================================
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter(){ return new BeamformingRTPluginAudioProcessor(); }

@@ -26,6 +26,12 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="Lu59yK" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <GROUP id="{78F36831-9416-DADC-D22D-6C9AC670C48F}" name="Helpers">
+      <FILE id="HxNkgN" name="ParameterHelper.cpp" compile="1" resource="0"
+            file="Source/ParameterHelper.cpp"/>
+      <FILE id="Oj4L8P" name="ParameterHelper.h" compile="0" resource="0"
+            file="Source/ParameterHelper.h"/>
+    </GROUP>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
