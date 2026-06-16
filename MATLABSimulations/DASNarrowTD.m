@@ -3,6 +3,9 @@
 %
 % Time domain DAS implementation for narrowband signals.
 %
+% Simulates motion tracking for a single moving listener through per-sample
+% calculation.
+%
 % Created By: Joseph Adam Bozzo
 %==========================================================================
 function [source_output] = DASNarrowTD(N, f, A, grid, Nx, Ny, b, d_x, ...
@@ -25,35 +28,40 @@ function [source_output] = DASNarrowTD(N, f, A, grid, Nx, Ny, b, d_x, ...
 
     c = 343; % sos in m/s
 
-    % As kwave flips 
-    b_y = b(1);
-    b_x = b(2);
-
-    % distance array (to focal point)
-    source_distances = zeros(1, N);
-
-    % time array (displacement vector)
-    tau = zeros(1, N);
-
-    for i = 1:N
-        % Euclidean distance between sources and bright point (in meters)
-        source_distances(i) = sqrt(((d_x(i) - b_x) * dx)^2 + ...
-                                   ((d_y(i) - b_y) * dy)^2);
-
-        tau(i) = source_distances(i) / c; 
-    end
-
-    % Max travel time
-    tau_max = max(tau);
+    Nt = length(grid.t_array);
 
     % Allocate output matrix 
-    source_p = zeros(N, length(grid.t_array));
+    source_p = zeros(N, Nt);
 
-    for i = 1:N
-        relative_delay = tau_max - tau(i);
-        source_p(i, :) = A * sin(2*pi*f*(grid.t_array - relative_delay));
+    for t = 1:Nt
+        
+        % Current focal point position
+        b_y = b(1,t);
+        b_x = b(2,t);
+
+        %disp([b_x b_y])
+
+        % arrival time array (displacement vector)
+        tau = zeros(1,N);
+
+        for i = 1:N
+            % Euclidean distance between sources and bright point (in meters)
+            source_distances(i) = sqrt(((d_x(i) - b_x) * dx)^2 + ...
+                                       ((d_y(i) - b_y) * dy)^2);
+
+            tau(i) = source_distances(i) / c; 
+        end
+
+        % Max travel time
+        tau_max = max(tau);
+
+        % Generate current sample for every speaker
+        for i = 1:N
+            relative_delay = tau_max - tau(i);
+            source_p(i,t) = A*sin(2*pi*f*(grid.t_array(t)-relative_delay));
+        end
+
     end
-
     source_output = source_p;
     toc;
 end

@@ -36,11 +36,6 @@ medium.density = 1.225 * ones(Nx, Ny);
 t_end = 0.02; % Simulation Time
 kgrid.makeTime(medium.sound_speed, [], t_end);
 
-% Bright Point b (Constructive interfereance focal point), Sound at listener
-% pos replace for X, Y of listener (Eventually motion capture) to measure
-% effectiveness of beamforming to the motion captured listener.
-b = [128; 128];
-
 %==========================================================================
 %% Construct Speaker Array (Source)
 
@@ -68,6 +63,27 @@ for i = 1:num_elements
 end
 
 %==========================================================================
+%% Bright Point (Focal Point)
+
+% Bright Point b (Constructive interfereance focal point), Sound at listener
+% pos replace for X, Y of listener (Eventually motion capture) to measure
+% effectiveness of beamforming to the motion captured listener.
+% Uses matrix of two points to move the point between 2 locations (simulates)
+% motion tracking.
+
+Nt = length(kgrid.t_array);
+
+b = zeros(2,Nt); % BP Matrix
+
+% Moves point from leftmost speaker to rightmost
+
+offset = 108;
+
+% Extremely bloody annoying as kgrid swaps rows and columns, be aware of
+% this in plotting functions!!!!
+b(1,:) = linspace(min(y_positions), max(y_positions), Nt);
+b(2,:) = x_positions(1) + offset;
+%==========================================================================
 %% Sensor
 % Full field (records pressure at all grid points)
 sensor.mask = ones(Nx, Ny);
@@ -91,6 +107,9 @@ sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, ...
                                  'DisplayMask', source.p_mask);
 %==========================================================================
 %% Plotting
-plotRMSPressureField(sensor_data.p, Nx, Ny, b, true);
+%plotRMSPressureField(sensor_data.p, Nx, Ny, b, true);
 %plotPressureField(sensor_data.p, Nx, Ny, b, 'end', true);
+
+MovingAnimation(20, sensor_data.p, Nx, Ny, x_positions, y_positions,...
+                                                        b, plot_scale, 'pm');
 %==========================================================================
