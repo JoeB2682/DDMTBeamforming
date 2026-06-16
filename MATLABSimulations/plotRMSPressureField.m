@@ -5,7 +5,9 @@
 %
 % Created By: Joseph Adam Bozzo
 %==========================================================================
-function plotRMSPressureField (sensor_data, Nx, Ny, b, show_focal)
+function plotRMSPressureField (sensor_data, Nx, Ny, b, show_focal, ...
+                                                 show_srcrcvr, sensor_mask, ...
+                                                 x_pos, y_pos)
 
     %======================================================================
     % sensor_data = defined sensor data (pressure) from kwave sim
@@ -13,6 +15,8 @@ function plotRMSPressureField (sensor_data, Nx, Ny, b, show_focal)
     % Ny = grid points in y
     % b = 'bright' / focal point
     % show_focal = boolean to show point b 
+    % show_scrrcvr = show mics and speaker if not using animation
+    % sensor_mask = mic array mask
     %======================================================================
 
     p = sensor_data;
@@ -28,12 +32,28 @@ function plotRMSPressureField (sensor_data, Nx, Ny, b, show_focal)
 
     clim([0 max(p_rms(:))*0.2]);
     title('RMS Pressure Field');
-    
+
     hold on;
 
     % show focal point
     if show_focal
         plot(b(1), b(2), 'rx', 'MarkerSize', 10, 'LineWidth', 2);
+    end
+
+    if show_srcrcvr
+         % Speakers as black squares
+        plot(y_pos, x_pos, 'ks', ...
+                           'MarkerFaceColor', 'k', ...
+                           'MarkerSize', 6);
+
+        % microphones as black circles
+        if nargin >= 7
+                [mic_x, mic_y] = find(sensor_mask);
+
+                plot(mic_y, mic_x, 'ko', ...
+                                   'MarkerFaceColor', 'k', ...
+                                   'MarkerSize', 6);
+        end
     end
 end
 %==========================================================================

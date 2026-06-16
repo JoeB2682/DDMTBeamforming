@@ -37,12 +37,10 @@ t_end = 0.02; % Simulation Time
 kgrid.makeTime(medium.sound_speed, [], t_end);
 
 %==========================================================================
-%% Construct Speaker Array (Source)
+%% Construct Speaker Array (Sources)
 
 source.p_mask = zeros(Nx, Ny); % Source Mask
-
 num_elements = 25;
-
 element_spacing_m = 0.15; 
 
 % Calculate total array length in meters and the start point 
@@ -61,6 +59,11 @@ y_positions = round(y_positions_m / dy);
 for i = 1:num_elements
     source.p_mask(x_positions(i), y_positions(i)) = 1;
 end
+
+%==========================================================================
+%% Fixed Sources 
+
+
 
 %==========================================================================
 %% Bright Point (Focal Point)
@@ -84,10 +87,40 @@ offset = 108;
 b(1,:) = linspace(min(y_positions), max(y_positions), Nt);
 b(2,:) = x_positions(1) + offset;
 %==========================================================================
-%% Sensor
-% Full field (records pressure at all grid points)
-sensor.mask = ones(Nx, Ny);
+%% Sensors (receivers)
+
+% Needs masks for both full field and mic array, observing affect of mic
+% array is visible on full field through beamforming algorithms.
+
+sensor.mask = zeros(Nx, Ny);
+num_mics = 25;
+mic_spacing_m = 0.15;
+
+% Calculate total microphone array length and start point
+total_mic_length_m = (num_mics - 1) * mic_spacing_m;
+
+grid_center_y_m = (Ny / 2) * dy;
+start_y_m = grid_center_y_m - (total_mic_length_m / 2);
+
+% Define horizontal microphone line position
+mic_x_pos = 150;   % parallel to speaker array
+mic_x_positions = mic_x_pos * ones(1, num_mics);
+
+% Generate physical positions in metres, convert to grid indices
+mic_y_positions_m = start_y_m + (0:num_mics-1) * mic_spacing_m;
+mic_y_positions = round(mic_y_positions_m / dy);
+
+% Create microphone array
+for i = 1:num_mics
+    sensor.mask(mic_x_positions(i), mic_y_positions(i)) = 1;
+end
+
 sensor.record = {'p'};
+
+% Needs sensor field mask for plots to work
+sensor_field.mask = ones(Nx, Ny);
+sensor_field.record = {'p'};
+
 %==========================================================================
 %% Apply Beamformer
 
@@ -100,16 +133,31 @@ source.p = beamformer_output;
 
 plot_scale = [-0.25, 0.25]; 
 
-sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, ...
+% Microphone array data (for adaptive beamforming)
+mic_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, ...
                                  'PlotSim', true, ...
                                  'PlotScale', plot_scale, ...
                                  'PlotLayout', false, ...
                                  'DisplayMask', source.p_mask);
+
+
+% Full field data (for plotting/animation)
+field_data = kspaceFirstOrder2D(kgrid, medium, source, sensor_field, ...
+                                 'PlotSim', false, ...
+                                 'PlotLayout', false);
+
 %==========================================================================
 %% Plotting
-%plotRMSPressureField(sensor_data.p, Nx, Ny, b, true);
-%plotPressureField(sensor_data.p, Nx, Ny, b, 'end', true);
 
-MovingAnimation(20, sensor_data.p, Nx, Ny, x_positions, y_positions,...
-                                                        b, plot_scale, 'pm');
+%plotRMSPressureField(field_data.p, Nx, Ny, b, true, true, sensor.mask, ... 
+%                                              x_positions, y_positions);
+
+%plotPressureField(field_data.p, Nx, Ny, b, 'end', true, true, sensor.mask, ...
+%                                              x_positions, y_positions);
+
+
+MovingAnimation(20, field_data.p, Nx, Ny, x_positions, y_positions,...
+                                                        b, plot_scale, 'pm', ...
+                                                        sensor.mask);
+
 %==========================================================================

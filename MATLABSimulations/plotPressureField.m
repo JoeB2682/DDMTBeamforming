@@ -5,7 +5,9 @@
 %
 % Created By: Joseph Adam Bozzo
 %==========================================================================
-function plotPressureField (sensor_data, Nx, Ny, b, frame, show_focal)
+function plotPressureField (sensor_data, Nx, Ny, b, frame, show_focal, ... 
+                                                 show_srcrcvr, sensor_mask, ...
+                                                 x_pos, y_pos)
 
     %======================================================================
     % sensor_data = defined sensor data (pressure) from kwave sim
@@ -14,6 +16,8 @@ function plotPressureField (sensor_data, Nx, Ny, b, frame, show_focal)
     % b = 'bright' / focal point
     % frame = 'mid'||'end' show either middle or final frame of simulation
     % show_focal = boolean to show point b 
+    % show_scrrcvr = show mics and speaker if not using animation
+    % sensor_mask = mic array mask
     %======================================================================
     
     p_final = reshape(sensor_data(:, end), Nx, Ny); % Final Frame
@@ -52,6 +56,22 @@ function plotPressureField (sensor_data, Nx, Ny, b, frame, show_focal)
     % Plots the focal point 
     if show_focal
         plot(b(1), b(2), 'rx', 'MarkerSize', 10, 'LineWidth', 2);
+    end
+
+    if show_srcrcvr
+         % Speakers as black squares
+        plot(y_pos, x_pos, 'ks', ...
+                           'MarkerFaceColor', 'k', ...
+                           'MarkerSize', 6);
+
+        % microphones as black circles
+        if nargin >= 7
+                [mic_x, mic_y] = find(sensor_mask);
+
+                plot(mic_y, mic_x, 'ko', ...
+                                   'MarkerFaceColor', 'k', ...
+                                   'MarkerSize', 6);
+        end
     end
 end
 %==========================================================================
