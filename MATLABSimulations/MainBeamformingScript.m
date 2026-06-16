@@ -39,7 +39,7 @@ kgrid.makeTime(medium.sound_speed, [], t_end);
 %==========================================================================
 %% Construct Speaker Array (Sources)
 
-source.p_mask = zeros(Nx, Ny); % Source Mask
+source_speakers.p_mask = zeros(Nx, Ny); % Speaker Array Mask
 num_elements = 25;
 element_spacing_m = 0.15; 
 
@@ -57,13 +57,23 @@ y_positions_m = start_y_m + (0:num_elements-1) * element_spacing_m;
 y_positions = round(y_positions_m / dy);
 
 for i = 1:num_elements
-    source.p_mask(x_positions(i), y_positions(i)) = 1;
+    source_speakers.p_mask(x_positions(i), y_positions(i)) = 1;
 end
 
 %==========================================================================
-%% Fixed Sources 
+%% Fixed Sources (Aditional emitters in sound field) 
 
+source_fixed.p_mask = zeros(Nx, Ny);
 
+% Noise Source
+noisesrc_x = 75;
+noisesrc_y = round(Ny/2);
+
+source_fixed.p_mask(noisesrc_x, noisesrc_y) = 1;
+
+% Generate and normalise
+noise_signal = randn(1, length(kgrid.t_array));
+noise_signal = noise_signal / max(abs(noise_signal));
 
 %==========================================================================
 %% Bright Point (Focal Point)
@@ -78,12 +88,10 @@ Nt = length(kgrid.t_array);
 
 b = zeros(2,Nt); % BP Matrix
 
-% Moves point from leftmost speaker to rightmost
-
-offset = 108;
-
+% Moves point from leftmost speaker to rightmost,
 % Extremely bloody annoying as kgrid swaps rows and columns, be aware of
 % this in plotting functions!!!!
+offset = 108;
 b(1,:) = linspace(min(y_positions), max(y_positions), Nt);
 b(2,:) = x_positions(1) + offset;
 %==========================================================================
@@ -124,10 +132,21 @@ sensor_field.record = {'p'};
 %==========================================================================
 %% Apply Beamformer
 
-[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, Nx, ...
-                              Ny, b, x_positions, y_positions, dx, dy, Fs);
+%[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy);
+[beamformer_output] = MVDRNarrow(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, mic_x_positions, mic_y_positions);
+%==========================================================================
+%% Combine Source Signals
 
-source.p = beamformer_output;
+% Combined source mask (Speaker + everything else)
+source.p_mask = source_speakers.p_mask + source_fixed.p_mask;
+source.p = zeros(num_elements + 1, length(kgrid.t_array));
+
+% Speaker signals (assign beamformer output)
+source.p(1:num_elements, :) = beamformer_output;
+
+% Noise source signal (assign noise signal)
+source.p(num_elements + 1, :) = noise_signal;
+
 %==========================================================================
 %% Run Simulation
 

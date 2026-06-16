@@ -5,7 +5,18 @@
               companyWebsite="JABAudio" pluginFormats="buildStandalone,buildVST3"
               pluginVST3Category="Spatial">
   <MAINGROUP id="Rhl5bl" name="BeamformingPluginRT">
-    <GROUP id="{26A5E7DF-CCC8-CD6D-B003-410997B2C112}" name="UI"/>
+    <GROUP id="{1422CC43-EBE4-CAD8-3180-EDF52D661575}" name="Beamformers">
+      <FILE id="gOer76" name="DAS.cpp" compile="1" resource="0" file="Source/DAS.cpp"/>
+      <FILE id="NF75kU" name="DAS.h" compile="0" resource="0" file="Source/DAS.h"/>
+    </GROUP>
+    <GROUP id="{9A5D419B-6F25-DD2D-A91B-63B690B4AD82}" name="Objects">
+      <FILE id="WM4AFL" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
+      <FILE id="VxE2ya" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
+    </GROUP>
+    <GROUP id="{26A5E7DF-CCC8-CD6D-B003-410997B2C112}" name="UI">
+      <FILE id="hhKyGU" name="LookandFeel.cpp" compile="1" resource="0" file="Source/LookandFeel.cpp"/>
+      <FILE id="xlJwOy" name="LookandFeel.h" compile="0" resource="0" file="Source/LookandFeel.h"/>
+    </GROUP>
     <GROUP id="{DC108D3B-02ED-FE33-A8E7-FA2BA907EDF0}" name="Source">
       <FILE id="oNLHis" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

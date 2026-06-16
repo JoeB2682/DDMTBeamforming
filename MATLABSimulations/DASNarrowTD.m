@@ -8,8 +8,7 @@
 %
 % Created By: Joseph Adam Bozzo
 %==========================================================================
-function [source_output] = DASNarrowTD(N, f, A, grid, Nx, Ny, b, d_x, ...
-                                       d_y, dx, dy, Fs)
+function [source_output] = DASNarrowTD(N, f, A, grid, b, d_x, d_y, dx, dy)
     tic;
     %======================================================================
     % N = size of speaker array
@@ -41,9 +40,10 @@ function [source_output] = DASNarrowTD(N, f, A, grid, Nx, Ny, b, d_x, ...
 
         %disp([b_x b_y])
 
-        % arrival time array (displacement vector)
+        % arrival time array
         tau = zeros(1,N);
 
+        % Steering Vector (essentially)
         for i = 1:N
             % Euclidean distance between sources and bright point (in meters)
             source_distances(i) = sqrt(((d_x(i) - b_x) * dx)^2 + ...
@@ -60,7 +60,6 @@ function [source_output] = DASNarrowTD(N, f, A, grid, Nx, Ny, b, d_x, ...
             relative_delay = tau_max - tau(i);
             source_p(i,t) = A*sin(2*pi*f*(grid.t_array(t)-relative_delay));
         end
-
     end
     source_output = source_p;
     toc;
