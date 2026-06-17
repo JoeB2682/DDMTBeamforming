@@ -130,10 +130,11 @@ sensor_field.mask = ones(Nx, Ny);
 sensor_field.record = {'p'};
 
 %==========================================================================
-%% Apply Beamformer
+%% Apply Transmit Beamformer
 
-%[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy);
-[beamformer_output] = MVDRNarrow(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, mic_x_positions, mic_y_positions);
+% Creates speaker signals
+[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy);
+
 %==========================================================================
 %% Combine Source Signals
 
@@ -164,7 +165,19 @@ mic_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, ...
 field_data = kspaceFirstOrder2D(kgrid, medium, source, sensor_field, ...
                                  'PlotSim', false, ...
                                  'PlotLayout', false);
+%========================================================================== 
+%% Apply Receive Algorithm 
 
+% Apply adaptive algorithm
+
+% Extract microphone signals
+mic_signals = mic_data.p;
+
+[mvdr_output] = MVDRNarrowReceiver(num_mics, 1000, kgrid, b,dx, dy, mic_x_positions, ...
+                                                   mic_y_positions, mic_signals);
+
+% Assign back to mic output
+mic_data.p = mvdr_output;
 %==========================================================================
 %% Plotting
 

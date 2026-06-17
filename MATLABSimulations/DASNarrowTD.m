@@ -20,9 +20,8 @@ function [source_output] = DASNarrowTD(N, f, A, grid, b, d_x, d_y, dx, dy)
     % b = bright/ focal point
     % d_x = source x positions
     % d_y = source y positions
-    % dx 
-    % dy
-    % Fs = sample rate 
+    % dx = grid spacing in x
+    % dy = grid spacing in y
     %======================================================================
 
     c = 343; % sos in m/s
