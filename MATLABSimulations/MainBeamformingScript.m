@@ -176,8 +176,29 @@ mic_signals = mic_data.p;
 [mvdr_output] = MVDRNarrowReceiver(num_mics, 1000, kgrid, b,dx, dy, mic_x_positions, ...
                                                    mic_y_positions, mic_signals);
 
-% Assign back to mic output
+% Assign back to mic output (Comment out for just the beamformer)
 mic_data.p = mvdr_output;
+
+%==========================================================================
+%% SNR Calculations 
+
+% Initialise vector (allows snr observation at particular mic)
+SNRdB_vec = zeros(1, num_mics);
+
+for i = 1:num_mics
+
+    % Ensures mic data isn't in complex form and in dB (beamformer uses 
+    % hermitian transpose therefore returns mic signals as complex number).
+    mic_dB = 10 * log10(abs(mic_data.p(i))); 
+    
+    % Subtract noise 
+    SNRdB_vec(i) = mic_dB - noise_signal(i);
+end
+
+% Average the SNR vector
+SNRdB_avg = mean(SNRdB_vec);
+
+disp("SNR Average Across Receiver Array: " + SNRdB_avg);
 %==========================================================================
 %% Plotting
 
