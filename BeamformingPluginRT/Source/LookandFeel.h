@@ -5,6 +5,7 @@
 
 using namespace juce;
 //==============================================================================
+//Main UI Look (Draw Background Elemenets Here)
 class MainUIlookandFeel : public juce::LookAndFeel_V4
 {
 
@@ -20,6 +21,7 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainUIlookandFeel)
 };
 //==============================================================================
+// Slider Look
 class SliderLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
@@ -46,4 +48,34 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SliderLookAndFeel)
 };
 //==============================================================================
+// Button Look
+class ButtonLookandFeel : public juce::LookAndFeel_V4
+{
+public:
+    ButtonLookandFeel() = default;
+    ~ButtonLookandFeel() override = default;
 
+    void drawButtonBackground(juce::Graphics& g, juce::Button& button,
+        const juce::Colour& backgroundColour,
+        bool isMouseOverButton, bool isButtonDown) override;
+
+    void drawButtonText(juce::Graphics& g, juce::TextButton& button,
+        bool isMouseOverButton, bool isButtonDown) override;
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ButtonLookandFeel)
+};
+//==============================================================================
+// Rounded Button Look (builds off of other button class)
+class RoundedButtonLookandFeel : public ButtonLookandFeel
+{
+public:
+    RoundedButtonLookandFeel() = default;
+    ~RoundedButtonLookandFeel() override = default;
+
+    void drawButtonBackground(juce::Graphics& g, juce::Button& button,
+        const juce::Colour& backgroundColour,
+        bool isMouseOverButton, bool isButtonDown) override;
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RoundedButtonLookandFeel)
+};
+//==============================================================================

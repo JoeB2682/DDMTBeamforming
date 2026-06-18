@@ -11,6 +11,8 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
         (audioProcessor.apvts, "Gain", gainSlider, &sliderlookandfeel);
     gainSlider.setLookAndFeel(&sliderlookandfeel);
     gainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    gainSlider.setRange(0.0f, 1.0f, 0.01f);
+    gainSlider.setNumDecimalPlacesToDisplay(2);
 
     setSize (800, 500);
 }

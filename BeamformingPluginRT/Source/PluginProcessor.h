@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include "ParameterHelper.h"
+#include "DAS.h"
 
 //==================================================================================
 // Chainsettings keeps track of parameter states 
@@ -61,6 +62,7 @@ public:
 
 private:
 
+    std::unique_ptr<DAS> DelayandSumBeamformer;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)

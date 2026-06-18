@@ -14,6 +14,7 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
                        )
 #endif
 {
+    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate());
 }
 
 BeamformingRTPluginAudioProcessor::~BeamformingRTPluginAudioProcessor()
@@ -50,21 +51,10 @@ bool BeamformingRTPluginAudioProcessor::isMidiEffect() const
 }
 double BeamformingRTPluginAudioProcessor::getTailLengthSeconds() const { return 0.0; }
 int BeamformingRTPluginAudioProcessor::getNumPrograms() { return 1; }
-int BeamformingRTPluginAudioProcessor::getCurrentProgram()
-{
-    return 0;
-}
-void BeamformingRTPluginAudioProcessor::setCurrentProgram (int index)
-{
-}
-const juce::String BeamformingRTPluginAudioProcessor::getProgramName (int index)
-{
-    return {};
-}
-void BeamformingRTPluginAudioProcessor::changeProgramName (int index, const juce::String& newName)
-{
-}
-
+int BeamformingRTPluginAudioProcessor::getCurrentProgram(){ return 0; }
+void BeamformingRTPluginAudioProcessor::setCurrentProgram (int index){}
+const juce::String BeamformingRTPluginAudioProcessor::getProgramName (int index){ return {};}
+void BeamformingRTPluginAudioProcessor::changeProgramName (int index, const juce::String& newName){}
 //==============================================================================
 void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
@@ -83,8 +73,6 @@ bool BeamformingRTPluginAudioProcessor::isBusesLayoutSupported (const BusesLayou
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
-
-    // This checks if the input layout matches the output layout
    #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
@@ -103,12 +91,20 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
     getChainSettings(chainsettings);
 
+    // assign parameters to variables
     float gain = chainsettings.Gain;
    
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    float numSamples = buffer.getNumSamples();
+
+    for (int channel = 0; channel < totalNumInputChannels; channel++)
     {
         auto* channelData = buffer.getWritePointer (channel);
 
+        for (int sample = 0; sample < numSamples; sample++) {
+
+
+            channelData[sample] *= DelayandSumBeamformer->generateNarrowband(1000, 0.5f) * (float)gain;
+        }
     }
 }
 
