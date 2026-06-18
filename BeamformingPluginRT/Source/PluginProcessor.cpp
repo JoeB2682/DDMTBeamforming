@@ -14,7 +14,7 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
                        )
 #endif
 {
-    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate());
+   
 }
 
 BeamformingRTPluginAudioProcessor::~BeamformingRTPluginAudioProcessor()
@@ -58,7 +58,7 @@ void BeamformingRTPluginAudioProcessor::changeProgramName (int index, const juce
 //==============================================================================
 void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-
+    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate());
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources(){}
@@ -93,17 +93,28 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
     // assign parameters to variables
     float gain = chainsettings.Gain;
-   
+    bool bypass = chainsettings.bypass;
+    int Channel = chainsettings.Channel - 1;
+
+    //DBG("isBypass = " << (bypass ? "true" : "false"));
+
+    // Safety check stops out of bounds indexing
+    if (Channel < 0 || Channel >= buffer.getNumChannels()) return;
+
     float numSamples = buffer.getNumSamples();
+
+    // Allows bypassusing button
+    if (bypass) return;
 
     for (int channel = 0; channel < totalNumInputChannels; channel++)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        auto* channelData = buffer.getWritePointer (Channel);
 
         for (int sample = 0; sample < numSamples; sample++) {
 
-
-            channelData[sample] *= DelayandSumBeamformer->generateNarrowband(1000, 0.5f) * (float)gain;
+             
+       
+            channelData[sample] = DelayandSumBeamformer->generateNarrowband(1000, 0.5f) * (float)gain;
         }
     }
 }
@@ -122,15 +133,16 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
 {
     // Load Parameters into chainsettings
     settings.Gain = apvts.getRawParameterValue("Gain")->load();
+    settings.bypass = apvts.getRawParameterValue("Bypass")->load();
+    settings.Channel = apvts.getRawParameterValue("Channel")->load();
 }
 
+// Abstracted parameter crap into helper file
 juce::AudioProcessorValueTreeState::ParameterLayout
 BeamformingRTPluginAudioProcessor::createParameterLayout()
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
-
     ParameterHelper::addParameters(layout);
-
     return layout;
 }
 //==============================================================================

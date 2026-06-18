@@ -8,7 +8,9 @@
 // Chainsettings keeps track of parameter states 
 struct ChainSettings {
 
-    float Gain{ 0.0f };
+    float Gain{ 1.0f };
+    bool bypass{ };
+    int Channel{ 1 };
 };
 //==================================================================================
 class BeamformingRTPluginAudioProcessor  : public juce::AudioProcessor
@@ -61,6 +63,8 @@ public:
     ChainSettings chainsettings;
 
 private:
+    //==============================================================================
+    //Instanciation Station
 
     std::unique_ptr<DAS> DelayandSumBeamformer;
 

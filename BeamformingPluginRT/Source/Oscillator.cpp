@@ -28,7 +28,8 @@ float Oscillator::incrementSample()
     currentAmplitude += ampSmoothingCoeff * (targetAmplitude - currentAmplitude);
 
     sample = juce::dsp::FastMathApproximations::sin(phase + Phi);
-    phase = phase + PhaseInc, 2.0f * PI;
+
+    phase += PhaseInc;
 
     if (phase >= 2.0f * PI) phase -= 2.0f * PI;
 

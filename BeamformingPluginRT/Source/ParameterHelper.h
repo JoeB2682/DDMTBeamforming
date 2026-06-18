@@ -30,14 +30,21 @@ class EditorParameterHelper
 {
 public:
 
-    using SliderAttachment =
-        juce::AudioProcessorValueTreeState::SliderAttachment;
-
+    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
     static std::unique_ptr<SliderAttachment> createSliderAttachment(
         juce::AudioProcessorValueTreeState& apvts,
         const juce::String& parameterID,
         juce::Slider& slider,
+        juce::LookAndFeel* lookAndFeel = nullptr
+    );
+
+    using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
+
+    static std::unique_ptr<ButtonAttachment> createButtonAttachment(
+        juce::AudioProcessorValueTreeState& apvts,
+        const juce::String& parameterID,
+        juce::Button& button,
         juce::LookAndFeel* lookAndFeel = nullptr
     );
 

@@ -16,17 +16,27 @@ public:
     void resized() override;
 
 private:
+    //==============================================================================
+    //Instanciation Station
 
     BeamformingRTPluginAudioProcessor& audioProcessor;
 
-    MainUIlookandFeel mainuilookandfeel;
-    SliderLookAndFeel sliderlookandfeel;
+    // Custom UI look and feel classes
+    MainUIlookandFeel        mainuilookandfeel;
+    SliderLookAndFeel        sliderlookandfeel;
+    ButtonLookandFeel        buttonlookandfeel;
+    RoundedButtonLookandFeel roundedbuttonlookandfeel;
+
+    //Toggle Buttons 
+    bool bypasstoggle;
+    TextButton bypassbutton;
 
     // Sliders
-    juce::Slider gainSlider;
+    juce::Slider gainSlider, channelSlider;
 
-    // Attachments
-    std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment;
+    // Parameter Attachments
+    std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment;
+    std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessorEditor)
 };

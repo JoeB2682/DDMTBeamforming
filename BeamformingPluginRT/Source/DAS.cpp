@@ -16,12 +16,13 @@ DAS::DAS(int samplerate) :
 
 float DAS::generateNarrowband(float freq, float amplitude) 
 {
-	osc->setFrequency(freq); 
+	osc->setFrequency(freq);
 
-	// I genuinely can't remember which one is needed so use both functions
-	osc->setAmplitude(1.f);
-	osc->setTargetAmplitude(1.f);
+	osc->setAmplitude(amplitude);
+	osc->setTargetAmplitude(amplitude);
 
+	osc->updateIncrement();
+	
 	return osc->incrementSample();
 }
 

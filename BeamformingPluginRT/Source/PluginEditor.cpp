@@ -5,6 +5,9 @@
 BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor (BeamformingRTPluginAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
+    // Size of plugin
+    setSize(800, 500);
+
     // Attach Params and make visible
     addAndMakeVisible(gainSlider);
     gainAttachment = EditorParameterHelper::createSliderAttachment
@@ -14,12 +17,48 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     gainSlider.setRange(0.0f, 1.0f, 0.01f);
     gainSlider.setNumDecimalPlacesToDisplay(2);
 
-    setSize (800, 500);
+    addAndMakeVisible(channelSlider);
+    channelsliderattachment = EditorParameterHelper::createSliderAttachment
+        (audioProcessor.apvts, "Channel", channelSlider, &sliderlookandfeel);
+    channelSlider.setLookAndFeel(&sliderlookandfeel);
+    channelSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    channelSlider.setRange(0, 8, 1);
+    channelSlider.setNumDecimalPlacesToDisplay(0);
+
+    {
+        // Buttons and toggles (ENSURE TO CONTROL BUTTONS THROUGH TOGGLE STATE!)
+
+        bypassbutton.setClickingTogglesState(true);
+        bypassAttachment = EditorParameterHelper::createButtonAttachment
+            (audioProcessor.apvts, "Bypass", bypassbutton,&roundedbuttonlookandfeel);
+
+        bypassbutton.setLookAndFeel(&roundedbuttonlookandfeel);
+        bypassbutton.setButtonText("OFF");
+
+        bypassbutton.onClick = [this]
+            { 
+                bypassbutton.setButtonText(bypassbutton.getToggleState() ? "ON" : "OFF"); 
+            };
+
+        addAndMakeVisible(bypassbutton);
+
+
+
+
+
+    }
+
+
+
+
+
 }
 
 BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEditor()
 {
     gainSlider.setLookAndFeel(nullptr);
+    bypassbutton.setLookAndFeel(nullptr);
+    channelSlider.setLookAndFeel(nullptr);
 
     setLookAndFeel(nullptr);
 }
@@ -38,7 +77,11 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
     // Resize and postion components
     auto bounds = getLocalBounds();
 
-    gainSlider.setBounds(bounds.getCentreX() - 50, bounds.getCentreY() - 50, 100, 100);
+    // Sliders
+    gainSlider.setBounds(bounds.getCentreX() + 150, bounds.getCentreY() - 100, 100, 100);
+    channelSlider.setBounds(bounds.getCentreX() + 250, bounds.getCentreY() - 100, 100, 100);
 
+    // Buttons 
+    bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, gainSlider.getBottom() + 10, 50, 50);
 }
 //==============================================================================

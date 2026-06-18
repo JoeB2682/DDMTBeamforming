@@ -11,20 +11,23 @@
 #include "ParameterHelper.h"
 
 //==============================================================================
+// Parameter Layout 
 void ParameterHelper::addParameters(
     juce::AudioProcessorValueTreeState::ParameterLayout& layout
 )
 {
-    layout.add(std::make_unique<juce::AudioParameterFloat>(
-        "Gain",
-        "Gain",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f),
-        0.5f
+    // Sliders
+    layout.add(std::make_unique<juce::AudioParameterFloat>("Gain", "Gain",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.5f
     ));
 
+    layout.add(std::make_unique<juce::AudioParameterInt>("Channel", "Channel", 0, 8, 1));
 
+    // Buttons
+    layout.add(std::make_unique<juce::AudioParameterBool>("Bypass", "Bypass", false));
 }
 //==============================================================================
+// Creates Slider Attachment
 std::unique_ptr<EditorParameterHelper::SliderAttachment>
 EditorParameterHelper::createSliderAttachment(
     juce::AudioProcessorValueTreeState& apvts,
@@ -38,5 +41,23 @@ EditorParameterHelper::createSliderAttachment(
         parameterID,
         slider
     );
+}
+
+//==============================================================================
+// Creates Button Attachment
+std::unique_ptr<EditorParameterHelper::ButtonAttachment>
+EditorParameterHelper::createButtonAttachment(
+    juce::AudioProcessorValueTreeState& apvts,
+    const juce::String& parameterID,
+    juce::Button& button,
+    juce::LookAndFeel* lookAndFeel)
+{
+    if (lookAndFeel != nullptr)
+        button.setLookAndFeel(lookAndFeel);
+
+    return std::make_unique<ButtonAttachment>(
+        apvts,
+        parameterID,
+        button);
 }
 //==============================================================================
