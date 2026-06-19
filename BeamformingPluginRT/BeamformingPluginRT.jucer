@@ -41,7 +41,7 @@
             useGlobalPath="1"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_processors_headless" showAllCode="1" useLocalCopy="0"
-            useGlobalPath="1"/>
+            useGlobalPath="0"/>
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -51,7 +51,8 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
+               JUCE_ASIO="1"/>
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
@@ -72,7 +73,7 @@
         <MODULEPATH id="juce_graphics" path="../../../Documents/JUCE and Projects/Libraries/JUCE-master/JUCE-master/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../../Documents/JUCE and Projects/Libraries/JUCE-master/JUCE-master/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../Documents/JUCE and Projects/Libraries/JUCE-master/JUCE-master/modules"/>
-        <MODULEPATH id="juce_audio_processors_headless" path="../../../Documents/JUCE and Projects/Libraries/JUCE-master/JUCE-master/modules"/>
+        <MODULEPATH id="juce_audio_processors_headless" path="..\..\..\Documents\JUCE and Projects\Libraries\JUCE-master\JUCE-master\modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>

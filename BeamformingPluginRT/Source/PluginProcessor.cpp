@@ -1,15 +1,15 @@
+//==============================================================================
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-
 //==============================================================================
 BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("Input",  juce::AudioChannelSet::discreteChannels(8), true)
                       #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                       .withOutput ("Output", juce::AudioChannelSet::discreteChannels(8), true)
                      #endif
                        )
 #endif
@@ -58,30 +58,35 @@ void BeamformingRTPluginAudioProcessor::changeProgramName (int index, const juce
 //==============================================================================
 void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    {
+        // Debug messages to ensure that I/O is configured properly
+        DBG("Inputs  = " << getTotalNumInputChannels());
+        DBG("Outputs = " << getTotalNumOutputChannels());
+
+        DBG("Main input bus  = " << getMainBusNumInputChannels());
+        DBG("Main output bus = " << getMainBusNumOutputChannels());
+    }
+
     DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate());
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources(){}
 
-#ifndef JucePlugin_PreferredChannelConfigurations
-bool BeamformingRTPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+// Modify layout to support more channels (as specified in constructor)
+bool BeamformingRTPluginAudioProcessor::isBusesLayoutSupported
+(const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-  #else
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-        return false;
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
+    auto outputLayout = layouts.getMainOutputChannelSet();
 
-    return true;
-  #endif
-}
+    if (outputLayout != juce::AudioChannelSet::discreteChannels(8))
+        return false;
+
+#if !JucePlugin_IsSynth
+    if (layouts.getMainInputChannelSet() != outputLayout)
+        return false;
 #endif
+    return true;
+}
 
 void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
@@ -112,8 +117,6 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
         for (int sample = 0; sample < numSamples; sample++) {
 
-             
-       
             channelData[sample] = DelayandSumBeamformer->generateNarrowband(1000, 0.5f) * (float)gain;
         }
     }
