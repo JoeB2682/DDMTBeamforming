@@ -16,6 +16,7 @@ DAS::DAS(int samplerate) :
 
 float DAS::generateNarrowband(float freq, float amplitude) 
 {
+	// Generates pure tone using made oscillator class
 	osc->setFrequency(freq);
 
 	osc->setAmplitude(amplitude);

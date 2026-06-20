@@ -1,4 +1,13 @@
 //===============================================================================
+//
+// DAS.h
+// 
+// Delay and Sum beamformer class, generates and handles both narrow and wideband 
+// signals. Allows for both linear and nonlinear arrays.
+// 
+// created by Joseph Bozzo
+// 
+//===============================================================================
 #pragma once
 
 #include <JuceHeader.h>
@@ -18,7 +27,7 @@ public:
 
 private:
 
-    int sampleRate, oscbuffersize;
+    int sampleRate;
 
     std::unique_ptr<Oscillator> osc;
     

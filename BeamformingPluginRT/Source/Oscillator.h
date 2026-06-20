@@ -1,30 +1,20 @@
-/*
-  ==============================================================================
-
-    Oscillator.h
-    Created: 31 Jul 2025 11:06:39am
-    Author:  josep
-
-    Basic Oscillator class for future expansion larger projects.
-
-  ==============================================================================
-*/
+//===============================================================================
+//
+// Oscillator.h
+// 
+// Oscillator classes for the generation of pure, complex tones and noise.
+// 
+// created by Joseph Bozzo
+// 
+//===============================================================================
 
 #pragma once
 
 #include <JuceHeader.h>
 #include <random>
 
-enum oscillator {
-    SINE,
-    HarmSAW,
-    Square,
-    Triangle,
-    Noise,
-    WhiteNoise,
-    Formant
-};
-
+//===============================================================================
+// Sine wave generator (pure tone, narrowband)
 class Oscillator
 {
 public:
@@ -68,6 +58,8 @@ public:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Oscillator)
 };
 
+//===============================================================================
+// Saw wave generator
 class HarmonicOsc : public Oscillator
 {
 public:
@@ -89,6 +81,8 @@ protected:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HarmonicOsc)
 };
 
+//===============================================================================
+// Square wave generator
 class SquareOsc : public Oscillator
 {
 public:
@@ -109,7 +103,8 @@ protected:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SquareOsc)
 };
-
+//===============================================================================
+// Triangle wave generator
 class TriangleOsc : public Oscillator
 {
 public:
@@ -131,6 +126,8 @@ protected:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TriangleOsc)
 };
 
+//===============================================================================
+// Mixed noise and harmonics
 class NoiseOSC : public Oscillator
 {
 public:
@@ -152,9 +149,11 @@ protected:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NoiseOSC)
 };
-
+//===============================================================================
+// Generates white noise
 class ActualNoise : public Oscillator, protected NoiseOSC {
     float incrementSample();
 };
+//===============================================================================
 
 
