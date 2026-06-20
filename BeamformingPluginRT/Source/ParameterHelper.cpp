@@ -18,13 +18,15 @@ void ParameterHelper::addParameters(
 {
     // Sliders
     layout.add(std::make_unique<juce::AudioParameterFloat>("Gain", "Gain",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.5f
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.02f
     ));
 
     layout.add(std::make_unique<juce::AudioParameterInt>("Channel", "Channel", 0, 8, 1));
 
     // Buttons
     layout.add(std::make_unique<juce::AudioParameterBool>("Bypass", "Bypass", false));
+    layout.add(std::make_unique<juce::AudioParameterBool>("Outtype", "Outtype", false));
+
 }
 //==============================================================================
 // Creates Slider Attachment

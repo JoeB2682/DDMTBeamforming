@@ -17,6 +17,11 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     gainSlider.setRange(0.0f, 1.0f, 0.01f);
     gainSlider.setNumDecimalPlacesToDisplay(2);
 
+    gainsliderlabel.setText("Gain", juce::dontSendNotification);
+    gainsliderlabel.setJustificationType(juce::Justification::centred);
+    gainsliderlabel.attachToComponent(&gainSlider, false);
+
+
     addAndMakeVisible(channelSlider);
     channelsliderattachment = EditorParameterHelper::createSliderAttachment
         (audioProcessor.apvts, "Channel", channelSlider, &sliderlookandfeel);
@@ -25,8 +30,12 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     channelSlider.setRange(0, 8, 1);
     channelSlider.setNumDecimalPlacesToDisplay(0);
 
+    channelsliderlabel.setText("ChannelOut", juce::dontSendNotification);
+    channelsliderlabel.setJustificationType(juce::Justification::centred);
+    channelsliderlabel.attachToComponent(&channelSlider, false);
+
     {
-        // Buttons and toggles (ENSURE TO CONTROL BUTTONS THROUGH TOGGLE STATE!)
+        // Buttons and toggles (ENSURE TO CONTROL BUTTONS THROUGH TOGGLE STATE NOT A SEPERATE BOOLEAN!)
 
         bypassbutton.setClickingTogglesState(true);
         bypassAttachment = EditorParameterHelper::createButtonAttachment
@@ -35,6 +44,10 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
         bypassbutton.setLookAndFeel(&roundedbuttonlookandfeel);
         bypassbutton.setButtonText("OFF");
 
+        bypassbuttonlabel.setText("Bypass", juce::dontSendNotification);
+        bypassbuttonlabel.setJustificationType(juce::Justification::centred);
+        bypassbuttonlabel.attachToComponent(&bypassbutton, false);
+
         bypassbutton.onClick = [this]
             { 
                 bypassbutton.setButtonText(bypassbutton.getToggleState() ? "ON" : "OFF"); 
@@ -42,7 +55,23 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
 
         addAndMakeVisible(bypassbutton);
 
+        outputtypebutton.setClickingTogglesState(true);
+        outputtypeattachment = EditorParameterHelper::createButtonAttachment
+        (audioProcessor.apvts, "Outtype", outputtypebutton, &roundedbuttonlookandfeel);
 
+        outputtypebutton.setLookAndFeel(&roundedbuttonlookandfeel);
+        outputtypebutton.setButtonText("SCHAN");
+
+        outputtypebuttonlabel.setText("Output", juce::dontSendNotification);
+        outputtypebuttonlabel.setJustificationType(juce::Justification::centred);
+        outputtypebuttonlabel.attachToComponent(&outputtypebutton, false);
+
+        outputtypebutton.onClick = [this]
+            {
+                outputtypebutton.setButtonText(outputtypebutton.getToggleState() ? "SCHAN" : "ALL");
+            };
+
+        addAndMakeVisible(outputtypebutton);
 
 
 
@@ -82,6 +111,7 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
     channelSlider.setBounds(bounds.getCentreX() + 250, bounds.getCentreY() - 100, 100, 100);
 
     // Buttons 
-    bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, gainSlider.getBottom() + 10, 50, 50);
+    bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, gainSlider.getBottom() + 30, 50, 50);
+    outputtypebutton.setBounds(channelSlider.getX() + (channelSlider.getWidth() - 80) / 2, channelSlider.getBottom() + 30, 80, 50);
 }
 //==============================================================================

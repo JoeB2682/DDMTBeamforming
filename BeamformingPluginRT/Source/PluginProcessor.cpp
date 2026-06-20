@@ -100,6 +100,7 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
     float gain = chainsettings.Gain;
     bool bypass = chainsettings.bypass;
     int Channel = chainsettings.Channel - 1;
+    bool Outputtype = chainsettings.outtype;
 
     //DBG("isBypass = " << (bypass ? "true" : "false"));
 
@@ -110,14 +111,24 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
     // Allows bypassusing button
     if (bypass) return;
-
-    for (int channel = 0; channel < totalNumInputChannels; channel++)
+    
+    // Sample Loop 
+    for (int sample = 0; sample < numSamples; sample++)
     {
-        auto* channelData = buffer.getWritePointer (Channel);
+        // Generate Output Once per Sample to avoid noise
+        float output = DelayandSumBeamformer->generateNarrowband(1000, 0.5f) * gain;
 
-        for (int sample = 0; sample < numSamples; sample++) {
-
-            channelData[sample] = DelayandSumBeamformer->generateNarrowband(1000, 0.5f) * (float)gain;
+        // Toggle to switch between outputtin on selected channel or all channels
+        if (Outputtype)
+        {
+            // Output on all channels (needed for beamforming)
+            for (int channel = 0; channel < totalNumOutputChannels; channel++)
+                buffer.getWritePointer(channel)[sample] = output;
+        }
+        else
+        {
+            // Output on selected channel (for testing source outputs)
+            buffer.getWritePointer(Channel)[sample] = output;
         }
     }
 }
@@ -138,6 +149,7 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
     settings.Gain = apvts.getRawParameterValue("Gain")->load();
     settings.bypass = apvts.getRawParameterValue("Bypass")->load();
     settings.Channel = apvts.getRawParameterValue("Channel")->load();
+    settings.outtype = apvts.getRawParameterValue("Outtype")->load();
 }
 
 // Abstracted parameter crap into helper file

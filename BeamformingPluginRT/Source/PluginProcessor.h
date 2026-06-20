@@ -9,7 +9,7 @@
 struct ChainSettings {
 
     float Gain{ 1.0f };
-    bool bypass{ };
+    bool bypass{ }, outtype{ };
     int Channel{ 1 };
 };
 //==================================================================================

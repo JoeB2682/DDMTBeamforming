@@ -28,15 +28,17 @@ private:
     RoundedButtonLookandFeel roundedbuttonlookandfeel;
 
     //Toggle Buttons 
-    bool bypasstoggle;
-    TextButton bypassbutton;
+    TextButton bypassbutton, outputtypebutton;
 
     // Sliders
     juce::Slider gainSlider, channelSlider;
 
+    // Labels
+    Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel;
+
     // Parameter Attachments
     std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment;
-    std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment;
+    std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessorEditor)
 };
