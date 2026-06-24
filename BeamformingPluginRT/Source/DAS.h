@@ -20,14 +20,36 @@ class DAS
 {
 public:
 
-    DAS(int samplerate);
+    // Used to store 2D coordinates
+    struct Point2D
+    {
+        float x;
+        float y;
+    };
+
+public:
+
+    DAS(int samplerate, int N, float r);
     ~DAS() = default;
 
     float generateNarrowband(float freq, float amplitude);
 
+    inline void setbrightPoint(Point2D& b, float x, float y);
+    void setsourcePositions(float& radius, std::vector<Point2D>& speakers);
+    void calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers);
+    void processcircularDAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y);
+
 private:
 
-    int sampleRate;
+    const int speedofSound = 343; // sos in m/s
+    int sampleRate, N, Nt;
+    float dx, dy, r;
+    bool setPosflag;
+
+    Point2D b;
+
+    std::vector<Point2D> speakers;
+    std::vector<float> tau;
 
     std::unique_ptr<Oscillator> osc;
     

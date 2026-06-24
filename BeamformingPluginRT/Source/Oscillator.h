@@ -32,7 +32,7 @@ public:
 
     inline void resetPhaseRandom() { phase = randomFloat(0.0f, 2.0f * juce::MathConstants<float>::pi); }
     inline void setTargetAmplitude(float newAmp) { targetAmplitude = newAmp; }
-    inline void setPhase(float newPhase) { phase = newPhase; }
+    inline void setPhaseOffset(float newOffset) { Phi = newOffset; }
 
 protected:
 
@@ -41,7 +41,7 @@ protected:
     double Amplitude, frequency;
     int buffersize, samplerate;
     double Phi, phase;
-    double PhaseInc;
+    double PhaseInc, PhaseOffset;
     bool Offset;
     double sample;
 

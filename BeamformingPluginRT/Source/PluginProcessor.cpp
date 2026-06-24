@@ -67,7 +67,7 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
         DBG("Main output bus = " << getMainBusNumOutputChannels());
     }
 
-    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate());
+    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate(), 8, 2.f);
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources(){}
@@ -109,14 +109,18 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
     float numSamples = buffer.getNumSamples();
 
-    // Allows bypassusing button
+    // Allows bypassing button
     if (bypass) return;
     
     // Sample Loop 
     for (int sample = 0; sample < numSamples; sample++)
     {
         // Generate Output Once per Sample to avoid noise
-        float output = DelayandSumBeamformer->generateNarrowband(1000, 0.5f) * gain;
+
+        float narrowbandSig = DelayandSumBeamformer->generateNarrowband(1000, 0.5f);
+
+        // Assign to output 
+        float output = narrowbandSig * gain;
 
         // Toggle to switch between outputtin on selected channel or all channels
         if (Outputtype)

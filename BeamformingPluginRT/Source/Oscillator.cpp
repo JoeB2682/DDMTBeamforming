@@ -15,7 +15,8 @@ void Oscillator::setupOscillator(int sampleRate, int BufferSize, bool offset)
 {
     samplerate = sampleRate; buffersize = BufferSize; Offset = offset;
 
-    Phi = (offset) ? PI / 2.0 : 0.0;
+    //Phi = (offset) ? PI / 2.0 : 0.0;
+    Phi = 0.0;
 }
 
 void Oscillator::updateIncrement() { PhaseInc = (2 * PI * frequency) / samplerate; }
