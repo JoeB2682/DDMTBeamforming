@@ -2,11 +2,12 @@
 #include "DAS.h"
 //===============================================================================
 // Constructor
-DAS::DAS(int samplerate, int N, float r) :
+DAS::DAS(int samplerate, int N, float r, int totalNoOutputChannels) :
 	sampleRate(48000),
 	N(N),
 	r(r),
-	setPosflag(false)
+	setPosflag(false),
+	setoscbankflag(false)
 {
 	// Overwrites default value with actual sr
 	sampleRate = samplerate;
@@ -22,6 +23,14 @@ DAS::DAS(int samplerate, int N, float r) :
 
 	// Just give arbritrary vals upon construction
 	setbrightPoint(b, r + 1, r + 2);
+
+	// Initialise oscillator bank
+	oscbank.resize(N);
+
+	for (int i = 0; i < N; i++)
+	{
+		oscbank[i] = std::make_unique<Oscillator>();
+	}
 }
 
 //===============================================================================
@@ -42,16 +51,54 @@ float DAS::generateTestTone(float freq, float amplitude, float Phi)
 
 //===============================================================================
 // Generates full narrowband signal for each source (calc correct offset prior)
-float DAS::generateNarrowband(float freq, float amplitude, float Phi)
+void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
+	juce::AudioBuffer<float>& buffer,
+	float freq,
+	float amplitude,
+	std::vector<float>& tau,
+	float gain)
 {
+	// Calculate max of time of arrival array
+	float tauMax = *std::max_element(tau.begin(), tau.end());
 
+	// Use flag to setup oscillators once
+	if (!setoscbankflag)
+	{
+		for (int i = 0; i < oscbank.size(); i++)
+		{
+			oscbank[i]->setupOscillator(sampleRate,
+				buffer.getNumSamples(),
+				false);
+		}
+		setoscbankflag = true;
+	}
+
+	// Calculate relative delays for each speaker and apply to each channel
+	for (int speaker = 0; speaker < N; speaker++)
+	{
+		float relativeDelay = tauMax - tau[speaker];
+		float phaseOffset = -2.0f * juce::MathConstants<float>::pi * freq * relativeDelay;
+
+		oscbank[speaker]->setFrequency(freq);
+		oscbank[speaker]->setTargetAmplitude(amplitude);
+		oscbank[speaker]->setPhaseOffset(phaseOffset);
+
+		auto* channel = buffer.getWritePointer(speaker);
+
+		for (int sample = 0; sample < buffer.getNumSamples(); sample++)
+		{
+			channel[sample] = oscbank[speaker]->incrementSample() * gain;
+		}
+	}
 }
 
 //===============================================================================
 // Sets source positions vector based on specified radius
 void DAS::setsourcePositions(float& radius, std::vector<Point2D>& speakers) 
 {
-	for (int i = 0; i < speakers.size(); ++i)
+	speakers.clear();
+
+	for (int i = 0; i < N; ++i)
 	{
 		float angle = juce::MathConstants<float>::twoPi * i / 8.0f;
 
@@ -72,27 +119,32 @@ inline void DAS::setbrightPoint(Point2D& b, float x, float y)
 
 //===============================================================================
 // Calculates tau vector for phase offset
-void DAS::calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers)
+void DAS::calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers, Point2D& b)
 {
+	for (int i = 0; i < N; i++)
+	{
+		float dx = speakers[i].x - b.x;
+		float dy = speakers[i].y - b.y;
 
+		float distance = std::sqrt(dx * dx + dy * dy);
+
+		tau[i] = distance / speedofSound;
+	}
 }
 
 //===============================================================================
 // Calls necessary functions to process circular array
-void DAS::processcircularDAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y)
+void DAS::processcircularDAS(juce::AudioBuffer<float>& buffer,
+	float bright_x, float bright_y, float gain)
 {
-	// Sets speaker positions if not allready set
-	if (setPosflag == false) {
+	if (!setPosflag)
+	{
 		setsourcePositions(r, speakers);
-		setPosflag == true;
+		setPosflag = true;
 	}
 
-	// Update bright point based on parameters
 	setbrightPoint(b, bright_x, bright_y);
-	
-	// Calculate time of arrival vector
-	calcsourceTOI(tau, speakers);
-
-
+	calcsourceTOI(tau, speakers, b);
+	generateNarrowband(oscbank, buffer, 1000.0f, 0.5f, tau, gain);
 }
 //===============================================================================

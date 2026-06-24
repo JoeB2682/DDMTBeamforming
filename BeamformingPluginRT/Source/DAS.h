@@ -29,29 +29,35 @@ public:
 
 public:
 
-    DAS(int samplerate, int N, float r);
+    DAS(int samplerate, int N, float r, int totalNoOutputChannels);
     ~DAS() = default;
 
-    float generateNarrowband(float freq, float amplitude);
+    // Generator functions
+    float generateTestTone(float freq, float amplitude, float Phi);
+    void generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank, juce::AudioBuffer<float>& buffer,
+        float freq, float amplitude, std::vector<float>& tau, float gain);
 
+    // Beamforming functions
     inline void setbrightPoint(Point2D& b, float x, float y);
     void setsourcePositions(float& radius, std::vector<Point2D>& speakers);
-    void calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers);
-    void processcircularDAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y);
+    void calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers, Point2D& b);
+    void processcircularDAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y, float gain);
 
 private:
 
+    int totalNoOutputChannels;
     const int speedofSound = 343; // sos in m/s
     int sampleRate, N, Nt;
     float dx, dy, r;
-    bool setPosflag;
+    bool setPosflag, setoscbankflag;
 
     Point2D b;
 
     std::vector<Point2D> speakers;
     std::vector<float> tau;
+    std::vector<std::unique_ptr<Oscillator>> oscbank;
 
-    std::unique_ptr<Oscillator> osc;
+    std::unique_ptr<Oscillator> testosc;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DAS)
 };

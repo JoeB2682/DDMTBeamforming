@@ -67,7 +67,7 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
         DBG("Main output bus = " << getMainBusNumOutputChannels());
     }
 
-    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate(), 8, 2.f);
+    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate(), 8, 2.f, getTotalNumOutputChannels());
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources(){}
@@ -111,26 +111,24 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
     // Allows bypassing button
     if (bypass) return;
-    
-    // Sample Loop 
-    for (int sample = 0; sample < numSamples; sample++)
+
+    // Toggle to switch between speaker test or beamformer
+    if (!Outputtype)
     {
-        // Generate Output Once per Sample to avoid noise
-
-        float narrowbandSig = DelayandSumBeamformer->generateNarrowband(1000, 0.5f);
-
-        // Assign to output 
-        float output = narrowbandSig * gain;
-
-        // Toggle to switch between outputtin on selected channel or all channels
-        if (Outputtype)
+        // Generate beamformer output
+        DelayandSumBeamformer->processcircularDAS(buffer, 0.0f, 0.0f, gain);
+    }
+    else
+    {
+        // Sample Loop 
+        for (int sample = 0; sample < numSamples; sample++)
         {
-            // Output on all channels (needed for beamforming)
-            for (int channel = 0; channel < totalNumOutputChannels; channel++)
-                buffer.getWritePointer(channel)[sample] = output;
-        }
-        else
-        {
+            // Generate test tone on selected channel only
+            float testsig = DelayandSumBeamformer->generateTestTone(1000.0f, 0.5f, 0.0f);
+
+            // Assign to output 
+            float output = testsig * gain;
+
             // Output on selected channel (for testing source outputs)
             buffer.getWritePointer(Channel)[sample] = output;
         }
