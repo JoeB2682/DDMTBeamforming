@@ -27,6 +27,10 @@ void ParameterHelper::addParameters(
     layout.add(std::make_unique<juce::AudioParameterBool>("Bypass", "Bypass", false));
     layout.add(std::make_unique<juce::AudioParameterBool>("Outtype", "Outtype", false));
 
+    // XY Grid
+    layout.add(std::make_unique<juce::AudioParameterFloat>("BrightX","BrightX", -1.0f, 1.0f, 0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>( "BrightY", "BrightY", -1.0f, 1.0f, 0.0f));
+
 }
 //==============================================================================
 // Creates Slider Attachment

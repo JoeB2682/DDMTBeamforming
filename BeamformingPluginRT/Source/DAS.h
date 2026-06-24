@@ -13,8 +13,6 @@
 #include <JuceHeader.h>
 #include "Oscillator.h"
 
-// Class to handle all delay and sum beamforming...
-
 //===============================================================================
 class DAS 
 {
@@ -41,7 +39,7 @@ public:
     inline void setbrightPoint(Point2D& b, float x, float y);
     void setsourcePositions(float& radius, std::vector<Point2D>& speakers);
     void calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers, Point2D& b);
-    void processcircularDAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y, float gain);
+    void processcircularDAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y, float freq, float amplitude, float gain);
 
 private:
 

@@ -72,15 +72,19 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
             };
 
         addAndMakeVisible(outputtypebutton);
-
-
-
     }
 
+    // Bright Point Plot
+    addAndMakeVisible(brightpointplot);
 
+    brightpointplot.onPointMoved = [this](float x, float y)
+        {
+            audioProcessor.apvts.getParameter("BrightX")
+                ->setValueNotifyingHost((x + 1.0f) * 0.5f);
 
-
-
+            audioProcessor.apvts.getParameter("BrightY")
+                ->setValueNotifyingHost((y + 1.0f) * 0.5f);
+        };
 }
 
 BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEditor()
@@ -113,5 +117,8 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
     // Buttons 
     bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, gainSlider.getBottom() + 30, 50, 50);
     outputtypebutton.setBounds(channelSlider.getX() + (channelSlider.getWidth() - 80) / 2, channelSlider.getBottom() + 30, 80, 50);
+
+    // Bright Point Plot
+    brightpointplot.setBounds(20, 20, 400, 400);
 }
 //==============================================================================

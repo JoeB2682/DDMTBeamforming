@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "LookandFeel.h"
+#include "MoveableXY.h"
 
 //==================================================================================
 class BeamformingRTPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
@@ -39,6 +40,9 @@ private:
     // Parameter Attachments
     std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment;
     std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment;
+
+    // XY Bright Point Mover
+    BrightPointPlot brightpointplot;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessorEditor)
 };

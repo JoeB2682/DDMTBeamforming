@@ -16,6 +16,8 @@
     <GROUP id="{26A5E7DF-CCC8-CD6D-B003-410997B2C112}" name="UI">
       <FILE id="hhKyGU" name="LookandFeel.cpp" compile="1" resource="0" file="Source/LookandFeel.cpp"/>
       <FILE id="xlJwOy" name="LookandFeel.h" compile="0" resource="0" file="Source/LookandFeel.h"/>
+      <FILE id="IwAYIW" name="MoveableXY.cpp" compile="1" resource="0" file="Source/MoveableXY.cpp"/>
+      <FILE id="QGiUEI" name="MoveableXY.h" compile="0" resource="0" file="Source/MoveableXY.h"/>
     </GROUP>
     <GROUP id="{DC108D3B-02ED-FE33-A8E7-FA2BA907EDF0}" name="Source">
       <FILE id="oNLHis" name="PluginProcessor.cpp" compile="1" resource="0"

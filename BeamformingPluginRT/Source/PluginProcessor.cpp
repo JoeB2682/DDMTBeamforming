@@ -67,7 +67,7 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
         DBG("Main output bus = " << getMainBusNumOutputChannels());
     }
 
-    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate(), 8, 2.f, getTotalNumOutputChannels());
+    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources(){}
@@ -101,6 +101,8 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
     bool bypass = chainsettings.bypass;
     int Channel = chainsettings.Channel - 1;
     bool Outputtype = chainsettings.outtype;
+    float brightX = chainsettings.brightx;
+    float brightY = chainsettings.brighty;
 
     //DBG("isBypass = " << (bypass ? "true" : "false"));
 
@@ -109,14 +111,20 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
     float numSamples = buffer.getNumSamples();
 
+    // Convert normalized position in metres
+    brightX *= ArrayRadius;
+    brightY *= ArrayRadius;
+
     // Allows bypassing button
     if (bypass) return;
 
     // Toggle to switch between speaker test or beamformer
     if (!Outputtype)
     {
-        // Generate beamformer output
-        DelayandSumBeamformer->processcircularDAS(buffer, 0.0f, 0.0f, gain);
+        // Generate beamformer output (BE CAREFUL IF RADIUS IS WRONG GAIN WILL SPIKE!!!!!!)
+        DelayandSumBeamformer->processcircularDAS(buffer, brightX, brightY, 1000.f, 0.5f, gain);
+        //DBG("Raw BrightX: " << brightX);
+        //DBG("Raw BrightY: " << brightY);
     }
     else
     {
@@ -152,6 +160,8 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
     settings.bypass = apvts.getRawParameterValue("Bypass")->load();
     settings.Channel = apvts.getRawParameterValue("Channel")->load();
     settings.outtype = apvts.getRawParameterValue("Outtype")->load();
+    settings.brightx = apvts.getRawParameterValue("BrightX")->load();
+    settings.brighty = apvts.getRawParameterValue("BrightY")->load();
 }
 
 // Abstracted parameter crap into helper file

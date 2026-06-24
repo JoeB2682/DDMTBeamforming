@@ -11,6 +11,8 @@ struct ChainSettings {
     float Gain{ 1.0f };
     bool bypass{ }, outtype{ };
     int Channel{ 1 };
+    float brightx{  }, brighty{  };
+
 };
 //==================================================================================
 class BeamformingRTPluginAudioProcessor  : public juce::AudioProcessor
@@ -67,6 +69,11 @@ private:
     //Instanciation Station
 
     std::unique_ptr<DAS> DelayandSumBeamformer;
+    juce::AudioParameterFloat *brightX, *brightY;
+
+public:
+
+    float ArrayRadius = 0.5;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)

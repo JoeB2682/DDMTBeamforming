@@ -21,9 +21,6 @@ DAS::DAS(int samplerate, int N, float r, int totalNoOutputChannels) :
 	speakers.resize(N);
 	tau.resize(N, 0.0f);
 
-	// Just give arbritrary vals upon construction
-	setbrightPoint(b, r + 1, r + 2);
-
 	// Initialise oscillator bank
 	oscbank.resize(N);
 
@@ -73,6 +70,9 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 		setoscbankflag = true;
 	}
 
+	// Clamp to prevent blowup
+	gain = juce::jlimit(0.0f, 0.01f, gain);
+
 	// Calculate relative delays for each speaker and apply to each channel
 	for (int speaker = 0; speaker < N; speaker++)
 	{
@@ -87,9 +87,17 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 
 		for (int sample = 0; sample < buffer.getNumSamples(); sample++)
 		{
-			channel[sample] = oscbank[speaker]->incrementSample() * gain;
+			// Normalise to prevent insane gain levels
+			channel[sample] = oscbank[speaker]->incrementSample() * gain / N;
 		}
 	}
+
+	/*
+	for (int i = 0; i < N; i++)
+	{
+		DBG("tau " << i << ": " << tau[i]);
+	}
+	*/
 }
 
 //===============================================================================
@@ -100,7 +108,10 @@ void DAS::setsourcePositions(float& radius, std::vector<Point2D>& speakers)
 
 	for (int i = 0; i < N; ++i)
 	{
-		float angle = juce::MathConstants<float>::twoPi * i / 8.0f;
+
+		// Change this depending upon speaker channel config 
+		//float angle = juce::MathConstants<float>::twoPi * i / N;
+		float angle = juce::MathConstants<float>::twoPi * i / N + juce::MathConstants<float>::halfPi; // This is for lab room array
 
 		speakers.push_back(
 			{
@@ -123,8 +134,8 @@ void DAS::calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers,
 {
 	for (int i = 0; i < N; i++)
 	{
-		float dx = speakers[i].x - b.x;
-		float dy = speakers[i].y - b.y;
+		float dx = b.x - speakers[i].x;
+		float dy = b.y - speakers[i].y;
 
 		float distance = std::sqrt(dx * dx + dy * dy);
 
@@ -135,7 +146,7 @@ void DAS::calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers,
 //===============================================================================
 // Calls necessary functions to process circular array
 void DAS::processcircularDAS(juce::AudioBuffer<float>& buffer,
-	float bright_x, float bright_y, float gain)
+	float bright_x, float bright_y, float freq, float amplitude, float gain)
 {
 	if (!setPosflag)
 	{
@@ -145,6 +156,6 @@ void DAS::processcircularDAS(juce::AudioBuffer<float>& buffer,
 
 	setbrightPoint(b, bright_x, bright_y);
 	calcsourceTOI(tau, speakers, b);
-	generateNarrowband(oscbank, buffer, 1000.0f, 0.5f, tau, gain);
+	generateNarrowband(oscbank, buffer, freq, 0.5f, tau, gain);
 }
 //===============================================================================
