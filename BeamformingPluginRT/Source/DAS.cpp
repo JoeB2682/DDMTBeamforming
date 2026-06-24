@@ -74,13 +74,20 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	gain = juce::jlimit(0.0f, 0.01f, gain);
 
 	// Calculate relative delays for each speaker and apply to each channel
+	/*
 	for (int speaker = 0; speaker < N; speaker++)
 	{
 		float relativeDelay = tauMax - tau[speaker];
 		float phaseOffset = -2.0f * juce::MathConstants<float>::pi * freq * relativeDelay;
+		float distance = tau[speaker] * speedofSound;
+
+		distance = juce::jmax(distance, 0.1f); 
+		float distanceWeight = 1.0f / distance;
+
+		float compensatedAmplitude = amplitude; //* distanceWeight;
 
 		oscbank[speaker]->setFrequency(freq);
-		oscbank[speaker]->setTargetAmplitude(amplitude);
+		oscbank[speaker]->setTargetAmplitude(compensatedAmplitude);
 		oscbank[speaker]->setPhaseOffset(phaseOffset);
 
 		auto* channel = buffer.getWritePointer(speaker);
@@ -98,8 +105,31 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 		DBG("tau " << i << ": " << tau[i]);
 	}
 	*/
-}
+	for (int speaker = 0; speaker < N; speaker++)
+	{
+		float phaseOffset =
+			-2.0f *
+			juce::MathConstants<float>::pi *
+			freq *
+			tau[speaker];
 
+
+		oscbank[speaker]->setFrequency(freq);
+		oscbank[speaker]->setTargetAmplitude(amplitude);
+		oscbank[speaker]->setPhaseOffset(phaseOffset);
+
+
+		auto* channel = buffer.getWritePointer(speaker);
+
+		for (int sample = 0; sample < buffer.getNumSamples(); sample++)
+		{
+			channel[sample] =
+				oscbank[speaker]->incrementSample()
+				* gain
+				/ N;
+		}
+	}
+}
 //===============================================================================
 // Sets source positions vector based on specified radius
 void DAS::setsourcePositions(float& radius, std::vector<Point2D>& speakers) 

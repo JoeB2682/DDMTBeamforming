@@ -20,7 +20,7 @@ void BrightPointPlot::paint(juce::Graphics& g)
     float centerY = getHeight() / 2.0f;
 
     // Draw grid
-    g.setColour(juce::Colours::darkred);
+    g.setColour(juce::Colours::darkgreen);
 
     for (int i = 0; i < getWidth(); i += 20)
     {
@@ -48,7 +48,7 @@ void BrightPointPlot::paint(juce::Graphics& g)
     float pointX = centerX + brightPoint.x * circleRadius;
     float pointY = centerY - brightPoint.y * circleRadius;
 
-    g.setColour(juce::Colours::yellow);
+    g.setColour(juce::Colours::red);
 
     g.fillEllipse(
         pointX - 8,
@@ -101,8 +101,6 @@ juce::Point<float> BrightPointPlot::getNormalizedPosition(int x, int y)
     float normalizedX =
         (x - getWidth() / 2.0f) /
         (getWidth() / 2.0f);
-
-
 
     float normalizedY =
         (getHeight() / 2.0f - y) /

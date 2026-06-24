@@ -22,7 +22,6 @@ public:
     BrightPointPlot();
     ~BrightPointPlot() override = default;
 
-
     void paint(juce::Graphics& g) override;
 
     void mouseDown(const juce::MouseEvent& event) override;

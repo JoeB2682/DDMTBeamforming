@@ -14,6 +14,10 @@
       <FILE id="VxE2ya" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
     </GROUP>
     <GROUP id="{26A5E7DF-CCC8-CD6D-B003-410997B2C112}" name="UI">
+      <FILE id="aNq4O9" name="BeamVisualiser.cpp" compile="1" resource="0"
+            file="Source/BeamVisualiser.cpp"/>
+      <FILE id="RR1j4C" name="BeamVisualiser.h" compile="0" resource="0"
+            file="Source/BeamVisualiser.h"/>
       <FILE id="hhKyGU" name="LookandFeel.cpp" compile="1" resource="0" file="Source/LookandFeel.cpp"/>
       <FILE id="xlJwOy" name="LookandFeel.h" compile="0" resource="0" file="Source/LookandFeel.h"/>
       <FILE id="IwAYIW" name="MoveableXY.cpp" compile="1" resource="0" file="Source/MoveableXY.cpp"/>

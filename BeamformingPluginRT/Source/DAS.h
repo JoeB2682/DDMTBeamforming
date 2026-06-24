@@ -41,6 +41,11 @@ public:
     void calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers, Point2D& b);
     void processcircularDAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y, float freq, float amplitude, float gain);
 
+public:
+
+    std::vector<Point2D> speakers;
+    std::vector<float> tau;
+
 private:
 
     int totalNoOutputChannels;
@@ -49,12 +54,10 @@ private:
     float dx, dy, r;
     bool setPosflag, setoscbankflag;
 
-    Point2D b;
+    Point2D b; // Bright Point
 
-    std::vector<Point2D> speakers;
-    std::vector<float> tau;
+    // Oscillators
     std::vector<std::unique_ptr<Oscillator>> oscbank;
-
     std::unique_ptr<Oscillator> testosc;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DAS)

@@ -1,3 +1,5 @@
+//==================================================================================
+
 #pragma once
 
 #include <JuceHeader.h>
@@ -68,12 +70,12 @@ private:
     //==============================================================================
     //Instanciation Station
 
-    std::unique_ptr<DAS> DelayandSumBeamformer;
     juce::AudioParameterFloat *brightX, *brightY;
 
 public:
 
-    float ArrayRadius = 0.5;
+    std::unique_ptr<DAS> DelayandSumBeamformer;
+    float ArrayRadius = 1;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)

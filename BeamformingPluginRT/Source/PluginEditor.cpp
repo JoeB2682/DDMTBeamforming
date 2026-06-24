@@ -1,3 +1,4 @@
+//==============================================================================
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -7,6 +8,9 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
 {
     // Size of plugin
     setSize(800, 500);
+
+    // Start Callcback
+    startTimerHz(30);
 
     // Attach Params and make visible
     addAndMakeVisible(gainSlider);
@@ -85,6 +89,11 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
             audioProcessor.apvts.getParameter("BrightY")
                 ->setValueNotifyingHost((y + 1.0f) * 0.5f);
         };
+
+    // Beamvisualiser
+    addAndMakeVisible(beamvisualiser);
+    beamvisualiser.setSpeakers(audioProcessor.DelayandSumBeamformer->speakers);
+    beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau);
 }
 
 BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEditor()
@@ -102,23 +111,38 @@ void BeamformingRTPluginAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId)); 
 
     mainuilookandfeel.drawmainUI(g, *this);
-
 }
-
+//==============================================================================
 void BeamformingRTPluginAudioProcessorEditor::resized()
 {
-    // Resize and postion components
     auto bounds = getLocalBounds();
 
-    // Sliders
-    gainSlider.setBounds(bounds.getCentreX() + 150, bounds.getCentreY() - 100, 100, 100);
-    channelSlider.setBounds(bounds.getCentreX() + 250, bounds.getCentreY() - 100, 100, 100);
-
-    // Buttons 
-    bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, gainSlider.getBottom() + 30, 50, 50);
-    outputtypebutton.setBounds(channelSlider.getX() + (channelSlider.getWidth() - 80) / 2, channelSlider.getBottom() + 30, 80, 50);
-
     // Bright Point Plot
-    brightpointplot.setBounds(20, 20, 400, 400);
+    brightpointplot.setBounds(20, 20, 200, 200);
+
+    // Beam Plot
+    beamvisualiser.setBounds(brightpointplot.getRight() + 20, brightpointplot.getY(), brightpointplot.getWidth(), brightpointplot.getHeight());
+
+    // Sliders
+    gainSlider.setBounds(beamvisualiser.getRight() + 20, beamvisualiser.getY() + 20, 100, 100);
+    channelSlider.setBounds(gainSlider.getRight() + 20, gainSlider.getY(), 100, 100);
+
+    // Buttons
+    bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, beamvisualiser.getBottom() - 50, 50, 50);
+    outputtypebutton.setBounds(channelSlider.getX() + (channelSlider.getWidth() - 80) / 2, beamvisualiser.getBottom() - 50, 80, 50);
+}
+//==============================================================================
+// Timer Callback 
+void BeamformingRTPluginAudioProcessorEditor::timerCallback()
+{
+
+    auto x = audioProcessor.apvts.getRawParameterValue("BrightX")->load();
+    auto y = audioProcessor.apvts.getRawParameterValue("BrightY")->load();
+
+    x *= audioProcessor.ArrayRadius;
+    y *= audioProcessor.ArrayRadius;
+
+    beamvisualiser.setBrightPoint(x, y);
+    beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau);
 }
 //==============================================================================
