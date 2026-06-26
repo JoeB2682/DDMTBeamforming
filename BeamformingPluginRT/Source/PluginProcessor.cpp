@@ -6,7 +6,7 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
+                      #if ! JucePlugin_IsSynth // MODIFY CHANNEL LAYOUT DEPENDING UPON ARRAY!!!
                        .withInput  ("Input",  juce::AudioChannelSet::discreteChannels(8), true)
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::discreteChannels(8), true)
@@ -146,9 +146,7 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 //==============================================================================
 bool BeamformingRTPluginAudioProcessor::hasEditor() const { return true; }
 juce::AudioProcessorEditor* BeamformingRTPluginAudioProcessor::createEditor()
-{
-    return new BeamformingRTPluginAudioProcessorEditor (*this);
-}
+{ return new BeamformingRTPluginAudioProcessorEditor (*this); }
 //==============================================================================
 void BeamformingRTPluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData){}
 void BeamformingRTPluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes){}

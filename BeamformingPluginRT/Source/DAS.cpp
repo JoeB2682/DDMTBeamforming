@@ -74,7 +74,6 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	gain = juce::jlimit(0.0f, 0.01f, gain);
 
 	// Calculate relative delays for each speaker and apply to each channel
-	/*
 	for (int speaker = 0; speaker < N; speaker++)
 	{
 		float relativeDelay = tauMax - tau[speaker];
@@ -105,6 +104,8 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 		DBG("tau " << i << ": " << tau[i]);
 	}
 	*/
+
+	/*
 	for (int speaker = 0; speaker < N; speaker++)
 	{
 		float phaseOffset =
@@ -129,6 +130,7 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 				/ N;
 		}
 	}
+	*/
 }
 //===============================================================================
 // Sets source positions vector based on specified radius
