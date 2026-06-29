@@ -8,8 +8,12 @@
     <GROUP id="{1422CC43-EBE4-CAD8-3180-EDF52D661575}" name="Beamformers">
       <FILE id="gOer76" name="DAS.cpp" compile="1" resource="0" file="Source/DAS.cpp"/>
       <FILE id="NF75kU" name="DAS.h" compile="0" resource="0" file="Source/DAS.h"/>
+      <FILE id="v14XIH" name="FAS.cpp" compile="1" resource="0" file="Source/FAS.cpp"/>
+      <FILE id="bRHlav" name="FAS.h" compile="0" resource="0" file="Source/FAS.h"/>
     </GROUP>
     <GROUP id="{9A5D419B-6F25-DD2D-A91B-63B690B4AD82}" name="Objects">
+      <FILE id="Nfn7Px" name="fracDelFIR.cpp" compile="1" resource="0" file="Source/fracDelFIR.cpp"/>
+      <FILE id="bsT21j" name="fracDelFIR.h" compile="0" resource="0" file="Source/fracDelFIR.h"/>
       <FILE id="WM4AFL" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
       <FILE id="VxE2ya" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
     </GROUP>
