@@ -133,7 +133,8 @@ sensor_field.record = {'p'};
 %% Apply Transmit Beamformer
 
 % Creates speaker signals
-[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy);
+%[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy);
+[beamformer_output] = FASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, Fs);
 
 %==========================================================================
 %% Combine Source Signals

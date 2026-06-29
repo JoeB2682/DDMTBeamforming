@@ -50,7 +50,7 @@ private:
 
     int totalNoOutputChannels;
     const int speedofSound = 343; // sos in m/s
-    int sampleRate, N, Nt;
+    int sampleRate, N;
     float dx, dy, r;
     bool setPosflag, setoscbankflag;
 

@@ -7,7 +7,8 @@ DAS::DAS(int samplerate, int N, float r, int totalNoOutputChannels) :
 	N(N),
 	r(r),
 	setPosflag(false),
-	setoscbankflag(false)
+	setoscbankflag(false),
+	totalNoOutputChannels(8)
 {
 	// Overwrites default value with actual sr
 	sampleRate = samplerate;
@@ -104,33 +105,6 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 		DBG("tau " << i << ": " << tau[i]);
 	}
 	*/
-
-	/*
-	for (int speaker = 0; speaker < N; speaker++)
-	{
-		float phaseOffset =
-			-2.0f *
-			juce::MathConstants<float>::pi *
-			freq *
-			tau[speaker];
-
-
-		oscbank[speaker]->setFrequency(freq);
-		oscbank[speaker]->setTargetAmplitude(amplitude);
-		oscbank[speaker]->setPhaseOffset(phaseOffset);
-
-
-		auto* channel = buffer.getWritePointer(speaker);
-
-		for (int sample = 0; sample < buffer.getNumSamples(); sample++)
-		{
-			channel[sample] =
-				oscbank[speaker]->incrementSample()
-				* gain
-				/ N;
-		}
-	}
-	*/
 }
 //===============================================================================
 // Sets source positions vector based on specified radius
@@ -166,8 +140,8 @@ void DAS::calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers,
 {
 	for (int i = 0; i < N; i++)
 	{
-		float dx = b.x - speakers[i].x;
-		float dy = b.y - speakers[i].y;
+		dx = b.x - speakers[i].x;
+		dy = b.y - speakers[i].y;
 
 		float distance = std::sqrt(dx * dx + dy * dy);
 
