@@ -91,9 +91,17 @@ b = zeros(2,Nt); % BP Matrix
 % Moves point from leftmost speaker to rightmost,
 % Extremely bloody annoying as kgrid swaps rows and columns, be aware of
 % this in plotting functions!!!!
+
 offset = 108;
-b(1,:) = linspace(min(y_positions), max(y_positions), Nt);
-b(2,:) = x_positions(1) + offset;
+
+% Moving Bright Point
+%b(1,:) = linspace(min(y_positions), max(y_positions), Nt);
+%b(2,:) = x_positions(1) + offset;
+
+% Static Bright Point
+b(1,:) = 123;
+b(2,:) = 123;
+
 %==========================================================================
 %% Sensors (receivers)
 
@@ -134,7 +142,7 @@ sensor_field.record = {'p'};
 
 % Creates speaker signals
 %[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy);
-[beamformer_output] = FASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, Fs);
+[beamformer_output] = FASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, 128, Fs);
 
 %==========================================================================
 %% Combine Source Signals

@@ -7,38 +7,44 @@
 %
 % Created By: Joseph Adam Bozzo
 %==========================================================================
-function [output] = fracDelFIR(x, ntaps, u, Fs)
-    
+function [output,z] = fracDelFIR(x, ntaps, u, Fs, f, z)
     %======================================================================
     % x = Input sig (non-delayed driver sig)
     % ntaps = number of filter taps
     % u = fractional delay in samples (tau * Fs)
     % Fs = sample rate
+    % z = Vector to allow for filter memory
     %======================================================================
 
-    % Prevent Division by 0
-    if mod(u,1) == 0
+    % Prevents division by 0
+    if mod(u,1)==0
         u = u + eps;
     end
-    
-    % Make fc Nyquist to cover all signals (restrict for isolation)
+
+    % force correct number of samples
+    n = 0:ntaps-1;
+
+    % centre filter
+    n = n - (ntaps-1)/2;
+
+    % Bandwidth has to be Nyquist
     fc = Fs/2;
     wc = 2*pi*fc/Fs;
-    
-    % Specify sample range
-    N = ntaps-1;
-    n = -N/2:N/2;
 
-    % Create filter 
+    % sinc fractional delay (the filter)
     h = sin(wc*(n-u))./(pi*(n-u));
 
-    % Create window (70dB sidelobe attenuation)
-    win = chebwin(ntaps,70);
+    % window
+    b = h .* chebwin(ntaps,70)';
 
-    % Filter coefficients (basic FIR equation h * w)
-    b = h .* win'; 
-   
-    % Apply to input via convolution
-    output = filter(b, 1, x);
+    % normalise
+    b = b/sum(b);
+
+    % correct state size 
+    if nargin < 6 || length(z) ~= length(b)-1
+        z = zeros(length(b)-1,1);
+    end
+
+    [output,z] = filter(b,1,x,z);
 end
 %==========================================================================

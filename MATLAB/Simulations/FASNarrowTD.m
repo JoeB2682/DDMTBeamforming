@@ -7,7 +7,7 @@
 %
 % Created By: Joseph Adam Bozzo
 %==========================================================================  
-function [source_output] = FASNarrowTD(N, f, A, grid, b, d_x, d_y, dx, dy, Fs)
+function [source_output] = FASNarrowTD(N, f, A, grid, b, d_x, d_y, dx, dy, ntaps, Fs)
     tic;
     %======================================================================
     % N = size of speaker array
@@ -22,6 +22,7 @@ function [source_output] = FASNarrowTD(N, f, A, grid, b, d_x, d_y, dx, dy, Fs)
     % dx = grid spacing in x
     % dy = grid spacing in y
     % Fs = sample rate
+    % ntaps = number of FIR filter taps
     %======================================================================
     
     c = 343; % sos in m/s
@@ -29,13 +30,18 @@ function [source_output] = FASNarrowTD(N, f, A, grid, b, d_x, d_y, dx, dy, Fs)
     source_p = zeros(N,Nt);
 
     % Input signal
-    input_signal = A*sin(2*pi*f*grid.t_array);
+    input_signal = sin(2*pi*f*grid.t_array);
 
     % Block size
     block_size = 256;
 
     num_blocks = floor(Nt/block_size);
 
+    % Initialise filter memory vector
+    fir_state = zeros(ntaps-1,N);
+
+    % Has to use block based processing for filter to work with moving
+    % bright point implementation.
     for block = 1:num_blocks
 
         % Current block indices
@@ -46,7 +52,7 @@ function [source_output] = FASNarrowTD(N, f, A, grid, b, d_x, d_y, dx, dy, Fs)
         x_block = input_signal(start_idx:end_idx);
 
         % Bright point position at block centre
-        t = start_idx;
+        t = start_idx + floor(block_size/2);
 
         b_y = b(1,t);
         b_x = b(2,t);
@@ -72,10 +78,10 @@ function [source_output] = FASNarrowTD(N, f, A, grid, b, d_x, d_y, dx, dy, Fs)
             u = (tau_max - tau(i))*Fs;
 
             % Apply FIR delay
-            y_block = fracDelFIR(x_block,64,u,Fs);
+            [y_block,fir_state(:,i)] = fracDelFIR(x_block,ntaps,u,Fs,f,fir_state(:,i));
             
             % Assign current block to output
-            source_p(i,start_idx:end_idx) = y_block;
+            source_p(i,start_idx:end_idx) = A * y_block;
         end
     end
     source_output = source_p;
