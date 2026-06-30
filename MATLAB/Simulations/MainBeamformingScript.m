@@ -13,7 +13,9 @@
 clear all;
 clc;
 
-Fs = 44100;
+addpath("Audio");
+
+Fs = 44800;
 t = (0:Fs-1)/Fs; % For possible other uses kwave uses own time handling
 %==========================================================================
 %% KWave Setup
@@ -142,8 +144,8 @@ sensor_field.record = {'p'};
 
 % Creates speaker signals
 %[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy);
-[beamformer_output] = FASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, 512, Fs);
-
+%[beamformer_output] = FASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, 512, Fs);
+[beamformer_output] = FASWideTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, 512, Fs);
 %==========================================================================
 %% Combine Source Signals
 
