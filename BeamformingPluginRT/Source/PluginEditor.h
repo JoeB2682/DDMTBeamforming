@@ -7,14 +7,14 @@
 #include "BeamVisualiser.h"
 
 //==================================================================================
-class BeamformingRTPluginAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Timer
+class BeamformingRTPluginAudioProcessorEditor : public juce::AudioProcessorEditor, public juce::Timer
 {
 public:
-    BeamformingRTPluginAudioProcessorEditor (BeamformingRTPluginAudioProcessor&);
+    BeamformingRTPluginAudioProcessorEditor(BeamformingRTPluginAudioProcessor&);
     ~BeamformingRTPluginAudioProcessorEditor() override;
 
     //==============================================================================
-    void paint (juce::Graphics&) override;
+    void paint(juce::Graphics&) override;
     void resized() override;
 
     // Timer Callbacks for Updates
@@ -23,7 +23,7 @@ public:
 private:
     //==============================================================================
     //Instanciation Station
-    
+
     BeamformingRTPluginAudioProcessor& audioProcessor;
 
     // Custom UI look and feel classes
@@ -51,6 +51,6 @@ private:
     // Beamvisualiser
     BeamVisualizer beamvisualiser;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BeamformingRTPluginAudioProcessorEditor)
 };
 //===================================================================================

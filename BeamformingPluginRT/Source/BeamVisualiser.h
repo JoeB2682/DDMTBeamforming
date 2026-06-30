@@ -5,7 +5,7 @@
     Created: 24 Jun 2026 6:30:32pm
     Author:  josep
 
-    AI Assisted (assisted in development) JUCE component to visualise beams from 
+    AI Assisted (assisted in development) JUCE component to visualise beams from
     circular array, built off of DAS Beamformer class using ChatGPT.
 
   ==============================================================================
@@ -22,14 +22,14 @@ class BeamVisualizer : public juce::Component
 
 public:
 
-    BeamVisualizer(){};
+    BeamVisualizer() {};
 
     void setSpeakers(const std::vector<DAS::Point2D>& newSpeakers);
     void setTau(const std::vector<float>& newTau);
     void setBrightPoint(float x, float y);
     void setFrequency(float freq);
     void paint(juce::Graphics& g) override;
-    
+
     void changeResolution(int Resolution) { resolution = Resolution; }
 
 private:
@@ -37,7 +37,7 @@ private:
     int resolution = 100;
 
     std::vector<DAS::Point2D> speakers;
-    std::vector<float> tau;   
+    std::vector<float> tau;
 
     DAS::Point2D brightPoint{ 0.0f,0.0f };
 

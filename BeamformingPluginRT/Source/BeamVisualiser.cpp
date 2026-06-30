@@ -1,9 +1,8 @@
-
 #include "BeamVisualiser.h"
 
 void BeamVisualizer::setSpeakers(const std::vector<DAS::Point2D>& newSpeakers) { speakers = newSpeakers; repaint(); }
 void BeamVisualizer::setBrightPoint(float x, float y) { brightPoint.x = x; brightPoint.y = y; repaint(); }
-void BeamVisualizer::setTau(const std::vector<float>& newTau){ tau = newTau; repaint(); }
+void BeamVisualizer::setTau(const std::vector<float>& newTau) { tau = newTau; repaint(); }
 void BeamVisualizer::setFrequency(float freq) { frequency = freq; repaint(); }
 
 float BeamVisualizer::calculateBeam(float x, float y)
@@ -73,7 +72,7 @@ void BeamVisualizer::paint(juce::Graphics& g)
 
     for (auto& s : speakers)
         g.fillEllipse(centre.x + s.x * scale - 5, centre.y - s.y * scale - 5, 10, 10);
-    
+
     // Bright point
     g.setColour(juce::Colours::red);
     g.fillEllipse(centre.x + brightPoint.x * scale - 7, centre.y - brightPoint.y * scale - 7, 14, 14);

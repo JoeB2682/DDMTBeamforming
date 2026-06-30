@@ -19,26 +19,34 @@ class fracDelFIR
 {
 public:
 
-    fracDelFIR(int ntaps, int ArraySize, int srate);
+    fracDelFIR(int ntaps, int ArraySize, int srate, float freq);
     ~fracDelFIR() = default;
 
     inline void getSampleRate(int samplerate) { Fs = samplerate; }
     inline void getTau(std::vector<float> Tau) { tau = Tau; }
 
-    float calculateCurrentU(std::vector<float> tau);
+    //float calculateCurrentU(std::vector<float> tau);
+    float calculateCurrentU(float tau, float tauMax);
 
     std::vector<float> GenerateHanning(int WindowLength);
 
-    std::vector<float> process(std::vector<float> tauvec, 
-                               std::vector<float> x, 
-                               std::vector<float> z);
+    //float process(std::vector<float> tauvec, float x);
+    float process(float tau, float tauMax, float x);
+
+    inline float simdInnerProduct(float* in, float* kernel, int numSamples, float y = 0.0f);
+
+public:
+
+    int N;
+    std::vector<float> n;
 
 private:
 
-    int Fs, ntaps, N, ArraySize;
+    float currentU = -1.0f;
+    int Fs, ntaps, ArraySize;
     float fc, wc;
     bool windowgenerationflag;
-    std::vector<float> tau, n, b, Out, z, win, h;
+    std::vector<float> tau, b, Out, z, win, h;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(fracDelFIR)
 };

@@ -3,8 +3,8 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor (BeamformingRTPluginAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor(BeamformingRTPluginAudioProcessor& p)
+    : AudioProcessorEditor(&p), audioProcessor(p)
 {
     // Size of plugin
     setSize(800, 500);
@@ -15,7 +15,7 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     // Attach Params and make visible
     addAndMakeVisible(gainSlider);
     gainAttachment = EditorParameterHelper::createSliderAttachment
-        (audioProcessor.apvts, "Gain", gainSlider, &sliderlookandfeel);
+    (audioProcessor.apvts, "Gain", gainSlider, &sliderlookandfeel);
     gainSlider.setLookAndFeel(&sliderlookandfeel);
     gainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     gainSlider.setRange(0.0f, 1.0f, 0.01f);
@@ -28,7 +28,7 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
 
     addAndMakeVisible(channelSlider);
     channelsliderattachment = EditorParameterHelper::createSliderAttachment
-        (audioProcessor.apvts, "Channel", channelSlider, &sliderlookandfeel);
+    (audioProcessor.apvts, "Channel", channelSlider, &sliderlookandfeel);
     channelSlider.setLookAndFeel(&sliderlookandfeel);
     channelSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     channelSlider.setRange(0, 8, 1);
@@ -43,7 +43,7 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
 
         bypassbutton.setClickingTogglesState(true);
         bypassAttachment = EditorParameterHelper::createButtonAttachment
-            (audioProcessor.apvts, "Bypass", bypassbutton,&roundedbuttonlookandfeel);
+        (audioProcessor.apvts, "Bypass", bypassbutton, &roundedbuttonlookandfeel);
 
         bypassbutton.setLookAndFeel(&roundedbuttonlookandfeel);
         bypassbutton.setButtonText("OFF");
@@ -53,8 +53,8 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
         bypassbuttonlabel.attachToComponent(&bypassbutton, false);
 
         bypassbutton.onClick = [this]
-            { 
-                bypassbutton.setButtonText(bypassbutton.getToggleState() ? "ON" : "OFF"); 
+            {
+                bypassbutton.setButtonText(bypassbutton.getToggleState() ? "ON" : "OFF");
             };
 
         addAndMakeVisible(bypassbutton);
@@ -106,9 +106,9 @@ BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEdito
 }
 
 //==============================================================================
-void BeamformingRTPluginAudioProcessorEditor::paint (juce::Graphics& g)
+void BeamformingRTPluginAudioProcessorEditor::paint(juce::Graphics& g)
 {
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId)); 
+    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
     mainuilookandfeel.drawmainUI(g, *this);
 }
