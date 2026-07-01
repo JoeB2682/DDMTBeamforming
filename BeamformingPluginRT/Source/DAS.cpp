@@ -21,6 +21,7 @@ DAS::DAS(int samplerate, int N, float r, int totalNoOutputChannels) :
 	// Initialise vectors
 	speakers.resize(N);
 	tau.resize(N, 0.0f);
+	vDistance.resize(N, 0.0f);
 
 	// Initialise oscillator bank
 	oscbank.resize(N);
@@ -145,6 +146,7 @@ void DAS::calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers,
 
 		float distance = std::sqrt(dx * dx + dy * dy);
 
+		vDistance[i] = distance;
 		tau[i] = distance / speedofSound;
 	}
 }

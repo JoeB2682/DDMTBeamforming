@@ -5,8 +5,9 @@
     Created: 24 Jun 2026 6:30:32pm
     Author:  josep
 
-    AI Assisted (assisted in development) JUCE component to visualise beams from
-    circular array, built off of DAS Beamformer class using ChatGPT.
+    AI Assisted (assisted in development due to time constraints) JUCE component 
+    to visualise beams from circular array, built off of DAS Beamformer class 
+    using ChatGPT.
 
   ==============================================================================
 */

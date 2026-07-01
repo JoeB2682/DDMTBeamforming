@@ -45,7 +45,7 @@ public:
 public:
 
     std::vector<Point2D> speakers;
-    std::vector<float> tau;
+    std::vector<float> tau, vDistance;
 
     int totalNoOutputChannels;
     const int speedofSound = 343; // sos in m/s

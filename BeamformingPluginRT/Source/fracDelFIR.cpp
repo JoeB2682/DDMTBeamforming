@@ -5,9 +5,10 @@
 #include "fracDelFIR.h"
 
 //===============================================================================
-fracDelFIR::fracDelFIR(int ntaps, int ArraySize, int srate, float freq) :
+fracDelFIR::fracDelFIR(int ntaps, int ArraySize, int srate, float freq, bool iswideband, std::shared_ptr<FrequencyBand> band) :
 	N(ntaps),
-	windowgenerationflag(false)
+	windowgenerationflag(false),
+	freqband(std::move(band))
 {
 	n.resize(N, 0.0f);
 
@@ -26,7 +27,9 @@ fracDelFIR::fracDelFIR(int ntaps, int ArraySize, int srate, float freq) :
 	getSampleRate(srate);
 
 	//fc = Fs / 2; //Nyquist
-	fc = 1000;
+
+	// Set bandwidth depending on whether signal is narrow or wideband
+	fc = (iswideband && freqband != nullptr) ? freqband->bandwidth() : freq;
 
 	wc = 2.0f * juce::MathConstants<float>::pi * fc / Fs;
 }

@@ -67,9 +67,11 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
         DBG("Main output bus = " << getMainBusNumOutputChannels());
     }
 
+    DBG("Main Buffer Size = " << samplesPerBlock);
+
     // Instanciate Beamformers
     DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
-    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 32, samplesPerBlock, 1000);
+    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 32, samplesPerBlock, 833.33f, 666.67f, 1000.f, true);
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources(){}
@@ -126,7 +128,7 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
         // Generate beamformer output (BE CAREFUL IF RADIUS IS WRONG GAIN WILL SPIKE!!!!!!)
         //DelayandSumBeamformer->processcircularDAS(buffer, brightX, brightY, 1000.f, 0.5f, gain);
 
-        FilterandSumBeamformer->processcircularFAS(buffer, brightX, brightY, 1000.f, 0.5f, gain);
+        FilterandSumBeamformer->processcircularFAS(buffer, brightX, brightY, 0.5f, gain);
 
         //DBG("Raw BrightX: " << brightX);
         //DBG("Raw BrightY: " << brightY);

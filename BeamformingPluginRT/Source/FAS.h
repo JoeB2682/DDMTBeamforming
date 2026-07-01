@@ -21,7 +21,7 @@ class FAS
 {
 public:
 
-	FAS(DAS* dasPtr, int numtaps, int bufferlen, float freq);
+	FAS(DAS* dasPtr, int numtaps, int bufferlen, float freq, float bandlow, float bandhigh, bool iswideband);
 	~FAS() = default;
 
 	void generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
@@ -32,14 +32,28 @@ public:
 							std::vector<float>& tau,
 							float gain);
 
-	void processcircularFAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y, float freq, float amplitude, float gain);
+	void generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
+							std::vector<std::unique_ptr<fracDelFIR>>& filterbank,
+							juce::AudioBuffer<float>& buffer,
+							float freq,
+							float amplitude,
+							std::vector<float>& tau,
+							float gain,
+		const std::shared_ptr<FrequencyBand>& frequencyband);
+
+	void processcircularFAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y, 
+							 float amplitude, float gain);
 
 public:
 
 	int numTaps;
 	float freq;
+	bool wideband;
 
 	DAS* das;
 	std::vector<std::unique_ptr<fracDelFIR>> filterBank;
+	std::shared_ptr<FrequencyBand> band;
+
+	std::vector<std::unique_ptr<Oscillator>> lowoscbank, highoscbank;
 };
 //===============================================================================
