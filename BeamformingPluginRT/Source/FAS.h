@@ -21,7 +21,7 @@ class FAS
 {
 public:
 
-	FAS(DAS* dasPtr, int numtaps, int bufferlen, float freq, float bandlow, float bandhigh, bool iswideband);
+	FAS(DAS* dasPtr, int numtaps, int bufferlen, float freq, float bandlow, float bandhigh, bool iswideband, bool useMVDR);
 	~FAS() = default;
 
 	float estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float thresh);
@@ -50,14 +50,12 @@ public:
 
 	int numTaps;
 	float freq;
-	bool wideband;
+	bool wideband, MVDR;
 
 	DAS* das;
 	std::vector<std::unique_ptr<fracDelFIR>> filterBank;
 	std::shared_ptr<FrequencyBand> band;
 
-	std::vector<std::unique_ptr<Oscillator>> lowoscbank, highoscbank;
-
-	
+	std::vector<std::unique_ptr<Oscillator>> lowoscbank, highoscbank;	
 };
 //===============================================================================

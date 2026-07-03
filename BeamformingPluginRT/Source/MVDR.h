@@ -19,7 +19,8 @@ public:
 
 	MVDR(DAS* dasPtr, int N, int Fs);
 	~MVDR() = default;
-
+	
+	void calculateSteeringVector(std::vector<float> receivertau, int N);
 	void processCircularMVDR(juce::AudioBuffer<float>& micbuffer, float bright_x, float bright_y);
 
 public:
@@ -28,7 +29,6 @@ public:
 
 private:
 
-	std::vector<float> Out, w, v, tau;
-
+	std::vector<float> Out, w, v;
 };
 //===============================================================================

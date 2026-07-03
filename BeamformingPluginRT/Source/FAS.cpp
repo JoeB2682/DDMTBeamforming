@@ -1,8 +1,9 @@
 //===============================================================================
 #include "FAS.h"
 //===============================================================================
-FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow, float bandhigh, bool iswideband)
-    : das(dasObject), numTaps(numtaps), freq(freq), wideband(iswideband)
+FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow, 
+								 float bandhigh, bool iswideband, bool useMVDR)
+    : das(dasObject), numTaps(numtaps), freq(freq), wideband(iswideband), MVDR(useMVDR)
 {
 	// Initialise wideband signal
 	band = std::make_shared<FrequencyBand>();
@@ -197,6 +198,9 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	// Uses own generate functions
 	if (wideband) {
 		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band);
+	}
+	else if (MVDR) {
+		return;
 	}
 	else {
 		generateNarrowband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain);

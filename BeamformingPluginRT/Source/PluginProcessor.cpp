@@ -71,7 +71,7 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
 
     // Instanciate Beamformers
     DelayandSumBeamformer = std::make_shared<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
-    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 32, samplesPerBlock, 833.33f, 666.67f, 1000.f, true);
+    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 32, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, false);
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources(){}
