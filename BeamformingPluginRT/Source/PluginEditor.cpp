@@ -38,6 +38,18 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     channelsliderlabel.setJustificationType(juce::Justification::centred);
     channelsliderlabel.attachToComponent(&channelSlider, false);
 
+    addAndMakeVisible(threshslider);
+    threshsliderattachment = EditorParameterHelper::createSliderAttachment
+    (audioProcessor.apvts, "thresh", threshslider, &sliderlookandfeel);
+    threshslider.setLookAndFeel(&sliderlookandfeel);
+    threshslider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    threshslider.setRange(0.0f, 1.0f, 0.000001f);
+    threshslider.setNumDecimalPlacesToDisplay(2);
+
+    threshsliderlabel.setText("thresh", juce::dontSendNotification);
+    threshsliderlabel.setJustificationType(juce::Justification::centred);
+    threshsliderlabel.attachToComponent(&threshslider, false);
+
     {
         // Buttons and toggles (ENSURE TO CONTROL BUTTONS THROUGH TOGGLE STATE NOT A SEPERATE BOOLEAN!)
 
@@ -101,6 +113,7 @@ BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEdito
     gainSlider.setLookAndFeel(nullptr);
     bypassbutton.setLookAndFeel(nullptr);
     channelSlider.setLookAndFeel(nullptr);
+    threshslider.setLookAndFeel(nullptr);
 
     setLookAndFeel(nullptr);
 }
@@ -124,8 +137,15 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
     beamvisualiser.setBounds(brightpointplot.getRight() + 20, brightpointplot.getY(), brightpointplot.getWidth(), brightpointplot.getHeight());
 
     // Sliders
-    gainSlider.setBounds(beamvisualiser.getRight() + 20, beamvisualiser.getY() + 20, 100, 100);
-    channelSlider.setBounds(gainSlider.getRight() + 20, gainSlider.getY(), 100, 100);
+    int startX = beamvisualiser.getRight() + 20;
+    int endX = getRight() - 20;
+
+    std::vector<juce::Component*> s = { &gainSlider, &channelSlider, &threshslider };
+
+    float step = (float)(endX - startX - 100) / (s.size() - 1);
+
+    for (int i = 0; i < s.size(); i++)
+        s[i]->setBounds(startX + (int)(i * step), beamvisualiser.getY() + 20, 100, 100);
 
     // Buttons
     bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, beamvisualiser.getBottom() - 50, 50, 50);

@@ -15,6 +15,7 @@ struct ChainSettings {
     bool bypass{ }, outtype{ };
     int Channel{ 1 };
     float brightx{  }, brighty{  };
+    float Thresh{  };
 
 };
 //==================================================================================

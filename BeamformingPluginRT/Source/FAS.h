@@ -24,7 +24,7 @@ public:
 	FAS(DAS* dasPtr, int numtaps, int bufferlen, float freq, float bandlow, float bandhigh, bool iswideband);
 	~FAS() = default;
 
-	float estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate);
+	float estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float thresh);
 
 	void generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 							std::vector<std::unique_ptr<fracDelFIR>>& filterbank,
@@ -44,7 +44,7 @@ public:
 							const std::shared_ptr<FrequencyBand>& frequencyband);
 
 	void processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
-							float bright_x, float bright_y, float amplitude, float gain);
+							float bright_x, float bright_y, float amplitude, float gain, float thresh);
 
 public:
 

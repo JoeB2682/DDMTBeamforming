@@ -36,13 +36,13 @@ private:
     TextButton bypassbutton, outputtypebutton;
 
     // Sliders
-    juce::Slider gainSlider, channelSlider;
+    juce::Slider gainSlider, channelSlider, threshslider;
 
     // Labels
-    Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel;
+    Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel, threshsliderlabel;
 
     // Parameter Attachments
-    std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment;
+    std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment, threshsliderattachment;
     std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment;
 
     // XY Bright Point Mover

@@ -114,7 +114,8 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	}
 
 	// Clamp to prevent blowup
-	gain = juce::jlimit(0.0f, 0.01f, gain);
+	//gain = juce::jlimit(0.0f, 0.01f, gain);
+	gain /= 10;
 
 	// Calculate relative delays for each speaker and to be use in FIR filters
 	for (int speaker = 0; speaker < das->N; speaker++)
@@ -151,24 +152,22 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 }
 //===============================================================================
 // Just an onset detector really
-float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate)
+float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float thresh)
 {
 	const float* x = micbuffer.getReadPointer(0);
 	int N = micbuffer.getNumSamples();
 
-	const float threshold = 0.0002f; 
-
 	for (int i = 0; i < N; i++)
 	{
-		if (std::abs(x[i]) > threshold)
+		//DBG(x[i]);
+		if (std::abs(x[i]) > thresh)
 			return (float)i / srate;
 	}
-
 	return 0.0f;
 }
 //===============================================================================
 void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
-							 float bright_x, float bright_y, float amplitude, float gain) 
+							 float bright_x, float bright_y, float amplitude, float gain, float thresh) 
 {
 	if (!das->setPosflag)
 	{
@@ -187,7 +186,7 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	for (int i = 0; i < das->N; i++)predictedMicArrival = std::max(predictedMicArrival, das->tau[i] + das->tau_rx[i]);
 
 	// measured mic arrival 
-	float measuredMicArrival = estimateMicTOA(micbuffer, das->sampleRate);
+	float measuredMicArrival = estimateMicTOA(micbuffer, das->sampleRate, thresh);
 	float delta = measuredMicArrival - predictedMicArrival;
 
 	std::vector<float> tauCorrected = das->tau;
