@@ -70,7 +70,7 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
     DBG("Main Buffer Size = " << samplesPerBlock);
 
     // Instanciate Beamformers
-    DelayandSumBeamformer = std::make_unique<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
+    DelayandSumBeamformer = std::make_shared<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
     FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 32, samplesPerBlock, 833.33f, 666.67f, 1000.f, true);
 }
 
@@ -113,7 +113,7 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
     // Safety check stops out of bounds indexing
     if (Channel < 0 || Channel >= buffer.getNumChannels()) return;
 
-    float numSamples = buffer.getNumSamples();
+    int numSamples = buffer.getNumSamples();
 
     // Convert normalized position in metres
     brightX *= ArrayRadius;
@@ -122,13 +122,17 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
     // Allows bypassing button
     if (bypass) return;
 
+    // Get copy of buffer before writing
+    juce::AudioBuffer<float> micBuffer;
+    micBuffer.makeCopyOf(buffer);
+
     // Toggle to switch between speaker test or beamformer
     if (!Outputtype)
     {
         // Generate beamformer output (BE CAREFUL IF RADIUS IS WRONG GAIN WILL SPIKE!!!!!!)
         //DelayandSumBeamformer->processcircularDAS(buffer, brightX, brightY, 1000.f, 0.5f, gain);
 
-        FilterandSumBeamformer->processcircularFAS(buffer, brightX, brightY, 0.5f, gain);
+        FilterandSumBeamformer->processcircularFAS(buffer, micBuffer, brightX, brightY, 0.5f, gain);
 
         //DBG("Raw BrightX: " << brightX);
         //DBG("Raw BrightY: " << brightY);

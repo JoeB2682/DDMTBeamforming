@@ -20,7 +20,12 @@ DAS::DAS(int samplerate, int N, float r, int totalNoOutputChannels) :
 
 	// Initialise vectors
 	speakers.resize(N);
+	receivers.resize(N);
+
 	tau.resize(N, 0.0f);
+	tau_rx.resize(N, 0.0f);
+	tau_total.resize(N, 0.0f);
+	tau_Corrected.resize(N, 0.0f);
 	vDistance.resize(N, 0.0f);
 
 	// Initialise oscillator bank
@@ -127,7 +132,31 @@ void DAS::setsourcePositions(float& radius, std::vector<Point2D>& speakers)
 			});
 	}
 }
+//===============================================================================
+// Sets receiver positions vector based on smaller radius
+void DAS::setreceiverPositions(float& radius, std::vector<Point2D>& receivers)
+{
+	receivers.clear();
 
+	// Currently only using 1 mic at centre
+	receivers.push_back({ 0.0f, 0.0f });
+
+	/*
+	for (int i = 0; i < N; ++i)
+	{
+
+		// Change this depending upon microphone channel config 
+		//float angle = juce::MathConstants<float>::twoPi * i / N;
+		float angle = juce::MathConstants<float>::twoPi * i / N + juce::MathConstants<float>::halfPi; // This is for lab room array
+
+		receivers.push_back(
+			{
+				radius * std::cos(angle),
+				radius * std::sin(angle)
+			});
+	}
+	*/
+}
 //===============================================================================
 // Sets bright point based on specified x, y coordinates
 inline void DAS::setbrightPoint(Point2D& b, float x, float y) 
@@ -136,7 +165,7 @@ inline void DAS::setbrightPoint(Point2D& b, float x, float y)
 }
 
 //===============================================================================
-// Calculates tau vector for phase offset
+// Calculates tau vector for source phase offset
 void DAS::calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers, Point2D& b)
 {
 	for (int i = 0; i < N; i++)
@@ -150,7 +179,22 @@ void DAS::calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers,
 		tau[i] = distance / speedofSound;
 	}
 }
+//===============================================================================
+// Calculates tau vector for receiver phase offset
+void DAS::calcReceiverTOI(std::vector<float>& tau_rx, std::vector<Point2D>& speakers, std::vector<Point2D>& receivers)
+{
+	tau_rx.resize(speakers.size());
 
+	for (int i = 0; i < speakers.size(); i++)
+	{
+		float dx = speakers[i].x - receivers[0].x;
+		float dy = speakers[i].y - receivers[0].y;
+
+		float distance = std::sqrt(dx * dx + dy * dy);
+
+		tau_rx[i] = distance / speedofSound; 
+	}
+}
 //===============================================================================
 // Calls necessary functions to process circular array
 void DAS::processcircularDAS(juce::AudioBuffer<float>& buffer,

@@ -76,7 +76,7 @@ private:
 public:
 
     // Beamformers
-    std::unique_ptr<DAS> DelayandSumBeamformer;
+    std::shared_ptr<DAS> DelayandSumBeamformer;
     std::unique_ptr<FAS> FilterandSumBeamformer;
 
     float ArrayRadius = 1;

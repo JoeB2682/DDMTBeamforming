@@ -38,14 +38,21 @@ public:
     // Beamforming functions
     inline void setbrightPoint(Point2D& b, float x, float y);
     void setsourcePositions(float& radius, std::vector<Point2D>& speakers);
+    void setreceiverPositions(float& radius, std::vector<Point2D>& receivers);
     void calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers, Point2D& b);
+    void calcReceiverTOI(std::vector<float>& tau_rx, std::vector<Point2D>& speakers, std::vector<Point2D>& receivers);
 
     void processcircularDAS(juce::AudioBuffer<float>& buffer, float bright_x, float bright_y, float freq, float amplitude, float gain);
 
 public:
 
+    // Speakers
     std::vector<Point2D> speakers;
     std::vector<float> tau, vDistance;
+
+    // Receivers
+    std::vector<Point2D> receivers;
+    std::vector<float> tau_rx, tau_total, tau_Corrected;
 
     int totalNoOutputChannels;
     const int speedofSound = 343; // sos in m/s

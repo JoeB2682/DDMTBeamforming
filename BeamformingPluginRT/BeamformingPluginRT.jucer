@@ -10,6 +10,8 @@
       <FILE id="NF75kU" name="DAS.h" compile="0" resource="0" file="Source/DAS.h"/>
       <FILE id="v14XIH" name="FAS.cpp" compile="1" resource="0" file="Source/FAS.cpp"/>
       <FILE id="bRHlav" name="FAS.h" compile="0" resource="0" file="Source/FAS.h"/>
+      <FILE id="kE4EKN" name="MVDR.cpp" compile="1" resource="0" file="Source/MVDR.cpp"/>
+      <FILE id="D1XVmj" name="MVDR.h" compile="0" resource="0" file="Source/MVDR.h"/>
     </GROUP>
     <GROUP id="{9A5D419B-6F25-DD2D-A91B-63B690B4AD82}" name="Objects">
       <FILE id="Nfn7Px" name="fracDelFIR.cpp" compile="1" resource="0" file="Source/fracDelFIR.cpp"/>

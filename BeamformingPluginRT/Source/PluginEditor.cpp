@@ -93,7 +93,7 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     // Beamvisualiser
     addAndMakeVisible(beamvisualiser);
     beamvisualiser.setSpeakers(audioProcessor.DelayandSumBeamformer->speakers);
-    beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau);
+    beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau_Corrected);
 }
 
 BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEditor()

@@ -150,24 +150,57 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	}
 }
 //===============================================================================
-void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer,
-	float bright_x, float bright_y, float amplitude, float gain) 
+// Just an onset detector really
+float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate)
+{
+	const float* x = micbuffer.getReadPointer(0);
+	int N = micbuffer.getNumSamples();
+
+	const float threshold = 0.0002f; 
+
+	for (int i = 0; i < N; i++)
+	{
+		if (std::abs(x[i]) > threshold)
+			return (float)i / srate;
+	}
+
+	return 0.0f;
+}
+//===============================================================================
+void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
+							 float bright_x, float bright_y, float amplitude, float gain) 
 {
 	if (!das->setPosflag)
 	{
 		das->setsourcePositions(das->r, das->speakers);
+		das->setreceiverPositions(das->r, das->receivers);
 		das->setPosflag = true;
 	}
 
 	das->setbrightPoint(das->b, bright_x, bright_y);
 	das->calcsourceTOI(das->tau, das->speakers, das->b);
+	das->calcReceiverTOI(das->tau_rx, das->speakers, das->receivers);
+
+	// Calculates tau using estimate + receiver arrival
+	float predictedMicArrival = 0.0f;
+
+	for (int i = 0; i < das->N; i++)predictedMicArrival = std::max(predictedMicArrival, das->tau[i] + das->tau_rx[i]);
+
+	// measured mic arrival 
+	float measuredMicArrival = estimateMicTOA(micbuffer, das->sampleRate);
+	float delta = measuredMicArrival - predictedMicArrival;
+
+	std::vector<float> tauCorrected = das->tau;
+
+	// apply correction to source TOI
+	for (int i = 0; i < das->N; i++) das->tau_Corrected[i] += delta;
 
 	// Uses own generate functions
 	if (wideband) {
-		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau, gain, band);
+		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band);
 	}
 	else {
-		generateNarrowband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau, gain);
+		generateNarrowband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain);
 	}
 }
 //===============================================================================
