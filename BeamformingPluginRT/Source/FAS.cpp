@@ -197,14 +197,14 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	for (int i = 0; i < das->N; i++) das->tau_Corrected[i] += delta;
 
 	// Uses own generate functions
-	if (wideband) {
+	if (wideband)
 		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band);
-	}
-	else if (MVDR) {
-		return;
-	}
-	else {
+	else
 		generateNarrowband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain);
+	
+	if (MVDR)
+	{
+		//mvdr.process(micbuffer, output, wideband, freq);
 	}
 }
 //===============================================================================

@@ -81,7 +81,7 @@ public:
     std::shared_ptr<DAS> DelayandSumBeamformer;
     std::unique_ptr<FAS> FilterandSumBeamformer;
 
-    float ArrayRadius = 1;
+    float ArrayRadius = 1.5; // meters
     float miclevel;
 
     //==============================================================================

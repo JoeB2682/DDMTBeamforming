@@ -34,5 +34,9 @@ protected:
 
     float level = 0.0f;
     float decayFactor = 0.95f;
+
+public:
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LevelMeter)
 };
 //===============================================================================

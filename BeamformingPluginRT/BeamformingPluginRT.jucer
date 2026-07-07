@@ -14,6 +14,9 @@
       <FILE id="D1XVmj" name="MVDR.h" compile="0" resource="0" file="Source/MVDR.h"/>
     </GROUP>
     <GROUP id="{9A5D419B-6F25-DD2D-A91B-63B690B4AD82}" name="Objects">
+      <FILE id="tDcOyL" name="FFTProcessor.cpp" compile="1" resource="0"
+            file="Source/FFTProcessor.cpp"/>
+      <FILE id="EzLZeI" name="FFTProcessor.h" compile="0" resource="0" file="Source/FFTProcessor.h"/>
       <FILE id="Nfn7Px" name="fracDelFIR.cpp" compile="1" resource="0" file="Source/fracDelFIR.cpp"/>
       <FILE id="bsT21j" name="fracDelFIR.h" compile="0" resource="0" file="Source/fracDelFIR.h"/>
       <FILE id="mOYzmV" name="FrequencyBand.h" compile="0" resource="0" file="Source/FrequencyBand.h"/>
