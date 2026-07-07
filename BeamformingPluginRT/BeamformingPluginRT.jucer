@@ -25,6 +25,8 @@
             file="Source/BeamVisualiser.cpp"/>
       <FILE id="RR1j4C" name="BeamVisualiser.h" compile="0" resource="0"
             file="Source/BeamVisualiser.h"/>
+      <FILE id="iFTygW" name="LevelMeter.cpp" compile="1" resource="0" file="Source/LevelMeter.cpp"/>
+      <FILE id="G34LIt" name="LevelMeter.h" compile="0" resource="0" file="Source/LevelMeter.h"/>
       <FILE id="hhKyGU" name="LookandFeel.cpp" compile="1" resource="0" file="Source/LookandFeel.cpp"/>
       <FILE id="xlJwOy" name="LookandFeel.h" compile="0" resource="0" file="Source/LookandFeel.h"/>
       <FILE id="IwAYIW" name="MoveableXY.cpp" compile="1" resource="0" file="Source/MoveableXY.cpp"/>

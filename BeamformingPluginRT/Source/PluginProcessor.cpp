@@ -71,7 +71,7 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
 
     // Instanciate Beamformers
     DelayandSumBeamformer = std::make_shared<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
-    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 32, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, false);
+    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 64, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, false);
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources(){}
@@ -108,6 +108,7 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
     float brightX = chainsettings.brightx;
     float brightY = chainsettings.brighty;
     float thresh = chainsettings.Thresh;
+    float inpgain = chainsettings.inpgain;
 
     //DBG("isBypass = " << (bypass ? "true" : "false"));
 
@@ -125,7 +126,11 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
     // Get copy of buffer before writing
     juce::AudioBuffer<float> micBuffer;
+
     micBuffer.makeCopyOf(buffer);
+
+    // Apply and adjust Input Gain accordingly depending upon receiver used
+    micBuffer.applyGain(inpgain);
 
     // Toggle to switch between speaker test or beamformer
     if (!Outputtype)
@@ -153,6 +158,9 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
             buffer.getWritePointer(Channel)[sample] = output;
         }
     }
+
+    // Get input level after processing (threshold or MVDR)
+    miclevel = micBuffer.getMagnitude(0, 0, micBuffer.getNumSamples());
 }
 
 //==============================================================================
@@ -173,6 +181,7 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
     settings.brightx = apvts.getRawParameterValue("BrightX")->load();
     settings.brighty = apvts.getRawParameterValue("BrightY")->load();
     settings.Thresh = apvts.getRawParameterValue("thresh")->load();
+    settings.inpgain = apvts.getRawParameterValue("inpgain")->load();
 }
 
 // Abstracted parameter crap into helper file

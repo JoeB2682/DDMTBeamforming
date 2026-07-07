@@ -18,13 +18,14 @@ from torchvision import datasets
 class TrainingHelper():
     # ====================================================
     # Constructor
-    def __init__(self):
+    def __init__(self, device, epochs):
 
-        super().__init__()
+            self.device = device
+            self.epochs = epochs
 
     # ====================================================
     # Get Training and Validation Datasets
-    def download_Datasets(self):
+    def download_Datasets():
 
         # Training Data
         #train_data = 
@@ -35,7 +36,7 @@ class TrainingHelper():
 
     # ====================================================
     # Define one epoch
-    def train_one_epoch(self, model, data_loader, loss_fn, optimiser, device):
+    def train_one_epoch(model, data_loader, loss_fn, optimiser, device):
 
         #    for inputs, targets in data_loader:
         #        inputs, targets = inputs.to(device), targets.to(device)
@@ -55,7 +56,7 @@ class TrainingHelper():
 
     # ====================================================
     # Training Function
-    def train(self, model, data_loader, loss_fn, optimiser, device, epochs):
+    def train(model, data_loader, loss_fn, optimiser, device, epochs):
     
         #    for i in range(epochs):
         #        print(f"Epoch {i+1}")

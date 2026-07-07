@@ -8,25 +8,31 @@
 # Created by: Joseph Bozzo
 #    
 # ========================================================
+# Module Imports
 import torch as t
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 from torchvision import datasets
 
+# Header Imports
 from TrainingFunctions import TrainingHelper
 from BeamNet import BeamNet
 # ========================================================
-# Constants
+# Constants (hyperparameters)
 BATCH_SIZE = 128
 NO_EPOCHS = 10
 LEARNINGRATE = 0.01
+# ========================================================
+# Instanciation Station
+trainingHelper = TrainingHelper("cpu", NO_EPOCHS)
+beamnet = BeamNet()
 # ========================================================
 # Main Running Function
 if __name__ == "__main__":
     
     print("Main")
-
+    
     # Get training data
     #train_data, _ = 
     #print("Training data downloaded")
@@ -35,10 +41,6 @@ if __name__ == "__main__":
     
     # Create Data Loader for Trainset
     #train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE)    
-    
-    # Instanciate Model
-    #device = "cpu"
-    #BeamNet = 
   
     # Instanciate Loss function + Optimiser
     #loss_fn = nn.CrossEntropyLoss()

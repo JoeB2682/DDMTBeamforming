@@ -16,6 +16,7 @@ struct ChainSettings {
     int Channel{ 1 };
     float brightx{  }, brighty{  };
     float Thresh{  };
+    float inpgain{ 400.f };
 
 };
 //==================================================================================
@@ -81,6 +82,7 @@ public:
     std::unique_ptr<FAS> FilterandSumBeamformer;
 
     float ArrayRadius = 1;
+    float miclevel;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)

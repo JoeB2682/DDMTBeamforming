@@ -19,6 +19,7 @@ void ParameterHelper::addParameters(
     // Sliders
     layout.add(std::make_unique<juce::AudioParameterFloat>("Gain", "Gain", juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.02f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("thresh", "thresh", juce::NormalisableRange<float>(0.0f, 1.0f, 0.000001f), 0.00002f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("inpgain", "inpgain", juce::NormalisableRange<float>(0.0f, 1000.f, 0.1f), 400.f));
 
     layout.add(std::make_unique<juce::AudioParameterInt>("Channel", "Channel", 0, 8, 1));
 

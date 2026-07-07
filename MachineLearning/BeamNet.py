@@ -26,9 +26,9 @@ class BeamNet(nn.Module):
 
         super().__init__()
 
-        self.time = TemporalCNN()
-        self.spec = SpectralCNN()
-        self.space = SpatialCNN()
+        self.timecnn = TemporalCNN()
+        self.speccnn = SpectralCNN()
+        self.spacecnn = SpatialCNN()
 
         self.fc = nn.Sequential(
             nn.Linear(96,256),

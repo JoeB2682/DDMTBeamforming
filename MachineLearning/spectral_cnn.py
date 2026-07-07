@@ -13,7 +13,6 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 from torchvision import datasets
-
 # ========================================================
 # Model Class
 class SpectralCNN(nn.Module):

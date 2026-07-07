@@ -25,6 +25,17 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     gainsliderlabel.setJustificationType(juce::Justification::centred);
     gainsliderlabel.attachToComponent(&gainSlider, false);
 
+    addAndMakeVisible(inpgainslider);
+    inpgainsliderattachment = EditorParameterHelper::createSliderAttachment
+    (audioProcessor.apvts, "inpgain", inpgainslider, &sliderlookandfeel);
+    inpgainslider.setLookAndFeel(&sliderlookandfeel);
+    inpgainslider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    inpgainslider.setRange(0.0f, 1000.f, 0.1f);
+    inpgainslider.setNumDecimalPlacesToDisplay(1);
+
+    inpgainsliderlabel.setText("InpGain", juce::dontSendNotification);
+    inpgainsliderlabel.setJustificationType(juce::Justification::centred);
+    inpgainsliderlabel.attachToComponent(&inpgainslider, false);
 
     addAndMakeVisible(channelSlider);
     channelsliderattachment = EditorParameterHelper::createSliderAttachment
@@ -106,6 +117,14 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     addAndMakeVisible(beamvisualiser);
     beamvisualiser.setSpeakers(audioProcessor.DelayandSumBeamformer->speakers);
     beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau_Corrected);
+
+    // Input Meter
+    addAndMakeVisible(inputMeter);
+    inputMeter.setBarCol(juce::Colours::green);
+    inputMeter.setBGCol(juce::Colours::black);
+    inputmeterlabel.setText("RecInput", juce::dontSendNotification);
+    inputmeterlabel.setJustificationType(juce::Justification::centred);
+    inputmeterlabel.attachToComponent(&inputMeter, false);
 }
 
 BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEditor()
@@ -150,6 +169,11 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
     // Buttons
     bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, beamvisualiser.getBottom() - 50, 50, 50);
     outputtypebutton.setBounds(channelSlider.getX() + (channelSlider.getWidth() - 80) / 2, beamvisualiser.getBottom() - 50, 80, 50);
+
+    inputMeter.setBounds(threshslider.getX(), threshslider.getBottom() + 43, threshslider.getWidth(), 20);
+
+    // More Sliders
+    inpgainslider.setBounds(inputMeter.getX(), inputMeter.getBottom() + 40, inputMeter.getWidth(), 100);
 }
 //==============================================================================
 // Timer Callback 
@@ -164,5 +188,7 @@ void BeamformingRTPluginAudioProcessorEditor::timerCallback()
 
     beamvisualiser.setBrightPoint(x, y);
     beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau);
+
+    inputMeter.setLevel(audioProcessor.miclevel);
 }
 //==============================================================================

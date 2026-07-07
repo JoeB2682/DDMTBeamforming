@@ -1,6 +1,6 @@
 //===============================================================================
 //
-// DAS.h
+// MoveableXY.h
 // 
 // XY Grid to move the bright point within the array
 // 

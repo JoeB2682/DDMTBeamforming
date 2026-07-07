@@ -155,6 +155,7 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 // Just an onset detector really
 float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float thresh)
 {
+	// Eventually loop for all receivers
 	const float* x = micbuffer.getReadPointer(0);
 	int N = micbuffer.getNumSamples();
 

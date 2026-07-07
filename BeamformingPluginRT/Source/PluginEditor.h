@@ -5,6 +5,7 @@
 #include "LookandFeel.h"
 #include "MoveableXY.h"
 #include "BeamVisualiser.h"
+#include "LevelMeter.h"
 
 //==================================================================================
 class BeamformingRTPluginAudioProcessorEditor : public juce::AudioProcessorEditor, public juce::Timer
@@ -36,13 +37,16 @@ private:
     TextButton bypassbutton, outputtypebutton;
 
     // Sliders
-    juce::Slider gainSlider, channelSlider, threshslider;
+    juce::Slider gainSlider, channelSlider, threshslider, inpgainslider;
 
     // Labels
-    Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel, threshsliderlabel;
+    Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel, 
+          threshsliderlabel, inputmeterlabel, inpgainsliderlabel;
 
     // Parameter Attachments
-    std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment, threshsliderattachment;
+    std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment, 
+                                                             threshsliderattachment, inpgainsliderattachment;
+
     std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment;
 
     // XY Bright Point Mover
@@ -50,6 +54,9 @@ private:
 
     // Beamvisualiser
     BeamVisualizer beamvisualiser;
+
+    // Input Meter
+    LevelMeter inputMeter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BeamformingRTPluginAudioProcessorEditor)
 };
