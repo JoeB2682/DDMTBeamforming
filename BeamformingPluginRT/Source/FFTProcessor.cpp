@@ -20,6 +20,10 @@ FFTProcessor::FFTProcessor(int fftorder, int samplerate) : fftOrder(fftorder),
 		fftSize,
 		juce::dsp::WindowingFunction<float>::hamming
 	);
+
+	// Overlap Add
+	hopSize = fftSize / 2; // 50% Overlap
+	overlapBuffer.resize(fftSize - hopSize, 0.0f);
 }
 //===============================================================================
 // Destructor
@@ -170,6 +174,34 @@ void FFTProcessor::processIFFT()
 	}
 }
 //===============================================================================
+//Process and perform IFFT across entire buffer for multiple channels
+void FFTProcessor::processMultiChannelIFFT(std::vector<std::complex<float>>& spectrum,
+	juce::AudioBuffer<float>& outputBuffer)
+{
+	DBG("IFFT size: " << fftSize);
+	DBG("Output samples: " << outputBuffer.getNumSamples());
+
+	// Reset FFT data
+	std::fill(multifftData.begin(), multifftData.end(), 0.0f);
+
+	// Reconstruct interleaved FFT format
+	for (int k = 0; k < fftSize / 2; k++)
+	{
+		multifftData[2 * k] = spectrum[k].real();
+		multifftData[2 * k + 1] = spectrum[k].imag();
+	}
+
+	// Perform IFFT
+	FFT.performRealOnlyInverseTransform(multifftData.data());
+
+	// Scale
+	float scale = 1.0f / fftSize;
+
+	// Copy into output buffer
+	for (int i = 0; i < fftSize; i++)
+		outputBuffer.setSample(0, i, multifftData[i] * scale);
+}
+//===============================================================================
 // OVERRIDE THIS! Modify and process frequency domain data, allows 
 void FFTProcessor::processFreqDomain(std::vector<float>& magnvect,
 									 std::vector<float>& phasevec,
@@ -178,5 +210,17 @@ void FFTProcessor::processFreqDomain(std::vector<float>& magnvect,
 {
 	// Modify in Derived Class
 	// e.g. rawFFTData[100] = 0.0f; // remove frequency bin
+}
+//===============================================================================
+// Overlap add for STFT processing
+void FFTProcessor::overlapAdd(juce::AudioBuffer<float>& buffer)
+{
+	// Add previous overlap to beginning of current frame
+	for (int i = 0; i < overlapBuffer.size(); i++)
+		buffer.setSample(0, i, buffer.getSample(0, i) + overlapBuffer[i]);
+	
+	// Store end of frame for next overlap
+	for (int i = 0; i < overlapBuffer.size(); i++)
+		overlapBuffer[i] = buffer.getSample(0,hopSize + i);
 }
 //===============================================================================

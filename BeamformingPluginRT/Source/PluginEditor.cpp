@@ -190,5 +190,6 @@ void BeamformingRTPluginAudioProcessorEditor::timerCallback()
     beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau);
 
     inputMeter.setLevel(audioProcessor.miclevel);
+    DBG(audioProcessor.miclevel);
 }
 //==============================================================================

@@ -42,14 +42,19 @@ public:
     void processMultiChannelFFT(juce::AudioBuffer<float>& buffer,
                                 std::vector<std::vector<std::complex<float>>>& spectra);
 
+    void processMultiChannelIFFT(std::vector<std::complex<float>>& spectrum,
+                                 juce::AudioBuffer<float>& outputBuffer);
+
     virtual void processFreqDomain(std::vector<float>& magnvect,
                                    std::vector<float>& phasevec,
                                    std::vector<float>& freqvec,
                                    std::vector<float>& rawFFTData);
 
+    void overlapAdd(juce::AudioBuffer<float>& buffer);
+
 public:
 
-    int fftOrder, fftSize, sampleRate;
+    int fftOrder, fftSize, sampleRate, hopSize;
    
     std::unique_ptr<juce::dsp::WindowingFunction<float>> window;
 
@@ -59,6 +64,8 @@ public:
     int fifoIndex = 0;
     bool nextFFTBlockReady = false;
     bool fftReadyForInverse = false;
+
+    std::vector<float> overlapBuffer;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FFTProcessor)
 };

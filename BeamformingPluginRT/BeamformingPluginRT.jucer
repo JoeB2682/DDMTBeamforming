@@ -74,8 +74,8 @@
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="BeamformingPluginRT"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="BeamformingPluginRT"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../Documents/JUCE and Projects/Libraries/JUCE-master/JUCE-master/modules"/>
