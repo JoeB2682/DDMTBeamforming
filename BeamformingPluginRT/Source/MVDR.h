@@ -14,25 +14,25 @@
 #include "FFTProcessor.h"
 
 //===============================================================================
-class MVDR : public FFTProcessor
+class MVDR 
 {
 public:
 
-	MVDR(DAS* dasPtr, int N, int Fs);
+	MVDR(DAS* dasPtr, int N, int Fs, std::shared_ptr<FFTProcessor> FFTprocessor);
 	~MVDR() = default;
 	
-	void calculateSteeringVector(std::vector<float> receivertau, int N);
-	void processCircularMVDR(juce::AudioBuffer<float>& micbuffer, float bright_x, float bright_y);
-	
-	// Inherit and Process Frequency Domain Data
-	void processFreqDomain(std::vector<float>& magnvect,
-						   std::vector<float>& phasevec,
-						   std::vector<float>& freqvec,
-						   std::vector<float>& rawFFTData) override;
+	void calculateSteeringVector(std::vector<float> receivertau, float freq);
+	void calculateSCM( std::vector<std::vector<std::complex<float>>>& spectra, int bin);
+	void calculateWeights();
+	std::complex<float> applyWeights(std::vector<std::vector<std::complex<float>>>& spectra, int bin);
+	void processCircularMVDR(juce::AudioBuffer<float>& micbuffer, std::vector<float> receivertau);
 
 public:
 	
+	int sampleRate, N;
 	std::vector<std::vector<float>> R;
+	std::shared_ptr<FFTProcessor> fftprocessor;
+	std::vector<std::complex<float>> outputSpectrum;
 
 private:
 

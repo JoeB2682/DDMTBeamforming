@@ -15,13 +15,17 @@
 #include <JuceHeader.h>
 #include "DAS.h"
 #include "fracDelFIR.h"
+#include "MVDR.h"
 
 //===============================================================================
 class FAS
 {
 public:
 
-	FAS(DAS* dasPtr, int numtaps, int bufferlen, float freq, float bandlow, float bandhigh, bool iswideband, bool useMVDR);
+	FAS(DAS* dasPtr, int numtaps, int bufferlen, float freq, float bandlow, 
+					 float bandhigh, bool iswideband, bool useMVDR, 
+					 std::shared_ptr<FFTProcessor> fftProcessor);
+
 	~FAS() = default;
 
 	float estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float thresh);
@@ -50,12 +54,14 @@ public:
 
 	int numTaps;
 	float freq;
-	bool wideband, MVDR;
+	bool wideband, isMVDR;
 
+	// Objects
 	DAS* das;
 	std::vector<std::unique_ptr<fracDelFIR>> filterBank;
 	std::shared_ptr<FrequencyBand> band;
-
+	std::unique_ptr<MVDR> mvdr;
+	std::shared_ptr<FFTProcessor> fftprocessor;
 	std::vector<std::unique_ptr<Oscillator>> lowoscbank, highoscbank;	
 };
 //===============================================================================

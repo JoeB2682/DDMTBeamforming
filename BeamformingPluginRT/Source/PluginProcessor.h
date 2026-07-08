@@ -6,6 +6,7 @@
 #include "ParameterHelper.h"
 #include "DAS.h"
 #include "FAS.h"
+#include "FFTProcessor.h"
 
 //==================================================================================
 // Chainsettings keeps track of parameter states 
@@ -80,6 +81,9 @@ public:
     // Beamformers
     std::shared_ptr<DAS> DelayandSumBeamformer;
     std::unique_ptr<FAS> FilterandSumBeamformer;
+
+    // FFT Processor
+    std::shared_ptr<FFTProcessor> fftprocessor;
 
     float ArrayRadius = 1.5; // meters
     float miclevel;

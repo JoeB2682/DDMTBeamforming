@@ -11,6 +11,7 @@ FFTProcessor::FFTProcessor(int fftorder, int samplerate) : fftOrder(fftorder),
 
 	fifo.resize(fftSize);
 	fftData.resize(fftSize * 2);
+	multifftData.resize(fftSize * 2);
 	magnitude.resize(fftSize / 2);
 	phase.resize(fftSize / 2);
 	frequencies.resize(fftSize / 2);
@@ -35,6 +36,7 @@ void FFTProcessor::releaseResources()
 	std::fill(magnitude.begin(), magnitude.end(), 0.0f);
 	std::fill(phase.begin(), phase.end(), 0.0f);
 	std::fill(fftData.begin(), fftData.end(), 0.0f);
+	std::fill(multifftData.begin(), multifftData.end(), 0.0f);
 
 	// Reset Index
 	fifoIndex = 0;
@@ -106,6 +108,54 @@ void FFTProcessor::processFFT()
 		// Set flags
 		fftReadyForInverse = true;
 		nextFFTBlockReady = false;
+	}
+}
+//===============================================================================
+// Process and perform FFT across entire buffer for multiple channels (array processing)
+void FFTProcessor::processMultiChannelFFT(juce::AudioBuffer<float>& buffer,
+	std::vector<std::vector<std::complex<float>>>& spectra)
+{
+	/*
+	DBG("Channels: " << buffer.getNumChannels());
+	DBG("Samples: " << buffer.getNumSamples());
+	DBG("FFT size: " << fftSize);
+	*/
+
+	// Get number of channels in specified buffer
+	int channels = buffer.getNumChannels();
+
+	// Check buffer validity
+	if (channels == 0 || buffer.getNumSamples() == 0) return;
+
+	// resize output matrix
+	spectra.resize(channels);
+
+	// Iterate each channel
+	for (int channel = 0; channel < channels; channel++)
+	{
+		// Resize for output for num channels and fftsize
+		spectra[channel].resize(fftSize / 2);
+
+		// reset data buffer
+		std::fill(multifftData.begin(), multifftData.end(), 0.0f);
+
+		// Get buffer pointer 
+		auto* samples = buffer.getReadPointer(channel);
+
+		// copy samples into data buffer up to fftsize
+		int copySize = juce::jmin(fftSize, buffer.getNumSamples());
+
+		std::copy(samples, samples + copySize, multifftData.begin());
+
+		// window (I <3 a good Hamm)
+		window->multiplyWithWindowingTable(multifftData.data(), fftSize);
+
+		// Perform real only FFT
+		FFT.performRealOnlyForwardTransform(multifftData.data());
+
+		// Iterate frequency domain adding interleaved data to output matrix
+		for (int k = 0; k < fftSize / 2; k++)
+			spectra[channel][k] = std::complex<float>(multifftData[2 * k], multifftData[2 * k + 1]);
 	}
 }
 //===============================================================================

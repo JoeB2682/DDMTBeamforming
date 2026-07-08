@@ -11,10 +11,10 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::discreteChannels(8), true)
                      #endif
-                       )
+                       ) 
 #endif
 {
-   
+
 }
 
 BeamformingRTPluginAudioProcessor::~BeamformingRTPluginAudioProcessor()
@@ -58,6 +58,8 @@ void BeamformingRTPluginAudioProcessor::changeProgramName (int index, const juce
 //==============================================================================
 void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    // Instanciating in prepare to play is often better than constructor due to bus configurations 
+    // already being specified...
     {
         // Debug messages to ensure that I/O is configured properly
         DBG("Inputs  = " << getTotalNumInputChannels());
@@ -69,12 +71,18 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
 
     DBG("Main Buffer Size = " << samplesPerBlock);
 
+    // FFT Processor
+    fftprocessor = std::make_shared<FFTProcessor>(11, getSampleRate());
+
     // Instanciate Beamformers
     DelayandSumBeamformer = std::make_shared<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
-    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 64, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, false);
+    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 64, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, true, fftprocessor);
 }
 
-void BeamformingRTPluginAudioProcessor::releaseResources(){}
+void BeamformingRTPluginAudioProcessor::releaseResources()
+{
+    fftprocessor->releaseResources();
+}
 
 // Modify layout to support more channels (as specified in constructor)
 bool BeamformingRTPluginAudioProcessor::isBusesLayoutSupported
@@ -142,6 +150,18 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
         //DBG("Raw BrightX: " << brightX);
         //DBG("Raw BrightY: " << brightY);
+
+        // Add mic data to FFT FIFO
+        for (int channel = 0; channel < micBuffer.getNumChannels(); ++channel)
+        {
+            auto* samples = micBuffer.getReadPointer(channel);
+
+            for (int sample = 0; sample < micBuffer.getNumSamples(); ++sample)
+                fftprocessor->pushNextSampleIntoFifo(samples[sample]);
+        }
+
+        // For Analysis and effects
+        fftprocessor->processFFT();
     }
     else
     {
@@ -159,7 +179,7 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
         }
     }
 
-    // Get input level after processing (threshold or MVDR)
+    // Get input level after processing (threshold)
     miclevel = micBuffer.getMagnitude(0, 0, micBuffer.getNumSamples());
 }
 

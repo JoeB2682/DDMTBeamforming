@@ -39,6 +39,9 @@ public:
     void processFFT();
     void processIFFT();
 
+    void processMultiChannelFFT(juce::AudioBuffer<float>& buffer,
+                                std::vector<std::vector<std::complex<float>>>& spectra);
+
     virtual void processFreqDomain(std::vector<float>& magnvect,
                                    std::vector<float>& phasevec,
                                    std::vector<float>& freqvec,
@@ -51,7 +54,7 @@ public:
     std::unique_ptr<juce::dsp::WindowingFunction<float>> window;
 
     juce::dsp::FFT FFT;
-    std::vector<float> fifo, fftData, magnitude, phase, frequencies;
+    std::vector<float> fifo, fftData, magnitude, phase, frequencies, multifftData;
 
     int fifoIndex = 0;
     bool nextFFTBlockReady = false;
