@@ -2,6 +2,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 //==============================================================================
+// Constructor
 BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
@@ -22,6 +23,7 @@ BeamformingRTPluginAudioProcessor::~BeamformingRTPluginAudioProcessor()
 }
 
 //==============================================================================
+// Setup
 const juce::String BeamformingRTPluginAudioProcessor::getName() const { 
     return JucePlugin_Name; 
 }
@@ -181,7 +183,7 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
 
     // Get input level after processing (threshold)
     miclevel = micBuffer.getMagnitude(0, 0, micBuffer.getNumSamples());
-    DBG(miclevel);
+    //DBG(miclevel);
 }
 
 //==============================================================================
