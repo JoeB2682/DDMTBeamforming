@@ -179,7 +179,6 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
 // Timer Callback 
 void BeamformingRTPluginAudioProcessorEditor::timerCallback()
 {
-
     auto x = audioProcessor.apvts.getRawParameterValue("BrightX")->load();
     auto y = audioProcessor.apvts.getRawParameterValue("BrightY")->load();
 
@@ -190,6 +189,5 @@ void BeamformingRTPluginAudioProcessorEditor::timerCallback()
     beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau);
 
     inputMeter.setLevel(audioProcessor.miclevel);
-    DBG(audioProcessor.miclevel);
 }
 //==============================================================================

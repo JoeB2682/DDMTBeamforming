@@ -178,8 +178,8 @@ void FFTProcessor::processIFFT()
 void FFTProcessor::processMultiChannelIFFT(std::vector<std::complex<float>>& spectrum,
 	juce::AudioBuffer<float>& outputBuffer)
 {
-	DBG("IFFT size: " << fftSize);
-	DBG("Output samples: " << outputBuffer.getNumSamples());
+	//DBG("IFFT size: " << fftSize);
+	//DBG("Output samples: " << outputBuffer.getNumSamples());
 
 	// Reset FFT data
 	std::fill(multifftData.begin(), multifftData.end(), 0.0f);

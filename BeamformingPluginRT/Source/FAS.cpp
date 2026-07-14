@@ -39,7 +39,10 @@ FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow,
 		highoscbank[i] = std::make_unique<Oscillator>();
 	}
 
-	mvdr = std::make_unique<MVDR>(dasObject, dasObject->N, dasObject->sampleRate, fftprocessor);
+	// FOR NOW, use N = 1, MVDR not technically possible without mic array this atm is
+	// just an optimised distortion filter.
+	mvdr = std::make_unique<MVDR>(dasObject, 1, dasObject->sampleRate, fftprocessor);
+	//mvdr = std::make_unique<MVDR>(dasObject, ADD NO MICS WHEN ARRAY EXTENDED!, dasObject->sampleRate, fftprocessor);
 }
 //===============================================================================
 // Generates full narrowband signal for each source (calc correct offset prior)

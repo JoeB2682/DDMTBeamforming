@@ -2,7 +2,7 @@
 #include "MVDR.h"
 //===============================================================================
 MVDR::MVDR(DAS* dasPtr, int N, int Fs, std::shared_ptr<FFTProcessor> FFTprocessor) :
-	fftprocessor(FFTprocessor), sampleRate(Fs), N(N)
+    fftprocessor(FFTprocessor), sampleRate(Fs), N(N)
 {
     outputSpectrum.resize(fftprocessor->fftSize / 2);
 
@@ -36,7 +36,7 @@ void MVDR::calculateWeights()
 //===============================================================================
 // Calculate Spatial Covariance Matrix...
 // MATLAB Equivalant,  R = (mic_signals * mic_signals') / size(mic_signals,2);
-void MVDR::calculateSCM(std::vector<std::vector<std::complex<float>>>& spectra, int bin) 
+void MVDR::calculateSCM(std::vector<std::vector<std::complex<float>>>& spectra, int bin)
 {
     // Set coeffs to 0
     R.setZero();
@@ -54,7 +54,7 @@ void MVDR::calculateSCM(std::vector<std::vector<std::complex<float>>>& spectra, 
 }
 //===============================================================================
 // Apply MVDR Weights (MATLAB, output = w' * mic_signals;)
-std::complex<float> MVDR::applyWeights(std::vector<std::vector<std::complex<float>>>& spectra, int bin) 
+std::complex<float> MVDR::applyWeights(std::vector<std::vector<std::complex<float>>>& spectra, int bin)
 {
     // CReate another vector for out (vector for matrix infomation)
     Eigen::VectorXcf x(N);
@@ -68,8 +68,8 @@ std::complex<float> MVDR::applyWeights(std::vector<std::vector<std::complex<floa
 }
 //===============================================================================
 // Main Process Function
-void MVDR::processCircularMVDR(juce::AudioBuffer<float>& micbuffer, 
-                               std::vector<float> receivertau)
+void MVDR::processCircularMVDR(juce::AudioBuffer<float>& micbuffer,
+    std::vector<float> receivertau)
 {
     // Frequency Domain Matrix
     std::vector<std::vector<std::complex<float>>> spectra;
@@ -77,31 +77,63 @@ void MVDR::processCircularMVDR(juce::AudioBuffer<float>& micbuffer,
     // Convert microphone signals into frequency domain using FFTProcessor
     fftprocessor->processMultiChannelFFT(micbuffer, spectra);
 
-    // Iterate frequency bins
-    for (int k = 0; k < fftprocessor->fftSize / 2; k++)
+    // Single microphone adaptive filtering (as MVDR not possible woithout proper mic array)
+    if (N == 1)
     {
-        // Calculate Current bin in Hz (needed for wideband)
-        float frequency = (float)k * sampleRate / fftprocessor->fftSize;
+        for (int k = 0; k < fftprocessor->fftSize / 2; k++)
+        {
+            // Remove DC Offset component
+            if (k == 0) { outputSpectrum[k] = 0; continue; }
 
-        // Calculate steering vector for this frequency
-        calculateSteeringVector(receivertau, frequency);
+            // Microphone spectrum
+            std::complex<float> X = spectra[0][k];
 
-        // Calculate SCM
-        calculateSCM(spectra, k);
+            // Calculate signal power
+            float power = std::norm(X);
 
-        // Diagonal Loading
-        R += 0.001f * Eigen::MatrixXcf::Identity(N, N);
+            // Diagonal loading / noise floor
+            float lambda = 0.001f;
 
-        // Invert SCM (MATLAB, R_v = R\v;)
-        Rv = R.ldlt().solve(v);
+            // Single channel MVDR/Wiener gain
+            float gain = power / (power + lambda);
 
-        // Calculate MVDR weights
-        calculateWeights();
-
-        // Beamform output
-        outputSpectrum[k] = applyWeights(spectra, k);
+            // Apply filtering
+            outputSpectrum[k] = X * gain;
+        }
     }
-    
+
+    // Multi microphone MVDR beamforming
+    else
+    {
+        // Iterate frequency bins
+        for (int k = 0; k < fftprocessor->fftSize / 2; k++)
+        {
+            // Remove DC Offset component
+            if (k == 0) { outputSpectrum[k] = 0; continue; }
+
+            // Calculate Current bin in Hz (needed for wideband)
+            float frequency = (float)k * sampleRate / fftprocessor->fftSize;
+
+            // Calculate steering vector for this frequency
+            calculateSteeringVector(receivertau, frequency);
+
+            // Calculate SCM
+            calculateSCM(spectra, k);
+
+            // Diagonal Loading
+            Eigen::MatrixXcf Rloaded = R + 0.001f * Eigen::MatrixXcf::Identity(N, N);
+
+            // Invert SCM (MATLAB, R_v = R\v;)
+            Rv = Rloaded.ldlt().solve(v);
+
+            // Calculate MVDR weights
+            calculateWeights();
+
+            // Beamform output
+            outputSpectrum[k] = applyWeights(spectra, k);
+        }
+    }
+
     // Convert back to time domain and output
     fftprocessor->processMultiChannelIFFT(outputSpectrum, outputBuffer);
 
