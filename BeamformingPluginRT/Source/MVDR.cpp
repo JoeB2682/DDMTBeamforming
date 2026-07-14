@@ -94,15 +94,16 @@ void MVDR::processCircularMVDR(juce::AudioBuffer<float>& micbuffer,
             // Diagonal loading / noise floor
             float lambda = 0.001f;
 
-            // Single channel MVDR/Wiener gain
-            float gain = power / (power + lambda);
+            // Single channel MVDR/Wiener gain (Scale as it makes signal too teeny tiny)
+            float gain = power / (power + lambda) * 1000;
+            //gain *= 2.0f;
 
             // Apply filtering
             outputSpectrum[k] = X * gain;
         }
     }
 
-    // Multi microphone MVDR beamforming
+    // MVDR beamforming
     else
     {
         // Iterate frequency bins

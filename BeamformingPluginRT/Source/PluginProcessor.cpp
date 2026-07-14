@@ -100,10 +100,10 @@ bool BeamformingRTPluginAudioProcessor::isBusesLayoutSupported
     return true;
 }
 
-void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
+    auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
     getChainSettings(chainsettings);
@@ -181,6 +181,7 @@ void BeamformingRTPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& 
 
     // Get input level after processing (threshold)
     miclevel = micBuffer.getMagnitude(0, 0, micBuffer.getNumSamples());
+    DBG(miclevel);
 }
 
 //==============================================================================
