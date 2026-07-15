@@ -62,6 +62,7 @@ class DatasetManager:
         # Specify sample name using input variable
         filename = f"sample_{sample_no:05d}.npz"
 
+        # Pickle controls serialisation / deserialisation (print as is)
         data = np.load(os.path.join(TRAINING_FOLDER, filename), allow_pickle=True)
 
         print("\n================================")
@@ -79,11 +80,14 @@ class DatasetManager:
             if np.isscalar(value) or value.ndim == 0:
                 print(f"Value: {value.item()}")
 
+            if key == "rir":
+                print(f"Number of RIRs: {value.shape[1]}")
+
             else:
 
                 print(f"Shape: {value.shape}")
 
-                if value.size <= 20:
+                if value.size <= 100:
                     print("Value:")
                     print(value)
 

@@ -85,7 +85,7 @@ class SampleCreator:
         # Create listener position
         listener_position = self.create_listener_position(L, W, speaker_positions)
 
-        # Create mic pos
+        # Create mic pos at listener pos (creates the listener)
         mic_positions = np.array(listener_position).reshape(3,1)
 
         # Calculate Time Of Arrival (tau)
@@ -122,10 +122,7 @@ class SampleCreator:
             )
 
         # Add receivers to room
-        self.add_receiver(
-            room,
-            mic_positions
-        )
+        self.add_receiver(room, mic_positions)
 
         # Run simulation
         audio = self.simulate(room)
@@ -146,10 +143,14 @@ class SampleCreator:
             dtype=object
         )
 
+        # Get RT60 val for genereated room
+        rt60 = self.get_RT60(room)
+
         # Create sample of data
         room_data = {
             "room_dimensions": np.array( [L, W, H]),
             "absorption": Absorption,
+            "rt60": rt60,
             "max_order": max_order,
             "array_type": array_type,
             "array_name": array_name,

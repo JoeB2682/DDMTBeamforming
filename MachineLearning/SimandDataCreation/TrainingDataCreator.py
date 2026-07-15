@@ -49,4 +49,23 @@ class TrainingDataCreator(
 
         # Create training data folder if it does not exist
         os.makedirs(TRAINING_FOLDER, exist_ok=True)
+
+    # ====================================================
+    # Use if angry (deletes all samples in folder)
+    def kill_all_data(self):
+         
+         # Iterates over each file in folder
+         for file in os.listdir(TRAINING_FOLDER):
+
+            # deletes everything with .npz extension
+            if file.endswith(".npz"):
+
+                # gets path of current file 
+                filepath = os.path.join(TRAINING_FOLDER, file)
+
+                # eradicates it 
+                os.remove(filepath)
+
+                # prints delete message
+                print(f"Deleted: {file}")
  # ========================================================

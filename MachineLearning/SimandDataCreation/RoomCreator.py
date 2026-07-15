@@ -60,5 +60,10 @@ class RoomCreator:
     def simulate(self, room):
         room.simulate()
         return room.mic_array.signals
+    # ====================================================
+    # RT60, returns RT60 value for current room
+    def get_RT60(self, room):
+        rt60 = room.measure_rt60()
+        return rt60
 # ========================================================
         
