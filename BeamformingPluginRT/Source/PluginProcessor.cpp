@@ -101,7 +101,13 @@ bool BeamformingRTPluginAudioProcessor::isBusesLayoutSupported
 #endif
     return true;
 }
+//==============================================================================
+// SNR Functions
 
+
+
+//==============================================================================
+// Main Processing
 void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
@@ -187,10 +193,12 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
 }
 
 //==============================================================================
+// Editor handling
 bool BeamformingRTPluginAudioProcessor::hasEditor() const { return true; }
 juce::AudioProcessorEditor* BeamformingRTPluginAudioProcessor::createEditor()
 { return new BeamformingRTPluginAudioProcessorEditor (*this); }
 //==============================================================================
+// Parameter and State 
 void BeamformingRTPluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData){}
 void BeamformingRTPluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes){}
 
@@ -217,3 +225,4 @@ BeamformingRTPluginAudioProcessor::createParameterLayout()
 }
 //==============================================================================
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter(){ return new BeamformingRTPluginAudioProcessor(); }
+//==============================================================================
