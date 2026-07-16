@@ -30,7 +30,7 @@ for i in range(SAMPLES_TO_CREATE):
     datacreator.create_sample()
 
 # Print or plot Data sample to validate
-#datacreator.print_sample(0)
+#datacreator.print_sample(7)
 
 # plots one after another so doesn't break too horrifically
 # (easier to kill)
@@ -39,6 +39,8 @@ if PLOT_ALL == "YES":
         sampleplotter.plot_sample(sample_no)
 else:
     if SAMPLE_TO_PLOT >= len(samples):
+        pass
+    if SAMPLE_TO_PLOT == -1:
         pass
     else:
         sampleplotter.plot_sample(SAMPLE_TO_PLOT)

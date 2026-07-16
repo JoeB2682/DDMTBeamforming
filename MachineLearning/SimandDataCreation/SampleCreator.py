@@ -14,6 +14,9 @@ class SampleCreator:
     # ====================================================
     # Main running function to create data sample
     def create_sample(self):
+        # ================================================
+        # Room and Geometry
+        # ================================================
 
         # Create random room parameters
         L = np.random.uniform(4, 8)
@@ -31,6 +34,9 @@ class SampleCreator:
             Absorption=Absorption,
             max_order=max_order
         )
+        # ================================================
+        # Speaker Array
+        # ================================================
 
         # Create random speaker array
         array_type = np.random.randint(0, 2) # Randomly chooses between cicular and linear array
@@ -81,7 +87,10 @@ class SampleCreator:
                 [centre_x, centre_y],
                 array_height
             )
-
+        # ================================================
+        # Listener Position
+        # ================================================
+        
         # Create listener position
         listener_position = self.create_listener_position(L, W, speaker_positions)
 
@@ -93,9 +102,58 @@ class SampleCreator:
             speaker_positions,
             np.array(listener_position)
         )
+        # ================================================
+        # Source Signal Creation
+        # ================================================
 
-         # Create source signal (Noise)
-        source_signal = self.create_noise_signal(self.fs)
+        # specifies which signal to use
+        signal_type = np.random.randint(1, 6)
+        signal_name = ""
+        signal_data = ""
+
+        if signal_type == 1:
+
+            # souyrce = noise signal
+            source_signal = self.create_noise_signal(self.fs)
+            signal_name = "Noise"
+
+        elif signal_type == 2:
+            
+            # random narrowband between 200 - 4000Hz
+            freq = np.random.randint(200, 4000)
+
+            # Source = narrowband signal (pure tone)
+            source_signal = self.create_narrowband(freq, self.fs)
+            signal_name = "Narrowband"
+            signal_data = f"Frequency: {freq}"
+
+        elif signal_type == 3:
+            
+            # random wideband between 200 - 4000Hz
+            f0 = np.random.randint(200, 1000)
+            f1 = np.random.randint(f0, 2500)
+            f2 = np.random.randint(f1, 4000)
+
+            # Source = random wideband chord
+            source_signal = self.create_wideband_chord(f0, f1, f2, self.fs)
+            signal_name = "Wideband"
+            signal_data = f"Frequencies: {f0}, {f1}, {f2}"
+
+        elif signal_type == 4:
+
+            source_signal, filename = self.use_speech_signal()
+            signal_name = "Speech"
+            signal_data = "Filename: " + filename
+
+        elif signal_type == 5:
+
+            source_signal, filename = self.use_music_signal()
+            signal_name = "Music"
+            signal_data = "Filename: " + filename
+
+        # ================================================
+        # Adding Speaker Delays and S/Rs to Room
+        # ================================================
 
         # Add delayed speaker signals
         max_tau = np.max(tau)
@@ -124,11 +182,14 @@ class SampleCreator:
         # Add receivers to room
         self.add_receiver(room, mic_positions)
 
-        # Run simulation
+        # ================================================
+        # Run Room Simulation and get RIR/RT60
+        # ================================================
+
         audio = self.simulate(room)
 
-        # Fix audio length to 1 second
-        audio = self.fix_audio_length(audio)
+        # Fix audio length to 3 seconds 
+        audio = self.fix_audio_length(audio, 3)
         print("Audio shape:", audio.shape)
 
         # Extract Spectral Features
@@ -146,7 +207,10 @@ class SampleCreator:
         # Get RT60 val for genereated room
         rt60 = self.get_RT60(room)
 
+        # ================================================
         # Create sample of data
+        # ================================================
+
         room_data = {
             "room_dimensions": np.array( [L, W, H]),
             "absorption": Absorption,
@@ -157,6 +221,8 @@ class SampleCreator:
             "num_speakers": num_speakers,
             "speaker_positions": speaker_positions,
             "listener_position": np.array(listener_position),
+            "Signal_Type" : signal_name,
+            "Signal_Data" : signal_data,
             "tau": tau,
             "mic_positions": mic_positions,
             "spectral_features": spectral_features,
