@@ -27,7 +27,7 @@ class RoomCreator:
 
         return room
     # ====================================================
-    # Create Listener Position as receiver
+    # Create Listener Position 
     def create_listener_position(self, L, W, speaker_positions):
         while True:
             position = np.array([
@@ -41,6 +41,18 @@ class RoomCreator:
             )
             if np.min(distance) > 0.5:
                 return position
+    # ====================================================
+    # Create BG Noise Position (same as above function but
+    # only cares about avoiding the walls).
+    def create_bgnoise_position(self, L, W):
+
+        position = np.array([
+            np.random.uniform(1,L-1),
+            np.random.uniform(1,W-1),
+            1.5
+        ])
+
+        return position
     # ====================================================
     # Calculate Room Impulse Responses
     def get_rir(self, room): 

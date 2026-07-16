@@ -31,6 +31,7 @@ class Sample_Plotter():
         speakers = data["speaker_positions"]
         listener = data["listener_position"]
         mic = data["mic_positions"]
+        bg_noise = data["Background_noise_position"]
 
         plt.figure(figsize=(7, 5))
 
@@ -61,6 +62,15 @@ class Sample_Plotter():
             mic[1, :],
             marker="o",
             label="Microphone"
+        )
+
+        # Background Noise
+        # Background Noise
+        plt.scatter(
+            bg_noise[0],
+            bg_noise[1],
+            marker="x",
+            label="BGNoise"
         )
 
         # Label speakers

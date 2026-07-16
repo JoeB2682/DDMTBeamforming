@@ -17,7 +17,7 @@ TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
 # ========================================================
 # Constants / Params
 SAMPLES_TO_CREATE = 0
-SAMPLE_TO_PLOT = 0
+SAMPLE_TO_PLOT = -1
 PLOT_ALL = "NO"
 # ========================================================
 # Instanciate and create data samples

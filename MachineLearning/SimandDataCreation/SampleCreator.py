@@ -102,6 +102,20 @@ class SampleCreator:
             speaker_positions,
             np.array(listener_position)
         )
+
+        # ================================================
+        # Background Noise Position and Creation
+        # ================================================
+
+        # Create Position
+        bgnoise_position = self.create_bgnoise_position(L, W)
+
+        # Vary the level per data sample
+        bgsignal_level = np.random.uniform(0.1, 1.0)
+
+        bgnoise_signal, bgsigname = self.get_bg_noise_sample(bgsignal_level)
+        bgsignal_data = "Filename: " + bgsigname
+
         # ================================================
         # Source Signal Creation
         # ================================================
@@ -182,6 +196,13 @@ class SampleCreator:
         # Add receivers to room
         self.add_receiver(room, mic_positions)
 
+        # Add Background Noise
+        self.add_source(
+            room,
+            position=bgnoise_position,
+            source_signal=bgnoise_signal
+        )
+
         # ================================================
         # Run Room Simulation and get RIR/RT60
         # ================================================
@@ -220,9 +241,11 @@ class SampleCreator:
             "array_name": array_name,
             "num_speakers": num_speakers,
             "speaker_positions": speaker_positions,
+            "Background_noise_position" : np.array(bgnoise_position),
             "listener_position": np.array(listener_position),
             "Signal_Type" : signal_name,
             "Signal_Data" : signal_data,
+            "Background_Noise" : bgsignal_data,
             "tau": tau,
             "mic_positions": mic_positions,
             "spectral_features": spectral_features,

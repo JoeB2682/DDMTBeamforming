@@ -6,6 +6,10 @@
 # for emmitter phases and various other signal 
 # processing functions. 
 #
+# References for sourced speech and Music Samples:
+#
+# - 
+#
 # Created by: Joseph Bozzo
 # ========================================================
 import os
@@ -20,6 +24,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SPEECH_FOLDER = os.path.join(BASE_DIR, "SpeechSamples")
 MUSIC_FOLDER = os.path.join(BASE_DIR, "MusicSamples")
+BG_NOISE_FOLDER = os.path.join(BASE_DIR, "BackgroundNoiseSamples")
 # ========================================================
 class SignalProcessor:
     # ====================================================
@@ -99,6 +104,31 @@ class SignalProcessor:
             audio = resample_poly(audio, 48000, fs)
 
         return audio, random_file
+    # ====================================================
+    # Get Background Noise Sample from dir
+    def get_bg_noise_sample(self, level):
+
+        files = [
+            f for f in os.listdir(BG_NOISE_FOLDER)
+            if f.endswith(".wav") or f.endswith(".mp3")
+        ]
+
+        random_file = random.choice(files)
+        file_path = os.path.join(BG_NOISE_FOLDER, random_file)
+
+        audio, fs = sf.read(file_path)
+
+        # force mono if needed
+        if audio.ndim > 1:
+            audio = audio[:, 0]
+        elif fs != 48000:
+            # resample if not at 48kHz
+            audio = resample_poly(audio, 48000, fs)
+
+        audio = audio * level
+
+        return audio, random_file
+
     # ====================================================
     # Calculate Time-Of-Arrival (from speakers to listener)
     def calculate_TOA(self, speaker_positions, listener_position):
