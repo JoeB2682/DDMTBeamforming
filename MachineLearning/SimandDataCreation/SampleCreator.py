@@ -88,20 +88,41 @@ class SampleCreator:
                 array_height
             )
         # ================================================
-        # Listener Position
+        # Listener Position + Movement
         # ================================================
         
-        # Create listener position
-        listener_position = self.create_listener_position(L, W, speaker_positions)
-
-        # Create mic pos at listener pos (creates the listener)
-        mic_positions = np.array(listener_position).reshape(3,1)
-
-        # Calculate Time Of Arrival (tau)
-        tau = self.calculate_TOA(
-            speaker_positions,
-            np.array(listener_position)
+        # Create listener starting position
+        listener_start = self.create_listener_position(
+            L,
+            W,
+            speaker_positions
         )
+
+        # random number of points 
+        no_points = np.random.randint(1,10)
+
+        # Create random waypoints
+        path = self.create_path(
+            listener_start,
+            no_points,
+            L=L,
+            W=W
+        )
+
+        # Create trajectory vectpr
+        trajectory = self.create_trajectory(path)
+
+        tau = []
+
+        # Recaulculate TOA as listener moves
+        for position in trajectory:
+            frame_tau = self.calculate_TOA(
+                speaker_positions,
+                position
+            )
+            tau.append(frame_tau)
+
+        tau = np.array(tau)
 
         # ================================================
         # Background Noise Position and Creation
@@ -172,31 +193,84 @@ class SampleCreator:
             signal_data = "Filename: " + filename
 
         # ================================================
-        # Adding Speaker Delays and S/Rs to Room
+        # Split the Source Signal for motion tracking and apply delays
         # ================================================
 
-        # Add delayed speaker signals
-        max_tau = np.max(tau)
+        # split source signal recalclate beamformer each block 
+        source_blocks = self.split_signal(source_signal)
+
+        # To prevent trajectopry and block size mismatch resample
+        num_frames = len(source_blocks)
+
+        trajectory = self.resample_trajectory(
+            trajectory,
+            num_frames
+        )
+
+        # Store microphone positions for every frame
+        mic_positions = trajectory.T
+        # ================================================
+        # Has tp recalculate TOA again
+        tau = []
+
+        for position in trajectory:
+            frame_tau = self.calculate_TOA(
+            speaker_positions,
+            position)
+            tau.append(frame_tau)
+
+        tau = np.array(tau)
+        # ================================================
+        # create array for each speaker signal
+        speaker_signals = [
+            np.array([])
+            for _ in range(num_speakers)
+        ]
+
+        # loop through blocks
+        for frame, block in enumerate(source_blocks):
+            
+            # TOA for current frame 
+            current_tau = tau[frame]
+            max_tau = np.max(current_tau)
+
+            for speaker in range(num_speakers):
+
+                # calculate speaker delay 
+                delay = max_tau - current_tau[speaker]
+
+                # apply speaker delay
+                delayed_block = self.apply_delay(
+                    block,
+                    delay
+                )
+
+                # concatenate blocks together 
+                speaker_signals[speaker] = np.concatenate(
+                (
+                    speaker_signals[speaker],
+                    delayed_block
+                )
+            )
+                
+        #print(len(source_blocks))
+        #print(len(trajectory))
+
+        # ================================================
+        # Adding Speaker Delays and S/Rs to Room
+        # ================================================
 
         # Iterate Speaker Positions
         for i, speaker in enumerate(speaker_positions.T):
 
-            # Apply beamformer steering delay (relative delay)
-            beam_delay = max_tau - tau[i]
+            # Normalise
+            speaker_signals[i] /= np.sqrt(num_speakers)
 
-            delayed_signal = self.apply_delay(
-                source_signal,
-                beam_delay
-            )
-
-            # normalise
-            delayed_signal /= np.sqrt(num_speakers)
-            
-            # Add sources to room
+            # Add each speaker source to the room (beamformed source)
             self.add_source(
                 room,
                 position=speaker,
-                source_signal=delayed_signal
+                source_signal=speaker_signals[i]
             )
 
         # Add receivers to room
@@ -238,17 +312,25 @@ class SampleCreator:
         # Use Beam Pattern Generator for dir features
         # ================================================
 
-        scan_angles, response, listener_angle = self.generate_beam_pattern(
-            speaker_positions,
-            est_narrow_freq,
-            listener_position
-        )
+        beam_patterns = []
+        desired_dir = []
 
-        beam_pattern = response
-        beam_angles = scan_angles
-        desired_dir = listener_angle
+        # Recalculate beampatterns for every trajectory frame
+        for position in trajectory:
+            angles, response, listener_angle = self.generate_beam_pattern(
+                speaker_positions,
+                est_narrow_freq,
+                position
+            )
+            beam_patterns.append(response)
+            desired_dir.append(listener_angle)
 
-        ideal_beamplot = self.plot_beam_pattern(scan_angles, beam_pattern, listener_angle)
+        beam_pattern = np.array(beam_patterns)
+        beam_angles = angles
+        desired_dir = np.array(desired_dir)
+
+        # Only plot the first frame 
+        ideal_beamplot = self.plot_beam_pattern(beam_angles, beam_pattern[0], desired_dir[0])
         self.save_ideal_beamplot(ideal_beamplot)
 
         # ================================================
@@ -266,7 +348,8 @@ class SampleCreator:
             "num_speakers": num_speakers,
             "speaker_positions": speaker_positions,
             "Background_noise_position" : np.array(bgnoise_position),
-            "listener_position": np.array(listener_position),
+            "listener_start_pos": np.array(listener_start),
+            "trajectory" : trajectory,
             "Signal_Type" : signal_name,
             "Signal_Data" : signal_data,
             "Background_Noise" : bgsignal_data,
@@ -274,7 +357,7 @@ class SampleCreator:
             "mic_positions": mic_positions,
             "spectral_features": spectral_features,
             "rir": rir,
-            "Beam_Pattern" : beam_pattern,
+            "Beam_Patterns" : beam_pattern,
             "Beam_Angles" : beam_angles,
             "Desired_Angle" : desired_dir
         }

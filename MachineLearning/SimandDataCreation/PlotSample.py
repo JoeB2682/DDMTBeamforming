@@ -12,10 +12,13 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 # ========================================================
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
+
 # ========================================================
 class Sample_Plotter():
+
     # ====================================================
     # Plot Data Sample
     def plot_sample(self, sample_no):
@@ -29,7 +32,8 @@ class Sample_Plotter():
         room = data["room_dimensions"]
 
         speakers = data["speaker_positions"]
-        listener = data["listener_position"]
+        listener = data["listener_start_pos"]
+        trajectory = data["trajectory"]
         mic = data["mic_positions"]
         bg_noise = data["Background_noise_position"]
 
@@ -47,29 +51,58 @@ class Sample_Plotter():
             label="Speakers"
         )
 
-        # Listener
+        # Listener starting position
         plt.scatter(
             listener[0],
             listener[1],
             marker="x",
             s=100,
-            label="Listener"
+            label="Listener Start"
         )
 
-        # Microphone
+        # Microphone positions
         plt.scatter(
             mic[0, :],
             mic[1, :],
             marker="o",
+            s=20,
             label="Microphone"
         )
 
-        # Background Noise
+        # Listener trajectory
+        plt.plot(
+            trajectory[:, 0],
+            trajectory[:, 1],
+            "r-",
+            linewidth=2,
+            label="Trajectory"
+        )
+
+        # Mark trajectory start
+        plt.scatter(
+            trajectory[0, 0],
+            trajectory[0, 1],
+            marker="o",
+            s=80,
+            label="Trajectory Start"
+        )
+
+        # Mark trajectory end
+        plt.scatter(
+            trajectory[-1, 0],
+            trajectory[-1, 1],
+            marker="x",
+            s=80,
+            label="Trajectory End"
+        )
+
+        # Background noise source
         plt.scatter(
             bg_noise[0],
             bg_noise[1],
-            marker="x",
-            label="BGNoise"
+            marker="^",
+            s=100,
+            label="Background Noise"
         )
 
         # Label speakers
@@ -85,6 +118,8 @@ class Sample_Plotter():
         plt.title(f"Sample {sample_no}")
         plt.legend()
         plt.grid()
+
+        plt.axis("equal")
 
         plt.show()
 # ========================================================

@@ -21,6 +21,7 @@ from FeatureExtractor import FeatureExtractor
 from DatasetManager import DatasetManager
 from SampleCreator import SampleCreator
 from BeamPatternGenerator import BeamPatternGenerator
+from TrajectoryCreator import TrajectoryCreator
 # ========================================================
 # Constants
 SAMPLERATE = 48000
@@ -43,7 +44,8 @@ class TrainingDataCreator(
         FeatureExtractor,
         DatasetManager,
         SampleCreator,
-        BeamPatternGenerator
+        BeamPatternGenerator,
+        TrajectoryCreator
 ):
     # ====================================================
     # Constructor
@@ -54,6 +56,13 @@ class TrainingDataCreator(
 
         # Create training data folder if it does not exist
         os.makedirs(TRAINING_FOLDER, exist_ok=True)
+
+        # Instanciate Trajectory Creator (has own constructor)
+        TrajectoryCreator.__init__(
+            self,
+            update_rate=100,
+            duration=3
+        )
 
     # ====================================================
     # Use if angry (deletes all samples in folder)

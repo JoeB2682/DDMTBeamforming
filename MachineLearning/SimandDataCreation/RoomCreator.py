@@ -29,7 +29,7 @@ class RoomCreator:
     # ====================================================
     # Create Listener Position 
     def create_listener_position(self, L, W, speaker_positions):
-        while True:
+        while True: 
             position = np.array([
                 np.random.uniform(1,L-1),
                 np.random.uniform(1,W-1),

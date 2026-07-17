@@ -167,5 +167,19 @@ class SignalProcessor:
             audio = np.pad(audio, ((0,0), (0,padding)))
 
         return audio
+    
+    # ====================================================
+    # Split signal into blocks so beamformer can be recalculated
+    # As listener moves
+    def split_signal(self, signal):
+
+        block_size = int(self.fs / self.update_rate)
+
+        blocks = []
+
+        for start in range(0, len(signal), block_size):
+            end = start + block_size
+            blocks.append(signal[start:end])
+        return blocks
 # ========================================================
         
