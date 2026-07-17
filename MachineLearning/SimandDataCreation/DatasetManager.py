@@ -16,6 +16,9 @@ import os
 # Training Data Directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
+
+# Beam Plot Directory 
+PLOT_FOLDER = os.path.join(BASE_DIR, "IdealBeamPlots")
 # ========================================================
 class DatasetManager:
     # ====================================================
@@ -32,6 +35,18 @@ class DatasetManager:
         filepath = os.path.join(TRAINING_FOLDER, filename)
 
         np.savez(filepath, audio=audio, **room_data)
+
+        print("Saved:", filename)
+    # ====================================================
+    # Save Ideal Beam Plot For Sample 
+    def save_ideal_beamplot(self, plot):
+
+        sample_number = self.get_next_sample_number()
+
+        filename = f"sample_{sample_number:05d}.png"
+        filepath = os.path.join(PLOT_FOLDER, filename)
+
+        plot.savefig(filepath, dpi=300, bbox_inches="tight")
 
         print("Saved:", filename)
     # ====================================================

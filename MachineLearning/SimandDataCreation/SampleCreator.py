@@ -120,6 +120,9 @@ class SampleCreator:
         # Source Signal Creation
         # ================================================
 
+        # For beam angle stuff
+        est_narrow_freq = np.random.randint(200, 4000)
+
         # specifies which signal to use
         signal_type = np.random.randint(1, 6)
         signal_name = ""
@@ -135,6 +138,7 @@ class SampleCreator:
             
             # random narrowband between 200 - 4000Hz
             freq = np.random.randint(200, 4000)
+            est_narrow_freq = freq
 
             # Source = narrowband signal (pure tone)
             source_signal = self.create_narrowband(freq, self.fs)
@@ -147,6 +151,8 @@ class SampleCreator:
             f0 = np.random.randint(200, 1000)
             f1 = np.random.randint(f0, 2500)
             f2 = np.random.randint(f1, 4000)
+
+            est_narrow_freq = f0
 
             # Source = random wideband chord
             source_signal = self.create_wideband_chord(f0, f1, f2, self.fs)
@@ -229,9 +235,27 @@ class SampleCreator:
         rt60 = self.get_RT60(room)
 
         # ================================================
+        # Use Beam Pattern Generator for dir features
+        # ================================================
+
+        scan_angles, response, listener_angle = self.generate_beam_pattern(
+            speaker_positions,
+            est_narrow_freq,
+            listener_position
+        )
+
+        beam_pattern = response
+        beam_angles = scan_angles
+        desired_dir = listener_angle
+
+        ideal_beamplot = self.plot_beam_pattern(scan_angles, beam_pattern, listener_angle)
+        self.save_ideal_beamplot(ideal_beamplot)
+
+        # ================================================
         # Create sample of data
         # ================================================
 
+        # Dictionary to store sample
         room_data = {
             "room_dimensions": np.array( [L, W, H]),
             "absorption": Absorption,
@@ -249,7 +273,10 @@ class SampleCreator:
             "tau": tau,
             "mic_positions": mic_positions,
             "spectral_features": spectral_features,
-            "rir": rir
+            "rir": rir,
+            "Beam_Pattern" : beam_pattern,
+            "Beam_Angles" : beam_angles,
+            "Desired_Angle" : desired_dir
         }
 
         # Save sample

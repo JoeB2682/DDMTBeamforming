@@ -20,6 +20,7 @@ from SignalProcessor import SignalProcessor
 from FeatureExtractor import FeatureExtractor
 from DatasetManager import DatasetManager
 from SampleCreator import SampleCreator
+from BeamPatternGenerator import BeamPatternGenerator
 # ========================================================
 # Constants
 SAMPLERATE = 48000
@@ -30,6 +31,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Training Data Directory
 TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
+
+# Beam Plot Directory 
+PLOT_FOLDER = os.path.join(BASE_DIR, "IdealBeamPlots")
 # ========================================================
 # Data Creation Class
 class TrainingDataCreator(
@@ -38,7 +42,8 @@ class TrainingDataCreator(
         SignalProcessor,
         FeatureExtractor,
         DatasetManager,
-        SampleCreator
+        SampleCreator,
+        BeamPatternGenerator
 ):
     # ====================================================
     # Constructor
@@ -54,7 +59,7 @@ class TrainingDataCreator(
     # Use if angry (deletes all samples in folder)
     def kill_all_data(self):
          
-         # Iterates over each file in folder
+         # Iterates over each file in training data folder
          for file in os.listdir(TRAINING_FOLDER):
 
             # deletes everything with .npz extension
@@ -62,6 +67,21 @@ class TrainingDataCreator(
 
                 # gets path of current file 
                 filepath = os.path.join(TRAINING_FOLDER, file)
+
+                # eradicates it 
+                os.remove(filepath)
+
+                # prints delete message
+                print(f"Deleted: {file}")
+
+         # Iterates over each file in plot data folder
+         for file in os.listdir(PLOT_FOLDER):
+
+            # deletes everything with .png extension
+            if file.endswith(".png"):
+
+                # gets path of current file 
+                filepath = os.path.join(PLOT_FOLDER, file)
 
                 # eradicates it 
                 os.remove(filepath)

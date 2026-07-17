@@ -30,7 +30,7 @@ for i in range(SAMPLES_TO_CREATE):
     datacreator.create_sample()
 
 # Print or plot Data sample to validate
-#datacreator.print_sample(7)
+#datacreator.print_sample(19)
 
 # plots one after another so doesn't break too horrifically
 # (easier to kill)

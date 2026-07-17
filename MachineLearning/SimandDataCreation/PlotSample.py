@@ -65,7 +65,6 @@ class Sample_Plotter():
         )
 
         # Background Noise
-        # Background Noise
         plt.scatter(
             bg_noise[0],
             bg_noise[1],
