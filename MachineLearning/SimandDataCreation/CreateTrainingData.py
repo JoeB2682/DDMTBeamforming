@@ -17,7 +17,7 @@ TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
 # ========================================================
 # Constants / Params
 SAMPLES_TO_CREATE = 0
-SAMPLE_TO_PLOT = 0
+SAMPLE_TO_PLOT = -1
 PLOT_ALL = "NO"
 # ========================================================
 # Instanciate and create data samples
@@ -28,6 +28,11 @@ samples = os.listdir(TRAINING_FOLDER)
 
 for i in range(SAMPLES_TO_CREATE):
     datacreator.create_sample()
+
+if SAMPLES_TO_CREATE > 0:
+    print(f"=======================")
+    print(f"Finished Creating Data.")
+    print(f"=======================")
 
 # Print or plot Data sample to validate
 #datacreator.print_sample(0)
@@ -45,5 +50,5 @@ else:
     else:
         sampleplotter.plot_sample(SAMPLE_TO_PLOT)
 
-datacreator.kill_all_data()
+#datacreator.kill_all_data()
 # ========================================================

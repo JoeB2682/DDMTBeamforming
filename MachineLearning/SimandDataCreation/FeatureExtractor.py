@@ -17,8 +17,11 @@ class FeatureExtractor:
     # Extract Spectral Features
     def extract_spectral_features(self, audio):
         
+        if audio.ndim == 1:
+            audio = audio[np.newaxis, :]
+
         frequencies, times, spectrum = signal.stft(
-            audio[0],
+            audio[0, :],
             fs=self.fs,
             nperseg=self.fft_size,
             noverlap=self.fft_size // 2

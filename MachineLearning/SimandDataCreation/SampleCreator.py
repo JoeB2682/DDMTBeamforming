@@ -40,7 +40,7 @@ class SampleCreator:
 
         # Create random speaker array
         array_type = np.random.randint(0, 2) # Randomly chooses between cicular and linear array
-        num_speakers = np.random.randint(8, 32)
+        num_speakers = np.random.randint(8, 24)
         array_height = np.random.uniform(1, H - 0.5)
         array_name = ""
 
@@ -53,7 +53,7 @@ class SampleCreator:
 
             # Ensure array fits inside room
             max_speakers = int((L - 1) / spacing)
-            num_speakers = np.random.randint(8, min(32, max_speakers))
+            num_speakers = np.random.randint(8, min(24, max_speakers))
             array_width = (num_speakers - 1) * spacing
 
             centre_x = np.random.uniform(
@@ -98,8 +98,8 @@ class SampleCreator:
             speaker_positions
         )
 
-        # random number of points 
-        no_points = np.random.randint(1,10)
+        # random number of points (between 1 and 5)
+        no_points = np.random.randint(1,5)
 
         # Create random waypoints
         path = self.create_path(
@@ -207,10 +207,10 @@ class SampleCreator:
             num_frames
         )
 
-        # Store microphone positions for every frame
-        mic_positions = trajectory.T
+        # Store microphone positions for every path point
+        mic_positions = path.T
         # ================================================
-        # Has tp recalculate TOA again
+        # Has to recalculate TOA again
         tau = []
 
         for position in trajectory:
@@ -222,10 +222,16 @@ class SampleCreator:
         tau = np.array(tau)
         # ================================================
         # create array for each speaker signal
+
+        #speaker_signals = [
+        #    [np.array([])]
+        #    for _ in range(num_speakers)
+        #]
+
         speaker_signals = [
-            np.array([])
-            for _ in range(num_speakers)
-        ]
+                []
+                for _ in range(num_speakers)
+            ]    
 
         # loop through blocks
         for frame, block in enumerate(source_blocks):
@@ -244,14 +250,20 @@ class SampleCreator:
                     block,
                     delay
                 )
+                speaker_signals[speaker].append(delayed_block)
 
                 # concatenate blocks together 
-                speaker_signals[speaker] = np.concatenate(
-                (
-                    speaker_signals[speaker],
-                    delayed_block
-                )
-            )
+                #speaker_signals[speaker] = np.concatenate(
+                #(
+                #    speaker_signals[speaker],
+                #    delayed_block
+                #)
+            #)
+
+        for speaker in range(num_speakers):
+            speaker_signals[speaker] = np.concatenate(
+            speaker_signals[speaker]
+        )
                 
         #print(len(source_blocks))
         #print(len(trajectory))
@@ -289,11 +301,15 @@ class SampleCreator:
 
         audio = self.simulate(room)
 
+        if audio.ndim == 1:
+            audio = audio[np.newaxis, :]
+
         # Fix audio length to 3 seconds 
         audio = self.fix_audio_length(audio, 3)
         print("Audio shape:", audio.shape)
 
         # Extract Spectral Features
+        print("Before feature extraction:", audio.shape, audio.ndim)
         spectral_features = self.extract_spectral_features(audio)
 
         # Get room impulse responses
@@ -332,6 +348,21 @@ class SampleCreator:
         # Only plot the first frame 
         ideal_beamplot = self.plot_beam_pattern(beam_angles, beam_pattern[0], desired_dir[0])
         self.save_ideal_beamplot(ideal_beamplot)
+
+        # ================================================
+        # Convert to smaller data type to reduce file size
+        # ================================================
+
+        audio = audio.astype(np.float32)
+        speaker_positions = speaker_positions.astype(np.float32)
+        trajectory = trajectory.astype(np.float32)
+        tau = tau.astype(np.float32)
+        spectral_features = spectral_features.astype(np.float32)
+        beam_pattern = beam_pattern.astype(np.float32)
+
+        max_order = np.uint8(max_order)
+        num_speakers = np.uint8(num_speakers)
+        array_type = np.uint8(array_type)
 
         # ================================================
         # Create sample of data

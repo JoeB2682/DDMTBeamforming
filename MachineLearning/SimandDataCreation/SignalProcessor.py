@@ -117,14 +117,18 @@ class SignalProcessor:
         file_path = os.path.join(BG_NOISE_FOLDER, random_file)
 
         audio, fs = sf.read(file_path)
+        print("Original audio shape:", audio.shape)
+        print("Dimensions:", audio.ndim)
 
         # force mono if needed
         if audio.ndim > 1:
             audio = audio[:, 0]
-        elif fs != 48000:
+        if fs != 48000:
             # resample if not at 48kHz
             audio = resample_poly(audio, 48000, fs)
 
+        # Fix to 3 secs
+        audio = self.fix_audio_length(audio, 3)
         audio = audio * level
 
         return audio, random_file
@@ -157,14 +161,21 @@ class SignalProcessor:
     # Fix Audio Length (ensures generated audio is the same length),
     # fixes using sample rate specified
     def fix_audio_length(self, audio, length):
-        
-        target_length = self.fs * length
 
-        if audio.shape[1] > target_length:
-            audio = audio[:, :target_length]
+        # ensure mono 1D
+        if audio.ndim > 1:
+            audio = np.mean(audio, axis=1)
+
+        target_length = int(self.fs * length)
+
+        print("Before fixing:", audio.shape)
+        print("Target length:", target_length)
+
+        if len(audio) > target_length:
+            audio = audio[:target_length]
         else:
-            padding = target_length - audio.shape[1]
-            audio = np.pad(audio, ((0,0), (0,padding)))
+            padding = target_length - len(audio)
+            audio = np.pad(audio, (0, padding))
 
         return audio
     

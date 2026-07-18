@@ -34,7 +34,8 @@ class DatasetManager:
         # specify file path
         filepath = os.path.join(TRAINING_FOLDER, filename)
 
-        np.savez(filepath, audio=audio, **room_data)
+        # Compress to reduce file size
+        np.savez_compressed(filepath, audio=audio, **room_data)
 
         print("Saved:", filename)
     # ====================================================

@@ -30,9 +30,9 @@ class BeamPatternGenerator:
     # ====================================================
     # Generate Ideal Beampattern
     def generate_beam_pattern(self,
-                              array_positions,
-                              freq,
-                              listener_pos):
+                          array_positions,
+                          freq,
+                          listener_pos):
 
         c = 343
 
@@ -43,23 +43,14 @@ class BeamPatternGenerator:
         )
 
         # Listener direction
-        listener_vector = (
-            listener_pos - array_center
-        )
+        listener_vector = listener_pos - array_center
 
         listener_angle = np.arctan2(
             listener_vector[1],
             listener_vector[0]
         )
 
-        # Steering direction towards listener
-        steering_direction = np.array([
-            np.cos(listener_angle),
-            np.sin(listener_angle),
-            0
-        ])
-
-        # Get actual radial distance to the listener for near-field scan
+        # Listener distance changes every trajectory frame
         listener_radius = np.linalg.norm(
             listener_vector
         )
@@ -68,62 +59,99 @@ class BeamPatternGenerator:
         scan_angles = np.linspace(
             -np.pi,
             np.pi,
-            361
+            72
         )
 
-        response = []
+        # Directions for every scan angle
+        directions = np.stack(
+            [
+                np.cos(scan_angles),
+                np.sin(scan_angles),
+                np.zeros_like(scan_angles)
+            ],
+            axis=1
+        )
 
-        # Check if the array is linear (all Y coordinates are virtually identical)
-        is_linear = np.allclose(array_positions[1, :], array_positions[1, 0])
+        # Determine array type
+        is_linear = np.allclose(
+            array_positions[1, :],
+            array_positions[1, 0]
+        )
 
-        # Generate pattern
-        for angle in scan_angles:
+        # ------------------------------------------------
+        # Steering delays (depends on listener position)
+        # Recalculated every trajectory frame
+        # ------------------------------------------------
 
-            direction = np.array([
-                np.cos(angle),
-                np.sin(angle),
-                0
-            ])
+        listener_distances = np.linalg.norm(
+            array_positions.T - listener_pos,
+            axis=1
+        )
 
-            beam = 0
+        steering_delays = listener_distances / c
 
-            for speaker in array_positions.T:
+        # ------------------------------------------------
+        # Create scan points for all angles
+        # ------------------------------------------------
 
-                # Steering delay towards listener (unchanged)
-                listener_distance = np.linalg.norm(listener_pos - speaker)
-                steering_delay = listener_distance / c
-
-                # FIX: Check geometry type for scan points
-                if is_linear:
-                    # For a linear array, use a far-field projection 
-                    # to keep phase relationships coherent across the line
-                    scan_point = array_center + (direction * 100.0)
-                else:
-                    # For a circular array, stick to the near-field radius
-                    scan_point = array_center + (direction * listener_radius)
-
-                scan_distance = np.linalg.norm(scan_point - speaker)
-                scan_delay = scan_distance / c
-
-                # Narrowband phase response
-                beam += np.exp(
-                    -1j *
-                    2 *
-                    np.pi *
-                    freq *
-                    (steering_delay - scan_delay)
-                )
-
-            response.append(
-                np.abs(beam)
+        if is_linear:
+            scan_points = (
+                array_center
+                +
+                directions * 100.0
+            )
+        else:
+            scan_points = (
+                array_center
+                +
+                directions * listener_radius
             )
 
-        response = np.array(response)
+        # ------------------------------------------------
+        # Distance from every scan point to every speaker
+        #
+        #  Shape:
+        #     (angles, speakers)
+        # ------------------------------------------------
+
+        scan_distances = np.linalg.norm(
+            scan_points[:, None, :]
+            -
+            array_positions.T[None, :, :],
+            axis=2
+        )
+
+        scan_delays = scan_distances / c
+
+        # ------------------------------------------------
+        # Phase response
+        #
+        # angles x speakers
+        # ------------------------------------------------
+
+        phase = np.exp(
+            -1j *
+            2 *
+            np.pi *
+            freq *
+            (
+                steering_delays[None, :]
+                -
+                scan_delays
+            )
+        )
+
+        # Sum speakers
+        beam = np.sum(
+            phase,
+            axis=1
+        )
+
+        response = np.abs(beam)
 
         # Normalise
         response /= np.max(response)
 
-        # Convert to dB
         response_db = 20*np.log10(
             response + 1e-12
         )
