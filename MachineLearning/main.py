@@ -9,7 +9,11 @@
 #    
 # ========================================================
 # Module Imports
+import os
 import torch as t
+import numpy as np
+import pandas as pd
+
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
@@ -18,6 +22,18 @@ from torchvision import datasets
 # Header Imports
 from TrainingFunctions import TrainingHelper
 from BeamNet import BeamNet
+# ========================================================
+# Directories
+
+# Base Project Directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Training Data Directory
+TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
+
+# Validation Data Directory
+VALIDATION_FOLDER = os.path.join(BASE_DIR, "ValidationData")
+
 # ========================================================
 # Constants (hyperparameters)
 BATCH_SIZE = 128

@@ -35,7 +35,7 @@ if SAMPLES_TO_CREATE > 0:
     print(f"=======================")
 
 # Print or plot Data sample to validate
-#datacreator.print_sample(0)
+datacreator.print_sample(555)
 
 # plots one after another so doesn't break too horrifically
 # (easier to kill)

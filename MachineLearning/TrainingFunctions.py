@@ -8,11 +8,24 @@
 #    
 # ========================================================
 # Imports
+import os
 import torch as t
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 from torchvision import datasets
+# ========================================================
+# Directories
+
+# Base Project Directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Training Data Directory
+TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
+
+# Validation Data Directory
+VALIDATION_FOLDER = os.path.join(BASE_DIR, "ValidationData")
+
 # ========================================================
 # Model Class
 class TrainingHelper():
@@ -22,17 +35,6 @@ class TrainingHelper():
 
             self.device = device
             self.epochs = epochs
-
-    # ====================================================
-    # Get Training and Validation Datasets
-    def download_Datasets():
-
-        # Training Data
-        #train_data = 
-
-        #Validation_data = 
-
-        pass
 
     # ====================================================
     # Define one epoch

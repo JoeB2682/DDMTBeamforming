@@ -173,7 +173,7 @@ float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float 
 		if (std::abs(x[i]) > thresh)
 			return (float)i / srate;
 	}
-	return 0.0f;
+	return -1.0f;
 }
 //===============================================================================
 void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
@@ -193,7 +193,8 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	// Calculates tau using estimate + receiver arrival
 	float predictedMicArrival = 0.0f;
 
-	for (int i = 0; i < das->N; i++)predictedMicArrival = std::max(predictedMicArrival, das->tau[i] + das->tau_rx[i]);
+	// Sum Speaker delay calculated from bright point only with the time of arrival to the mic 
+	for (int i = 0; i < das->N; i++) predictedMicArrival = std::max(predictedMicArrival, das->tau[i] + das->tau_rx[i]);
 
 	// measured mic arrival 
 	float measuredMicArrival = estimateMicTOA(micbuffer, das->sampleRate, thresh);
@@ -202,11 +203,20 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	std::vector<float> tauRXCorrected = das->tau_rx;
 
 	// apply correction to source TOI
-	for (int i = 0; i < das->N; i++) {
-		das->tau_Corrected[i] += delta;
-		tauRXCorrected[i] += delta;
+	float timingCorrection = 0.0f;
+	timingCorrection = delta;   // or filtered delta
+
+	for (int i = 0; i < das->N; i++)
+	{
+		das->tau_Corrected[i] = das->tau[i] + timingCorrection;
 	}
 
+	/*
+	DBG("predicted " << predictedMicArrival);
+	DBG("measured " << measuredMicArrival);
+	
+	*/
+	//DBG("delta " << delta);
 	// Uses own generate functions
 	if (wideband)
 		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band);
