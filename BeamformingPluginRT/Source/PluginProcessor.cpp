@@ -15,7 +15,11 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
                        ) 
 #endif
 {
+    // Instanciate Motion Tracker
+    motiontracker = std::make_unique<MotionTrackerHandler>();
 
+    if(motiontracker)
+        motiontracker->connect();
 }
 
 BeamformingRTPluginAudioProcessor::~BeamformingRTPluginAudioProcessor()
@@ -190,6 +194,11 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     // Get input level after processing (threshold)
     miclevel = micBuffer.getMagnitude(0, 0, micBuffer.getNumSamples());
     //DBG(miclevel);
+
+    // Get mocap coordinates
+    position = motiontracker->getPosition();
+
+   //DBG(position.x << position.y << position.z);
 }
 
 //==============================================================================

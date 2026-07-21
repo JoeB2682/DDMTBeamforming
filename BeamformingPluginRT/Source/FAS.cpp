@@ -203,19 +203,17 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	std::vector<float> tauRXCorrected = das->tau_rx;
 
 	// apply correction to source TOI
-	float timingCorrection = 0.0f;
-	timingCorrection = delta;   // or filtered delta
-
-	for (int i = 0; i < das->N; i++)
-	{
-		das->tau_Corrected[i] = das->tau[i] + timingCorrection;
+	for (int i = 0; i < das->N; i++) {
+		das->tau_Corrected[i] = delta;
+		//DBG(das->tau_Corrected[i]);
+		tauRXCorrected[i] = delta;
 	}
 
 	/*
 	DBG("predicted " << predictedMicArrival);
 	DBG("measured " << measuredMicArrival);
-	
 	*/
+
 	//DBG("delta " << delta);
 	// Uses own generate functions
 	if (wideband)

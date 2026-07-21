@@ -1,9 +1,5 @@
 //===============================================================================
-
-#pragma once
-
 #include "fracDelFIR.h"
-
 //===============================================================================
 fracDelFIR::fracDelFIR(int ntaps, int ArraySize, int srate, float freq, bool iswideband, std::shared_ptr<FrequencyBand> band) :
 	N(ntaps),

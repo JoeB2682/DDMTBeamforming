@@ -7,6 +7,7 @@
 #include "DAS.h"
 #include "FAS.h"
 #include "FFTProcessor.h"
+#include "MotionTrackerHandler.h"
 
 //==================================================================================
 // Chainsettings keeps track of parameter states 
@@ -87,6 +88,11 @@ public:
 
     float ArrayRadius = 1.5; // meters
     float miclevel;
+
+    // Motion Tracker
+    std::shared_ptr<MotionTrackerHandler> motiontracker;
+    Position position;
+    float x, y, z;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)
