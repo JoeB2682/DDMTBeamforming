@@ -15,7 +15,7 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
                        ) 
 #endif
 {
-    // Instanciate Motion Tracker
+    // Instanciate and Connect Motion Tracker
     motiontracker = std::make_unique<MotionTrackerHandler>();
 
     if(motiontracker)
@@ -129,6 +129,7 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     float brightY = chainsettings.brighty;
     float thresh = chainsettings.Thresh;
     float inpgain = chainsettings.inpgain;
+    bool MTrack = chainsettings.MTrack;
 
     //DBG("isBypass = " << (bypass ? "true" : "false"));
 
@@ -141,6 +142,24 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     brightX *= ArrayRadius;
     brightY *= ArrayRadius;
 
+    //DBG("BrightPointX: " << brightX << " BrightPointY: " << brightY);
+
+    // Get mocap coordinates
+    position = motiontracker->getPosition();
+
+    //DBG(position.x << position.y << position.z);
+    //DBG("MTrack " << (MTrack ? "true" : "false"));
+
+    // map motion track data
+    float MtrackXMapped = juce::jmap(position.x, -1.24f, 0.551f, -ArrayRadius, ArrayRadius);
+    float MtrackYMapped = juce::jmap(position.x, -0.f, 0.52f, -ArrayRadius, ArrayRadius);
+
+    // if toggle use motion tracking
+    if (MTrack) {
+        brightX = MtrackXMapped;
+        brightY = MtrackYMapped;
+    }
+       
     // Allows bypassing button
     if (bypass) return;
 
@@ -194,11 +213,6 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     // Get input level after processing (threshold)
     miclevel = micBuffer.getMagnitude(0, 0, micBuffer.getNumSamples());
     //DBG(miclevel);
-
-    // Get mocap coordinates
-    position = motiontracker->getPosition();
-
-   //DBG(position.x << position.y << position.z);
 }
 
 //==============================================================================
@@ -222,6 +236,7 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
     settings.brighty = apvts.getRawParameterValue("BrightY")->load();
     settings.Thresh = apvts.getRawParameterValue("thresh")->load();
     settings.inpgain = apvts.getRawParameterValue("inpgain")->load();
+    settings.MTrack = apvts.getRawParameterValue("MTrack")->load();
 }
 
 // Abstracted parameter crap into helper file

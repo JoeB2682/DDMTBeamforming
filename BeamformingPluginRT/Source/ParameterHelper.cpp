@@ -26,6 +26,7 @@ void ParameterHelper::addParameters(
     // Buttons
     layout.add(std::make_unique<juce::AudioParameterBool>("Bypass", "Bypass", false));
     layout.add(std::make_unique<juce::AudioParameterBool>("Outtype", "Outtype", false));
+    layout.add(std::make_unique<juce::AudioParameterBool>("MTrack", "MTrack", false));
 
     // XY Grid
     layout.add(std::make_unique<juce::AudioParameterFloat>("BrightX","BrightX", -1.0f, 1.0f, 0.0f));

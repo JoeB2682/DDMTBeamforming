@@ -34,20 +34,20 @@ private:
     RoundedButtonLookandFeel roundedbuttonlookandfeel;
 
     //Toggle Buttons 
-    TextButton bypassbutton, outputtypebutton;
+    TextButton bypassbutton, outputtypebutton, mtrackbutton;
 
     // Sliders
     juce::Slider gainSlider, channelSlider, threshslider, inpgainslider;
 
     // Labels
     Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel, 
-          threshsliderlabel, inputmeterlabel, inpgainsliderlabel;
+          threshsliderlabel, inputmeterlabel, inpgainsliderlabel, mtrackbuttonlabel;
 
     // Parameter Attachments
     std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment, 
                                                              threshsliderattachment, inpgainsliderattachment;
 
-    std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment;
+    std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment, mtrackbuttonattachment;
 
     // XY Bright Point Mover
     BrightPointPlot brightpointplot;

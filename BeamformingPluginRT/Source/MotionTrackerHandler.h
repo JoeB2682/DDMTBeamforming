@@ -8,7 +8,9 @@
 // 
 // Link to NatNet SDK source:
 // 
-// https://www.optitrack.com/support/downloads
+// https://old.optitrack.com/support/downloads/developer-tools.html
+// 
+// Has to use SDK version 2.8 to work with Motive 1.8.0
 // 
 // created by Joseph Bozzo
 // 
@@ -17,7 +19,6 @@
 #pragma once
 
 #include <NatNetTypes.h>
-#include <NatNetCAPI.h>
 #include <NatNetClient.h>
 #include <atomic>
 #include <JuceHeader.h>
@@ -42,7 +43,7 @@ public:
 private:
 
 	// Callback for when motion tracking frame arrives from Motive
-	static void NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData);
+	static void DataHandler(sFrameOfMocapData* data, void* pUserData);
 
 	NatNetClient* client;
 

@@ -99,6 +99,24 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
             };
 
         addAndMakeVisible(outputtypebutton);
+
+        mtrackbutton.setClickingTogglesState(true);
+        mtrackbuttonattachment = EditorParameterHelper::createButtonAttachment
+        (audioProcessor.apvts, "MTrack", mtrackbutton, &roundedbuttonlookandfeel);
+
+        mtrackbutton.setLookAndFeel(&roundedbuttonlookandfeel);
+        mtrackbutton.setButtonText("OFF");
+
+        mtrackbuttonlabel.setText("Motion Tracking", juce::dontSendNotification);
+        mtrackbuttonlabel.setJustificationType(juce::Justification::centred);
+        mtrackbuttonlabel.attachToComponent(&mtrackbutton, false);
+
+        mtrackbutton.onClick = [this]
+            {
+                mtrackbutton.setButtonText(mtrackbutton.getToggleState() ? "OFF" : "ON");
+            };
+
+        addAndMakeVisible(mtrackbutton);
     }
 
     // Bright Point Plot
@@ -133,6 +151,8 @@ BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEdito
     bypassbutton.setLookAndFeel(nullptr);
     channelSlider.setLookAndFeel(nullptr);
     threshslider.setLookAndFeel(nullptr);
+    outputtypebutton.setLookAndFeel(nullptr);
+    mtrackbutton.setLookAndFeel(nullptr);
 
     setLookAndFeel(nullptr);
 }
@@ -169,6 +189,7 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
     // Buttons
     bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, beamvisualiser.getBottom() - 50, 50, 50);
     outputtypebutton.setBounds(channelSlider.getX() + (channelSlider.getWidth() - 80) / 2, beamvisualiser.getBottom() - 50, 80, 50);
+    mtrackbutton.setBounds(outputtypebutton.getX(), outputtypebutton.getBottom() + 35, 80, 50);
 
     inputMeter.setBounds(threshslider.getX(), threshslider.getBottom() + 43, threshslider.getWidth(), 20);
 
@@ -181,6 +202,8 @@ void BeamformingRTPluginAudioProcessorEditor::timerCallback()
 {
     auto x = audioProcessor.apvts.getRawParameterValue("BrightX")->load();
     auto y = audioProcessor.apvts.getRawParameterValue("BrightY")->load();
+    
+    bool MTrack = audioProcessor.apvts.getRawParameterValue("MTrack")->load();
 
     x *= audioProcessor.ArrayRadius;
     y *= audioProcessor.ArrayRadius;
