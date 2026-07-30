@@ -9,7 +9,9 @@
 # Created by: Joseph Bozzo
 # ========================================================
 import numpy as np
+
 from fracDelFIR import FilterGenerator
+from BeamEvaluator import BeamEvaluator
 # ========================================================
 class SampleCreator:
     # ====================================================
@@ -113,58 +115,6 @@ class SampleCreator:
         # Create trajectory vectpr
         trajectory = self.create_trajectory(path)
 
-        tau = []
-
-        # Recaulculate TOA as listener moves
-        for position in trajectory:
-            frame_tau = self.calculate_TOA(
-                speaker_positions,
-                position
-            )
-            tau.append(frame_tau)
-
-        tau = np.array(tau)
-
-        # ================================================
-        # Create Geometry Based FIR Coefficients
-        # ================================================
-
-        # Initialise coeff array
-        fir_coefficients = []
-
-        # Instanciate Filter Generator
-        filter_generator = FilterGenerator(
-            N=64,
-            ArraySize=num_speakers,
-            Fs=self.fs
-        )
-
-        # Generate FIR coefficients for every trajectory frame
-        for frame in range(len(tau)):
-
-            # coeffs for current frame
-            frame_coefficients = []
-
-            # current tau vals for frame
-            current_tau = tau[frame]
-            tauMax = np.max(current_tau)
-
-            # Generate coefficient for every speaker
-            for speaker in range(num_speakers):
-                b = filter_generator.generate_coefficients(current_tau[speaker], tauMax)
-
-                # add to coeff vector
-                frame_coefficients.append(b)
-
-            # add current frame to coeff container
-            fir_coefficients.append(frame_coefficients)
-
-        # add to float 32 type array
-        fir_coefficients = np.array(
-            fir_coefficients,
-            dtype=np.float32
-        )
-
         # ================================================
         # Background Noise Position and Creation
         # ================================================
@@ -249,25 +199,74 @@ class SampleCreator:
         )
 
         # Store microphone positions for every path point
-        mic_positions = path.T
+        mic_positions = trajectory.T
+
         # ================================================
-        # Has to recalculate TOA again
+        # Calculate TOA for current trajectory
+        # ================================================
+
         tau = []
 
         for position in trajectory:
+
             frame_tau = self.calculate_TOA(
-            speaker_positions,
-            position)
+                speaker_positions,
+                position
+            )
             tau.append(frame_tau)
 
         tau = np.array(tau)
-        # ================================================
-        # create array for each speaker signal
 
-        #speaker_signals = [
-        #    [np.array([])]
-        #    for _ in range(num_speakers)
-        #]
+        relative_tau = np.zeros_like(tau)
+
+        for frame in range(len(tau)):
+            tauMax = np.max(tau[frame])
+            relative_tau[frame] = tauMax - tau[frame]
+
+        # ================================================
+        # Create Geometry Based FIR Coefficients
+        # ================================================
+
+        # Initialise coeff array
+        fir_coefficients = []
+
+        # Instanciate Filter Generator
+        filter_generator = FilterGenerator(
+            N=64,
+            ArraySize=num_speakers,
+            Fs=self.fs
+        )
+
+        # Generate FIR coefficients for every trajectory frame
+        for frame in range(len(tau)):
+
+            # coeffs for current frame
+            frame_coefficients = []
+
+            # current tau vals for frame
+            current_tau = tau[frame]
+            tauMax = np.max(current_tau)
+            current_relative_tau = relative_tau[frame]
+
+            # Generate coefficient for every speaker
+            for speaker in range(num_speakers):
+
+                b = filter_generator.generate_coefficients(current_relative_tau[speaker], tauMax)
+
+                # add to coeff vector
+                frame_coefficients.append(b)
+
+            # add current frame to coeff container
+            fir_coefficients.append(frame_coefficients)
+
+        # add to float 32 type array
+        fir_coefficients = np.array(
+            fir_coefficients,
+            dtype=np.float32
+        )
+
+        print("len(tau):", len(tau))
+        print("tau.shape:", tau.shape)
 
         speaker_signals = [[]for _ in range(num_speakers)]    
 
@@ -290,14 +289,6 @@ class SampleCreator:
                 )
                 speaker_signals[speaker].append(delayed_block)
 
-                # concatenate blocks together 
-                #speaker_signals[speaker] = np.concatenate(
-                #(
-                #    speaker_signals[speaker],
-                #    delayed_block
-                #)
-            #)
-
         for speaker in range(num_speakers):
             speaker_signals[speaker] = np.concatenate(
             speaker_signals[speaker]
@@ -305,6 +296,10 @@ class SampleCreator:
                 
         #print(len(source_blocks))
         #print(len(trajectory))
+
+        # Calculate Listener Velocity 
+        velocity = np.diff(trajectory, axis=0)
+        velocity = np.vstack([velocity[0], velocity])
 
         # ================================================
         # Adding Speaker Delays and S/Rs to Room
@@ -369,11 +364,14 @@ class SampleCreator:
         beam_patterns = []
         desired_dir = []
 
+        # Frequencies across bandwidth
+        frequencies = np.linspace(200, 1900, 32)
+
         # Recalculate beampatterns for every trajectory frame
         for position in trajectory:
             angles, response, listener_angle = self.generate_beam_pattern(
                 speaker_positions,
-                est_narrow_freq,
+                frequencies,
                 position
             )
             beam_patterns.append(response)
@@ -384,8 +382,30 @@ class SampleCreator:
         desired_dir = np.array(desired_dir)
 
         # Only plot the first frame 
-        ideal_beamplot = self.plot_beam_pattern(beam_angles, beam_pattern[0], desired_dir[0])
+        ideal_beamplot = self.plot_beam_pattern(beam_angles, beam_pattern[0], desired_dir[0], "Ideal Wideband Beam Pattern")
         self.save_ideal_beamplot(ideal_beamplot)
+
+        # ================================================
+        # Apply coefficients to the beam
+        # ================================================
+        
+        beam_evaluator = BeamEvaluator()
+        
+        freqsacrossband = np.linspace(200, 1900)
+        
+        filtered_beam = beam_evaluator.evaluate_fir_beam(
+            speaker_positions,
+            fir_coefficients,
+            angles=beam_angles,
+            listener_pos=trajectory
+        )
+
+        beam_error = np.abs(filtered_beam - beam_pattern)
+
+        # ================================================
+        # Plot for comparisons
+        filtered_beamplot = self.plot_beam_pattern(beam_angles, filtered_beam[0], desired_dir[0], "FIR Filtered Beam Pattern")
+        self.save_filtered_beamplot(filtered_beamplot)
 
         # ================================================
         # Convert to smaller data type to reduce file size
@@ -397,6 +417,9 @@ class SampleCreator:
         tau = tau.astype(np.float32)
         spectral_features = spectral_features.astype(np.float32)
         beam_pattern = beam_pattern.astype(np.float32)
+        filtered_beam = filtered_beam.astype(np.float32)
+        relative_tau = relative_tau.astype(np.float32)
+        beam_error = beam_error.astype(np.float32)
 
         max_order = np.uint8(max_order)
         num_speakers = np.uint8(num_speakers)
@@ -419,16 +442,20 @@ class SampleCreator:
             "Background_noise_position" : np.array(bgnoise_position),
             "listener_start_pos": np.array(listener_start),
             "trajectory" : trajectory,
+            "listener_velocity": velocity.astype(np.float32),
             "Signal_Type" : signal_name,
             "Signal_Data" : signal_data,
             "Background_Noise" : bgsignal_data,
             "tau": tau,
+            "relative_tau": relative_tau,
             "FIR_Coefficients": np.array(fir_coefficients),
             "mic_positions": mic_positions,
             "spectral_features": spectral_features,
             "rir": rir,
             "Beam_Patterns" : beam_pattern,
+            "FIR_Beam_Patterns": filtered_beam,
             "Beam_Angles" : beam_angles,
+            "Beam_error" : beam_error,
             "Desired_Angle" : desired_dir
         }
 

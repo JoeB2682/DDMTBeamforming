@@ -9,9 +9,6 @@
 # I saw comeone on linkdin using pyargus for beam plotting
 # in python so though it was a good idea...
 #
-# Even though i'm not just using narrowband, this will assume 
-# narrowband but will still allow rough directivity estimation
-#
 # Created by: Joseph Bozzo
 # ========================================================
 import os
@@ -31,7 +28,7 @@ class BeamPatternGenerator:
     # Generate Ideal Beampattern
     def generate_beam_pattern(self,
                           array_positions,
-                          freq,
+                          frequencies,
                           listener_pos):
 
         c = 343
@@ -129,25 +126,26 @@ class BeamPatternGenerator:
         # angles x speakers
         # ------------------------------------------------
 
-        phase = np.exp(
+        # Wideband response accumulator
+        response = np.zeros(len(scan_angles))
+
+        for freq in frequencies:
+
+            phase = np.exp(
             -1j *
             2 *
             np.pi *
             freq *
-            (
-                steering_delays[None, :]
-                -
-                scan_delays
-            )
-        )
+            (steering_delays[None, :] - scan_delays))
 
-        # Sum speakers
-        beam = np.sum(
+            beam = np.sum(
             phase,
-            axis=1
-        )
+            axis=1)
 
-        response = np.abs(beam)
+            response += np.abs(beam)
+
+        # Average over all frequencies
+        response /= len(frequencies)
 
         # Normalise
         response /= np.max(response)
@@ -167,7 +165,8 @@ class BeamPatternGenerator:
     def plot_beam_pattern(self,
                       angles,
                       response,
-                      listener_angle):
+                      listener_angle,
+                      title="Beam Directivity Pattern"):
     
         theta = np.deg2rad(angles)
 
@@ -188,10 +187,8 @@ class BeamPatternGenerator:
             label="Listener direction"
         )
 
-        ax.set_title(
-            "Ideal Narrowband Beam Directivity Pattern"
-        )
-
+        
+        ax.set_title(title)
         ax.legend()
 
         return fig

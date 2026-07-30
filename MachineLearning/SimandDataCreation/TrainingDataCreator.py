@@ -33,8 +33,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Training Data Directory
 TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
 
-# Beam Plot Directory 
+# Beam Plot Directories
 PLOT_FOLDER = os.path.join(BASE_DIR, "IdealBeamPlots")
+FIR_PLOT_FOLDER = os.path.join(BASE_DIR, "FIRBeamPlots")
 # ========================================================
 # Data Creation Class
 class TrainingDataCreator(
@@ -95,6 +96,21 @@ class TrainingDataCreator(
                 # eradicates it 
                 os.remove(filepath)
 
+                # prints delete message
+                print(f"Deleted: {file}")
+
+         # Iterates over each file in FIRPlot data folder
+         for file in os.listdir(FIR_PLOT_FOLDER):
+        
+            # deletes everything with .png extension
+            if file.endswith(".png"):
+        
+                # gets path of current file 
+                filepath = os.path.join(FIR_PLOT_FOLDER, file)
+        
+                # eradicates it 
+                os.remove(filepath)
+        
                 # prints delete message
                 print(f"Deleted: {file}")
  # ========================================================

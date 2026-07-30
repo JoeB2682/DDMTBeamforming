@@ -17,8 +17,9 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
 
-# Beam Plot Directory 
+# Beam Plot Directories
 PLOT_FOLDER = os.path.join(BASE_DIR, "IdealBeamPlots")
+FIR_PLOT_FOLDER = os.path.join(BASE_DIR, "FIRBeamplots")
 # ========================================================
 class DatasetManager:
     # ====================================================
@@ -49,6 +50,18 @@ class DatasetManager:
 
         plot.savefig(filepath, dpi=300, bbox_inches="tight")
 
+        print("Saved:", filename)
+    # ====================================================
+    # Save Filtered Beam Plot For Sample 
+    def save_filtered_beamplot(self, plot):
+
+        sample_number = self.get_next_sample_number()
+    
+        filename = f"sample_{sample_number:05d}.png"
+        filepath = os.path.join(FIR_PLOT_FOLDER, filename)
+    
+        plot.savefig(filepath, dpi=300, bbox_inches="tight")
+    
         print("Saved:", filename)
     # ====================================================
     # Get Next Sample Number (for automatic indexing in folder)
