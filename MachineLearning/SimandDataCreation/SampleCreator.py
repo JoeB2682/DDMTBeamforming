@@ -397,7 +397,7 @@ class SampleCreator:
             speaker_positions,
             fir_coefficients,
             angles=beam_angles,
-            listener_pos=trajectory
+            listener_positions=trajectory
         )
 
         beam_error = np.abs(filtered_beam - beam_pattern)
