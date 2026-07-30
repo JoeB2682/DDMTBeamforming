@@ -205,10 +205,19 @@ void BeamformingRTPluginAudioProcessorEditor::timerCallback()
     
     bool MTrack = audioProcessor.apvts.getRawParameterValue("MTrack")->load();
 
-    x *= audioProcessor.ArrayRadius;
-    y *= audioProcessor.ArrayRadius;
 
-    beamvisualiser.setBrightPoint(x, y);
+    if (MTrack) {
+        beamvisualiser.setBrightPoint(audioProcessor.chainsettings.brightx, audioProcessor.chainsettings.brighty);
+        brightpointplot.setBrightPoint(audioProcessor.chainsettings.brightx, audioProcessor.chainsettings.brighty);
+    }
+    else
+    {
+        x *= audioProcessor.ArrayRadius;
+        y *= audioProcessor.ArrayRadius;
+
+        beamvisualiser.setBrightPoint(x, y);
+    }
+
     beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau);
 
     inputMeter.setLevel(audioProcessor.miclevel);

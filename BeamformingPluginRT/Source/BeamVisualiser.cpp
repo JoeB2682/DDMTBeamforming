@@ -46,16 +46,21 @@ void BeamVisualizer::paint(juce::Graphics& g)
     g.fillAll(juce::Colours::black);
 
     auto area = getLocalBounds().toFloat();
-    float scale = juce::jmin(area.getWidth(), area.getHeight()) / 4.0f;
+    float scale = juce::jmin(area.getWidth(), area.getHeight())
+        / (2.0f * 1.5f / zoom);
 
     auto centre = area.getCentre();
+
+    //DBG(zoom);
 
     for (int ix = 0; ix < resolution; ix++)
     {
         for (int iy = 0; iy < resolution; iy++)
         {
-            float x = ((float)ix / resolution - 0.5f) * 4.0f;
-            float y = ((float)iy / resolution - 0.5f) * 4.0f;
+            float plotSize = (2.0f * 1.5f) / zoom;
+
+            float x = ((float)ix / resolution - 0.5f) * plotSize;
+            float y = ((float)iy / resolution - 0.5f) * plotSize;
 
             float level = calculateBeam(x, y);
 
@@ -80,4 +85,18 @@ void BeamVisualizer::paint(juce::Graphics& g)
     // Component outline
     g.setColour(juce::Colours::white);
     g.drawRect(getLocalBounds().toFloat(), 3.0f);
+}
+
+void BeamVisualizer::mouseWheelMove(const juce::MouseEvent& event,
+    const juce::MouseWheelDetails& wheel)
+{
+    // Scroll up = zoom in
+    // Scroll down = zoom out
+
+    zoom -= wheel.deltaY * 0.1f;
+
+    // Limit zoom range
+    zoom = juce::jlimit(0.25f, 5.0f, zoom);
+
+    repaint();
 }

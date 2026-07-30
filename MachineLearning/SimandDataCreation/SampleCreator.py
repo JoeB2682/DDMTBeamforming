@@ -9,6 +9,7 @@
 # Created by: Joseph Bozzo
 # ========================================================
 import numpy as np
+from fracDelFIR import FilterGenerator
 # ========================================================
 class SampleCreator:
     # ====================================================
@@ -40,7 +41,7 @@ class SampleCreator:
 
         # Create random speaker array
         array_type = np.random.randint(0, 2) # Randomly chooses between cicular and linear array
-        num_speakers = np.random.randint(8, 24)
+        num_speakers = np.random.randint(8, 17)
         array_height = np.random.uniform(1, H - 0.5)
         array_name = ""
 
@@ -125,6 +126,46 @@ class SampleCreator:
         tau = np.array(tau)
 
         # ================================================
+        # Create Geometry Based FIR Coefficients
+        # ================================================
+
+        # Initialise coeff array
+        fir_coefficients = []
+
+        # Instanciate Filter Generator
+        filter_generator = FilterGenerator(
+            N=64,
+            ArraySize=num_speakers,
+            Fs=self.fs
+        )
+
+        # Generate FIR coefficients for every trajectory frame
+        for frame in range(len(tau)):
+
+            # coeffs for current frame
+            frame_coefficients = []
+
+            # current tau vals for frame
+            current_tau = tau[frame]
+            tauMax = np.max(current_tau)
+
+            # Generate coefficient for every speaker
+            for speaker in range(num_speakers):
+                b = filter_generator.generate_coefficients(current_tau[speaker], tauMax)
+
+                # add to coeff vector
+                frame_coefficients.append(b)
+
+            # add current frame to coeff container
+            fir_coefficients.append(frame_coefficients)
+
+        # add to float 32 type array
+        fir_coefficients = np.array(
+            fir_coefficients,
+            dtype=np.float32
+        )
+
+        # ================================================
         # Background Noise Position and Creation
         # ================================================
 
@@ -142,10 +183,10 @@ class SampleCreator:
         # ================================================
 
         # For beam angle stuff
-        est_narrow_freq = np.random.randint(200, 4000)
+        est_narrow_freq = np.random.randint(200, 1900)
 
         # specifies which signal to use
-        signal_type = np.random.randint(1, 6)
+        signal_type = 3 # just use wideband then expand to other signal types
         signal_name = ""
         signal_data = ""
 
@@ -157,8 +198,8 @@ class SampleCreator:
 
         elif signal_type == 2:
             
-            # random narrowband between 200 - 4000Hz
-            freq = np.random.randint(200, 4000)
+            # random narrowband between 200 - 1900Hz
+            freq = np.random.randint(200, 1900)
             est_narrow_freq = freq
 
             # Source = narrowband signal (pure tone)
@@ -168,10 +209,10 @@ class SampleCreator:
 
         elif signal_type == 3:
             
-            # random wideband between 200 - 4000Hz
-            f0 = np.random.randint(200, 1000)
-            f1 = np.random.randint(f0, 2500)
-            f2 = np.random.randint(f1, 4000)
+            # random wideband between 200 - 1900Hz
+            f0 = np.random.randint(200, 600)
+            f1 = np.random.randint(f0 + 100, 1200)
+            f2 = np.random.randint(f1 + 100, 1900)
 
             est_narrow_freq = f0
 
@@ -228,10 +269,7 @@ class SampleCreator:
         #    for _ in range(num_speakers)
         #]
 
-        speaker_signals = [
-                []
-                for _ in range(num_speakers)
-            ]    
+        speaker_signals = [[]for _ in range(num_speakers)]    
 
         # loop through blocks
         for frame, block in enumerate(source_blocks):
@@ -385,6 +423,7 @@ class SampleCreator:
             "Signal_Data" : signal_data,
             "Background_Noise" : bgsignal_data,
             "tau": tau,
+            "FIR_Coefficients": np.array(fir_coefficients),
             "mic_positions": mic_positions,
             "spectral_features": spectral_features,
             "rir": rir,

@@ -28,10 +28,10 @@ public:
     void mouseDrag(const juce::MouseEvent& event) override;
     void mouseUp(const juce::MouseEvent& event) override;
 
+    void setBrightPoint(float x, float y);
+
     juce::Point<float> getBrightPoint();
     std::function<void(float, float)> onPointMoved;
-
-private:
 
     juce::Point<float> getNormalizedPosition(int x, int y);
     juce::Point<float> brightPoint;

@@ -113,11 +113,12 @@ void DAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	*/
 }
 //===============================================================================
-// Sets source positions vector based on specified radius
+// Sets source positions vector based on specified radius (Circular Array)
 void DAS::setsourcePositions(float& radius, std::vector<Point2D>& speakers) 
 {
 	speakers.clear();
 
+	// Iterate Each Speaker
 	for (int i = 0; i < N; ++i)
 	{
 
@@ -127,9 +128,30 @@ void DAS::setsourcePositions(float& radius, std::vector<Point2D>& speakers)
 
 		speakers.push_back(
 			{
-				radius * std::cos(angle),
-				radius * std::sin(angle)
+				radius * std::cos(angle), // x pos
+				radius * std::sin(angle) // y pos
 			});
+	}
+}
+//===============================================================================
+// Sets source positions vector in a Horizontal line, control position through 
+// offsetting y from centre in meters;
+void DAS::setninearhSourcePositions(float& spacing, float& yOffset, float& l, float& w,
+														std::vector<Point2D>& speakers) 
+{
+	speakers.clear();
+
+	// Get Centre of room length (y)
+	float room_centre_y = w * 0.5f;
+
+	// Define Array Centre
+	float array_centre = (N - 1) * spacing * 0.5;
+
+	// Iterate over each speaker
+	for (int i = 0; i < N; i++) 
+	{
+		float x = i * spacing - array_centre;
+		speakers.push_back({ x, room_centre_y + yOffset });
 	}
 }
 //===============================================================================

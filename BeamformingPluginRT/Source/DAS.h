@@ -38,6 +38,7 @@ public:
     // Beamforming functions
     inline void setbrightPoint(Point2D& b, float x, float y);
     void setsourcePositions(float& radius, std::vector<Point2D>& speakers);
+    void setninearhSourcePositions(float& spacing, float& yOffset, float& l, float& w, std::vector<Point2D>& speakers);
     void setreceiverPositions(float& radius, std::vector<Point2D>& receivers);
     void calcsourceTOI(std::vector<float>& tau, std::vector<Point2D>& speakers, Point2D& b);
     void calcReceiverTOI(std::vector<float>& tau_rx, std::vector<Point2D>& speakers, std::vector<Point2D>& receivers);

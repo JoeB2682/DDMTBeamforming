@@ -98,13 +98,8 @@ void BrightPointPlot::mouseUp(const juce::MouseEvent& event)
 //==============================================================================
 juce::Point<float> BrightPointPlot::getNormalizedPosition(int x, int y)
 {
-    float normalizedX =
-        (x - getWidth() / 2.0f) /
-        (getWidth() / 2.0f);
-
-    float normalizedY =
-        (getHeight() / 2.0f - y) /
-        (getHeight() / 2.0f);
+    float normalizedX = (x - getWidth() / 2.0f) / (getWidth() / 2.0f);
+    float normalizedY = (getHeight() / 2.0f - y) / (getHeight() / 2.0f);
 
     return { normalizedX, normalizedY };
 }
@@ -112,5 +107,13 @@ juce::Point<float> BrightPointPlot::getNormalizedPosition(int x, int y)
 juce::Point<float> BrightPointPlot::getBrightPoint()
 {
     return brightPoint;
+}
+//==============================================================================
+void BrightPointPlot::setBrightPoint(float x, float y) 
+{
+    brightPoint.x = x;
+    brightPoint.y = y;
+
+    repaint();
 }
 //==============================================================================

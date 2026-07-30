@@ -31,11 +31,15 @@ public:
     void setFrequency(float freq);
     void paint(juce::Graphics& g) override;
 
+    void mouseWheelMove(const juce::MouseEvent& event,
+        const juce::MouseWheelDetails& wheel) override;
+
     void changeResolution(int Resolution) { resolution = Resolution; }
 
 private:
 
     int resolution = 100;
+    float zoom = 0.71875f;
 
     std::vector<DAS::Point2D> speakers;
     std::vector<float> tau;

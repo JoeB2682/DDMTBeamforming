@@ -14,9 +14,6 @@ from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 from torchvision import datasets
 
-from spatial_cnn import SpatialCNN
-from temporal_cnn import TemporalCNN
-from spectral_cnn import SpectralCNN
 # ========================================================
 # Model Class
 class BeamNet(nn.Module):
@@ -25,10 +22,6 @@ class BeamNet(nn.Module):
     def __init__(self):
 
         super().__init__()
-
-        self.timecnn = TemporalCNN()
-        self.speccnn = SpectralCNN()
-        self.spacecnn = SpatialCNN()
 
         self.fc = nn.Sequential(
             nn.Linear(96,256),

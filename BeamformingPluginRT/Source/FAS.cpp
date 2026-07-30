@@ -70,7 +70,7 @@ void FAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	}
 
 	// Clamp to prevent blowup
-	gain = juce::jlimit(0.0f, 0.01f, gain);
+	//gain = juce::jlimit(0.0f, 0.01f, gain);
 
 	// Calculate relative delays for each speaker and to be use in FIR filters
 	for (int speaker = 0; speaker < das->N; speaker++)

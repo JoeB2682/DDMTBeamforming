@@ -50,7 +50,7 @@ if __name__ == "__main__":
     print("Main")
     
     # Get training data
-    #train_data, _ = 
+    # train_data, _ = 
     #print("Training data downloaded")
 
     # Possibly print data to validate

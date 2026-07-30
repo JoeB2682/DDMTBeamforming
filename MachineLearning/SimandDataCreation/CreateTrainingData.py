@@ -19,6 +19,7 @@ TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
 SAMPLES_TO_CREATE = 0
 SAMPLE_TO_PLOT = -1
 PLOT_ALL = "NO"
+SAMPLE_TO_PRINT = -1
 # ========================================================
 # Instanciate and create data samples
 datacreator = TrainingDataCreator()
@@ -35,7 +36,10 @@ if SAMPLES_TO_CREATE > 0:
     print(f"=======================")
 
 # Print or plot Data sample to validate
-datacreator.print_sample(555)
+if SAMPLE_TO_PRINT >= 0:
+    datacreator.print_sample(SAMPLE_TO_PRINT)
+else:
+    pass
 
 # plots one after another so doesn't break too horrifically
 # (easier to kill)

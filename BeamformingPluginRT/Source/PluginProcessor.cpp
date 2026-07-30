@@ -152,12 +152,16 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
 
     // map motion track data
     float MtrackXMapped = juce::jmap(position.x, -1.24f, 0.551f, -ArrayRadius, ArrayRadius);
-    float MtrackYMapped = juce::jmap(position.x, -0.f, 0.52f, -ArrayRadius, ArrayRadius);
+    float MtrackYMapped = juce::jmap(position.y, 0.0f, 0.52f, -ArrayRadius, ArrayRadius);
 
     // if toggle use motion tracking
     if (MTrack) {
         brightX = MtrackXMapped;
         brightY = MtrackYMapped;
+
+        // Write value back
+        chainsettings.brightx = brightX;
+        chainsettings.brighty = brightY;
     }
        
     // Allows bypassing button
