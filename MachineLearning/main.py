@@ -59,7 +59,7 @@ if __name__ == "__main__":
     #train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE)    
   
     # Instanciate Loss function + Optimiser
-    #loss_fn = nn.CrossEntropyLoss()
+    #loss_fn = MSE()
     #optimiser = torch.optim.Adam(feed_forward_net.parameters(), lr=LEARNINGRATE)
 
     # Train Each NNModel (Pass all prior defined shit)

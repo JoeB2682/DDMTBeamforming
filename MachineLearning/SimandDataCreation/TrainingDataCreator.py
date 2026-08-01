@@ -68,6 +68,12 @@ class TrainingDataCreator(
     # ====================================================
     # Use if angry (deletes all samples in folder)
     def kill_all_data(self):
+
+         confirm = input("Delete all data? type YES: ")
+
+         if confirm != "YES":
+            print("Cancelled")
+            return
          
          # Iterates over each file in training data folder
          for file in os.listdir(TRAINING_FOLDER):

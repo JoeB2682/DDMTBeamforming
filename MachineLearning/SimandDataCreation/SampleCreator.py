@@ -459,6 +459,11 @@ class SampleCreator:
             "Desired_Angle" : desired_dir
         }
 
+        #print(room_data["Beam_Patterns"].shape)
+        #print(room_data["spectral_features"].shape)
+        #print(room_data["Beam_error"].shape)
+        #print(room_data["FIR_Coefficients"].shape)
+
         # Save sample
         self.save_sample(audio, room_data)
 # ========================================================

@@ -16,10 +16,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
 # ========================================================
 # Constants / Params
-SAMPLES_TO_CREATE = 0
+SAMPLES_TO_CREATE = 1000
 SAMPLE_TO_PLOT = -1
 PLOT_ALL = "NO"
-SAMPLE_TO_PRINT = 23
+SAMPLE_TO_PRINT = -1
 # ========================================================
 # Instanciate and create data samples
 datacreator = TrainingDataCreator()
