@@ -39,6 +39,7 @@ VALIDATION_FOLDER = os.path.join(BASE_DIR, "ValidationData")
 BATCH_SIZE = 128
 NO_EPOCHS = 10
 LEARNINGRATE = 0.01
+DEVICE = "gpu"
 # ========================================================
 # Instanciation Station
 trainingHelper = TrainingHelper("cpu", NO_EPOCHS)
@@ -51,21 +52,19 @@ if __name__ == "__main__":
     
     # Get training data
     # train_data, _ = 
-    #print("Training data downloaded")
+    print("Training data downloaded")
 
-    # Possibly print data to validate
-    
     # Create Data Loader for Trainset
-    #train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE)    
+    train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE)    
   
     # Instanciate Loss function + Optimiser
-    #loss_fn = MSE()
-    #optimiser = torch.optim.Adam(feed_forward_net.parameters(), lr=LEARNINGRATE)
+    loss_fn = nn.MSELoss()
+    optimiser = t.optim.Adam(beamnet.parameters(), lr=LEARNINGRATE)
 
     # Train Each NNModel (Pass all prior defined shit)
-    #train(BeamNet, train_data_loader, loss_fn, optimiser, device, NO_EPOCHS)
+    trainingHelper.train(beamnet, train_data_loader, loss_fn, optimiser, DEVICE, NO_EPOCHS)
 
     # Store Model
-    #torch.save(feed_forward_net.state_dict(), "BeamNet.pth")
-
-    #print("Model trained and stored at BeamNet.pth")
+    t.save(beamnet.state_dict(), "BeamNet.pth")
+    print("Model trained and stored at BeamNet.pth")
+# ========================================================

@@ -14,7 +14,7 @@ from PlotSample import Sample_Plotter
 # Dataset Directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
-# ========================================================
+# ======================================================== 
 # Constants / Params
 SAMPLES_TO_CREATE = 1000
 SAMPLE_TO_PLOT = -1
@@ -54,5 +54,4 @@ else:
     else:
         sampleplotter.plot_sample(SAMPLE_TO_PLOT)
 
-#datacreator.kill_all_data()
 # ========================================================

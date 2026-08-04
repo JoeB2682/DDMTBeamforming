@@ -26,44 +26,66 @@ TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
 # ========================================================
 # Model Class
 class TrainingHelper():
+
     # ====================================================
     # Constructor
     def __init__(self, device, epochs):
 
-            self.device = device
-            self.epochs = epochs
+        self.device = device
+        self.epochs = epochs
+
 
     # ====================================================
     # Define one epoch
-    def train_one_epoch(model, data_loader, loss_fn, optimiser, device):
+    def train_one_epoch(self, model, data_loader, loss_fn, optimiser, device):
 
-        #    for inputs, targets in data_loader:
-        #        inputs, targets = inputs.to(device), targets.to(device)
-        #
-        #        # Calculate Loss
-        #        predictions = model(inputs)
-        #        loss = loss_fn(predictions, targets)
-        #
-        #        # Backpropogate Loss Update Weights
-        #        optimiser.zero_grad() # Reset gradients upon each training pass/ batch
-        #        loss.backward()
-        #        optimiser.step()
-        #
-        #    print(f"Loss: {loss.item()}")
+        model.train()
 
-        pass
+        for room, trajectory, fir, beam, targets in data_loader:
+
+            # Move data to GPU/CPU
+            room = room.to(device)
+            trajectory = trajectory.to(device)
+            fir = fir.to(device)
+            beam = beam.to(device)
+            targets = targets.to(device)
+
+            # Forward pass
+            predictions = model(
+                room,
+                trajectory,
+                fir,
+                beam
+            )
+
+            # Calculate loss
+            loss = loss_fn(
+                predictions,
+                targets
+            )
+
+            # Backpropagation
+            optimiser.zero_grad()
+            loss.backward()
+            optimiser.step()
+
+        print(f"Loss: {loss.item()}")
 
     # ====================================================
     # Training Function
-    def train(model, data_loader, loss_fn, optimiser, device, epochs):
-    
-        #    for i in range(epochs):
-        #        print(f"Epoch {i+1}")
-        #        train_one_epoch(model, data_loader, loss_fn, optimiser, device)
-        #        print("---------------------")
-        #
-        #    print("Training Done Lad...")    
-      
-        pass     
+    def train(self, model, data_loader, loss_fn, optimiser, device, epochs):
 
+        model.to(device)
+
+        for i in range(epochs):
+            print(f"Epoch {i+1}")
+            self.train_one_epoch(
+                model,
+                data_loader,
+                loss_fn,
+                optimiser,
+                device
+            )
+            print("---------------------")
+        print("Training Done Lad...")      
 # ========================================================
