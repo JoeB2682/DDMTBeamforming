@@ -21,6 +21,7 @@ from torchvision import datasets
 
 # Header Imports
 from TrainingFunctions import TrainingHelper
+from DatasetLoader import DatasetHandler
 from BeamNet import BeamNet
 # ========================================================
 # Directories
@@ -29,33 +30,43 @@ from BeamNet import BeamNet
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Training Data Directory
-TRAINING_FOLDER = os.path.join(BASE_DIR, "TrainingData")
+DATACREATION_FOLDER = os.path.join(BASE_DIR, "SimandDataCreation")
 
-# Validation Data Directory
-VALIDATION_FOLDER = os.path.join(BASE_DIR, "ValidationData")
+# Training Data Directory
+TRAINING_FOLDER = os.path.join(DATACREATION_FOLDER, "TrainingData")
 
 # ========================================================
 # Constants (hyperparameters)
 BATCH_SIZE = 128
-NO_EPOCHS = 10
+NO_EPOCHS = 1
 LEARNINGRATE = 0.01
-DEVICE = "gpu"
+DEVICE = "cpu"
 # ========================================================
 # Instanciation Station
 trainingHelper = TrainingHelper("cpu", NO_EPOCHS)
+datasethandler = DatasetHandler (TRAINING_FOLDER);
 beamnet = BeamNet()
 # ========================================================
 # Main Running Function
 if __name__ == "__main__":
     
-    print("Main")
-    
     # Get training data
-    # train_data, _ = 
+    train_data = datasethandler
     print("Training data downloaded")
 
     # Create Data Loader for Trainset
     train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE)    
+
+    # ====================================================
+    # Check Dataset Shapes
+    #sample = next(iter(train_data_loader))
+
+    #for item in sample:
+    #    print(item.shape)
+
+    # Stop here for debugging
+    #exit()
+    # ====================================================
   
     # Instanciate Loss function + Optimiser
     loss_fn = nn.MSELoss()

@@ -1,11 +1,11 @@
 # ========================================================
 # 
 # TrainingFunction.py
-#   
+#
 # General class to help with training Neural Networks
 #
 # Created by: Joseph Bozzo
-#    
+#
 # ========================================================
 # Imports
 import os
@@ -34,34 +34,33 @@ class TrainingHelper():
         self.device = device
         self.epochs = epochs
 
-
     # ====================================================
     # Define one epoch
     def train_one_epoch(self, model, data_loader, loss_fn, optimiser, device):
 
         model.train()
 
-        for room, trajectory, fir, beam, targets in data_loader:
+        for room, trajectory, fir, beam, filtered_beam, correction in data_loader:
 
             # Move data to GPU/CPU
             room = room.to(device)
             trajectory = trajectory.to(device)
             fir = fir.to(device)
             beam = beam.to(device)
-            targets = targets.to(device)
+            filtered_beam = filtered_beam.to(device)
+            correction = correction.to(device)
 
-            # Forward pass
-            predictions = model(
+            predicted_correction = model(
                 room,
                 trajectory,
                 fir,
-                beam
+                beam,
+                filtered_beam
             )
 
-            # Calculate loss
             loss = loss_fn(
-                predictions,
-                targets
+                predicted_correction,
+                correction
             )
 
             # Backpropagation
@@ -78,7 +77,9 @@ class TrainingHelper():
         model.to(device)
 
         for i in range(epochs):
+
             print(f"Epoch {i+1}")
+
             self.train_one_epoch(
                 model,
                 data_loader,
@@ -86,6 +87,7 @@ class TrainingHelper():
                 optimiser,
                 device
             )
+
             print("---------------------")
-        print("Training Done Lad...")      
+        print("Training Done Lad...")
 # ========================================================

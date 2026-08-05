@@ -2,7 +2,8 @@
 # 
 # DatasetLoader.py
 #
-# Dataset Handling Class
+# Dataset Handling Class, loads and uses set within main 
+# script
 #
 # Created by: Joseph Bozzo
 #    
@@ -36,7 +37,22 @@ class DatasetHandler(Dataset):
     # Returns Length of the Dataset
     def __len__(self): # dunder method, essentially just override in C++
         return len(self.Data_files)
-    
+
+    # ====================================================
+    # Pads FIR data to maximum speaker size, this is needed 
+    # due to random size generation 
+    def pad_speakers(self, data, max_speakers):
+
+        padded_data = np.zeros(
+            (data.shape[0],
+             max_speakers,
+             data.shape[2]),
+            dtype=np.float32
+        )
+
+        padded_data[:, :data.shape[1], :] = data
+
+        return padded_data
     # ====================================================
     # Gets items from the dataset
     def __getitem__(self, idx):
@@ -46,13 +62,21 @@ class DatasetHandler(Dataset):
             allow_pickle=True
         )
 
+        #print("Room dimensions:", data["room_dimensions"].shape)
+        #print("Absorption:", data["absorption"])
+        #print("RT60:", data["rt60"], data["rt60"].shape)
+        #print("Max order:", data["max_order"])
+        #print("Speakers:", data["num_speakers"])
+        #exit()
+
         room = np.array([
             data["room_dimensions"][0],
             data["room_dimensions"][1],
             data["room_dimensions"][2],
             data["absorption"],
-            data["rt60"],
-            data["max_order"]
+            np.mean(data["rt60"]), # rt60 needs averaging
+            data["max_order"],
+            data["num_speakers"]
         ], dtype=np.float32)
 
         trajectory = np.concatenate([
@@ -75,22 +99,36 @@ class DatasetHandler(Dataset):
 
         trajectory = trajectory.astype(np.float32)
 
+        # FIR Coefficients
+        # Original shape = (Frames, Speakers, Taps)
+
         fir = data["FIR_Coefficients"]
-        fir = np.expand_dims(fir, axis=0)
-        fir = fir.astype(np.float32)
+        fir = self.pad_speakers(fir, max_speakers=24)
+        fir = np.expand_dims(fir, axis=0).astype(np.float32)
 
         beam = data["Beam_Patterns"]
         beam = np.expand_dims(beam, axis=0)
         beam = beam.astype(np.float32)
 
+        # FIR Correction Target
+        # Original shape = (Frames, Speakers, Taps)
         correction = data["FIR_Correction"]
+        correction = self.pad_speakers(correction, max_speakers=24)
         correction = correction.astype(np.float32)
 
+        filtered_beam = data["FIR_Beam_Patterns"]
+        filtered_beam = np.expand_dims(
+            filtered_beam,
+            axis=0
+        ).astype(np.float32)
+
+        # Return Loaded Data as Tensors
         return (
             t.tensor(room),
             t.tensor(trajectory),
             t.tensor(fir),
             t.tensor(beam),
+            t.tensor(filtered_beam),
             t.tensor(correction)
         )
 # ========================================================
