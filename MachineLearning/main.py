@@ -2,6 +2,10 @@
 # 
 # Data-Driven Augmentation of Geometry Based
 # Beamforming for Motion Tracked Audio.
+# 
+# Note: ensure that the GPU 'cuda' version of torchvision 
+# is installed before running this as by default the cpu 
+# only version is available. SO DON'T TRAIN ON LAPTOP!!!!!
 #   
 # Main running script.
 #
@@ -35,27 +39,39 @@ DATACREATION_FOLDER = os.path.join(BASE_DIR, "SimandDataCreation")
 # Training Data Directory
 TRAINING_FOLDER = os.path.join(DATACREATION_FOLDER, "TrainingData")
 
+# Saved Models Directory
+MODELS_FOLDER = os.path.join(BASE_DIR, "Models")
+
+# Training Log Directory
+TRAINING_LOG = os.path.join(BASE_DIR, "TrainingLog")
+
 # ========================================================
 # Constants (hyperparameters)
 BATCH_SIZE = 128
-NO_EPOCHS = 1
-LEARNINGRATE = 0.01
-DEVICE = "cpu"
+NO_EPOCHS = 256
+LEARNINGRATE = 0.0001
+DEVICE = "cuda" # "cuda" = gpu
 # ========================================================
 # Instanciation Station
-trainingHelper = TrainingHelper("cpu", NO_EPOCHS)
+trainingHelper = TrainingHelper(DEVICE, NO_EPOCHS, LEARNINGRATE)
 datasethandler = DatasetHandler (TRAINING_FOLDER);
 beamnet = BeamNet()
 # ========================================================
 # Main Running Function
 if __name__ == "__main__":
+
+    # Determine Current Training Attempt 
+    training_attempt = len([
+        file for file in os.listdir("TrainingLog")
+        if file.endswith(".csv")
+    ]) + 1
     
     # Get training data
     train_data = datasethandler
     print("Training data downloaded")
 
-    # Create Data Loader for Trainset
-    train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE)    
+    # Create Data Loader for Trainset, USE SHUFFLE
+    train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True)    
 
     # ====================================================
     # Check Dataset Shapes
@@ -67,7 +83,6 @@ if __name__ == "__main__":
     # Stop here for debugging
     #exit()
     # ====================================================
-  
     # Instanciate Loss function + Optimiser
     loss_fn = nn.MSELoss()
     optimiser = t.optim.Adam(beamnet.parameters(), lr=LEARNINGRATE)
@@ -76,6 +91,10 @@ if __name__ == "__main__":
     trainingHelper.train(beamnet, train_data_loader, loss_fn, optimiser, DEVICE, NO_EPOCHS)
 
     # Store Model
-    t.save(beamnet.state_dict(), "BeamNet.pth")
-    print("Model trained and stored at BeamNet.pth")
+    model_filename = f"BeamNet_{training_attempt:05d}.pth"
+    model_path = os.path.join(MODELS_FOLDER, model_filename)
+
+    t.save(beamnet.state_dict(), model_path)
+
+    print(f"Model trained and stored at {model_path}")
 # ========================================================
