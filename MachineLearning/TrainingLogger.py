@@ -24,6 +24,7 @@ TRAINING_LOG = os.path.join(BASE_DIR, "TrainingLog")
 # Training Logger Class
 class TrainingLogger:
     # ====================================================
+    # Constructor
     def __init__(self, train_attempt, learning_rate):
 
         # Create CSV filename
