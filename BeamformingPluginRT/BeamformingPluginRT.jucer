@@ -5,6 +5,20 @@
               companyWebsite="JABAudio" pluginFormats="buildStandalone,buildVST3"
               pluginVST3Category="Spatial">
   <MAINGROUP id="Rhl5bl" name="BeamformingPluginRT">
+    <GROUP id="{AB02B076-30EE-D574-EC44-124082C04864}" name="Models">
+      <FILE id="WyFeSn" name="BeamNet_ONNX_00001.onnx" compile="0" resource="0"
+            file="../MachineLearning/Models/BeamNet_ONNX_00001.onnx"/>
+      <FILE id="iu6Neq" name="BeamNet_ONNX_00001.onnx.data" compile="0" resource="0"
+            file="../MachineLearning/Models/BeamNet_ONNX_00001.onnx.data"/>
+      <FILE id="XtrD8l" name="BeamNet_ONNX_00002.onnx" compile="0" resource="0"
+            file="../MachineLearning/Models/BeamNet_ONNX_00002.onnx"/>
+      <FILE id="o0DA98" name="BeamNet_ONNX_00002.onnx.data" compile="0" resource="0"
+            file="../MachineLearning/Models/BeamNet_ONNX_00002.onnx.data"/>
+      <FILE id="Puczxm" name="BeamNet_ONNX_00003.onnx" compile="0" resource="0"
+            file="../MachineLearning/Models/BeamNet_ONNX_00003.onnx"/>
+      <FILE id="sODqrI" name="BeamNet_ONNX_00003.onnx.data" compile="0" resource="0"
+            file="../MachineLearning/Models/BeamNet_ONNX_00003.onnx.data"/>
+    </GROUP>
     <GROUP id="{1422CC43-EBE4-CAD8-3180-EDF52D661575}" name="Beamformers">
       <FILE id="gOer76" name="DAS.cpp" compile="1" resource="0" file="Source/DAS.cpp"/>
       <FILE id="NF75kU" name="DAS.h" compile="0" resource="0" file="Source/DAS.h"/>
@@ -24,6 +38,10 @@
             file="Source/MotionTrackerHandler.cpp"/>
       <FILE id="sk0QcK" name="MotionTrackerHandler.h" compile="0" resource="0"
             file="Source/MotionTrackerHandler.h"/>
+      <FILE id="UyBLcA" name="NeuralNetworkHandler.cpp" compile="1" resource="0"
+            file="Source/NeuralNetworkHandler.cpp"/>
+      <FILE id="ShAuKG" name="NeuralNetworkHandler.h" compile="0" resource="0"
+            file="Source/NeuralNetworkHandler.h"/>
       <FILE id="WM4AFL" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
       <FILE id="VxE2ya" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
     </GROUP>
@@ -76,13 +94,13 @@
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
                JUCE_ASIO="1"/>
   <EXPORTFORMATS>
-    <VS2022 targetFolder="Builds/VisualStudio2022" externalLibraries="NatNetLib.lib&#10;">
+    <VS2022 targetFolder="Builds/VisualStudio2022" externalLibraries="NatNetLib.lib;&#10;onnxruntime.lib;&#10;">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0;&#10;C:\Users\josep\Desktop\NatNetSDK\include&#10;"
-                       libraryPath="C:\Users\josep\Desktop\NatNetSDK\lib\x64;&#10;"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0;&#10;C:\Users\josep\Desktop\NatNetSDK\include;&#10;C:\Users\josep\Documents\C++ Libs\onnxruntime\include;&#10;"
+                       libraryPath="C:\Users\josep\Desktop\NatNetSDK\lib\x64;&#10;C:\Users\josep\Documents\C++ Libs\onnxruntime\lib;&#10;"
                        winArchitecture="x64"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0;&#10;C:\Users\josep\Desktop\NatNetSDK\include&#10;"
-                       libraryPath="C:\Users\josep\Desktop\NatNetSDK\lib\x64;&#10;"
+        <CONFIGURATION isDebug="0" name="Release" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0;&#10;C:\Users\josep\Desktop\NatNetSDK\include;&#10;C:\Users\josep\Documents\C++ Libs\onnxruntime\include;&#10;"
+                       libraryPath="C:\Users\josep\Desktop\NatNetSDK\lib\x64;&#10;C:\Users\josep\Documents\C++ Libs\onnxruntime\lib;&#10;"
                        winArchitecture="x64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
