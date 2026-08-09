@@ -76,12 +76,14 @@
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
                JUCE_ASIO="1"/>
   <EXPORTFORMATS>
-    <VS2022 targetFolder="Builds/VisualStudio2022" externalLibraries="NatNetLib.lib">
+    <VS2022 targetFolder="Builds/VisualStudio2022" externalLibraries="NatNetLib.lib&#10;">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0;&#10;C:\Users\josep\Desktop\NatNetSDK\include"
-                       libraryPath="C:\Users\josep\Desktop\NatNetSDK\lib\x64"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0;&#10;C:\Users\josep\Desktop\NatNetSDK\include"
-                       libraryPath="C:\Users\josep\Desktop\NatNetSDK\lib\x64"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0;&#10;C:\Users\josep\Desktop\NatNetSDK\include&#10;"
+                       libraryPath="C:\Users\josep\Desktop\NatNetSDK\lib\x64;&#10;"
+                       winArchitecture="x64"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="BeamformingPluginRT" headerPath="C:\Users\josep\Documents\C++ Libs\eigen-5.0.0;&#10;C:\Users\josep\Desktop\NatNetSDK\include&#10;"
+                       libraryPath="C:\Users\josep\Desktop\NatNetSDK\lib\x64;&#10;"
+                       winArchitecture="x64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../Documents/JUCE and Projects/Libraries/JUCE-master/JUCE-master/modules"/>
