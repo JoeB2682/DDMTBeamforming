@@ -43,6 +43,12 @@ FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow,
 	// just an optimised distortion filter.
 	mvdr = std::make_unique<MVDR>(dasObject, 1, dasObject->sampleRate, fftprocessor);
 	//mvdr = std::make_unique<MVDR>(dasObject, ADD NO MICS WHEN ARRAY EXTENDED!, dasObject->sampleRate, fftprocessor);
+
+	// Neural Network Handler
+	networkhandler = std::make_unique<NeuralNetworkHandler>();
+
+	// Load NN
+	networkhandler->loadModel(3);
 }
 //===============================================================================
 // Generates full narrowband signal for each source (calc correct offset prior)
@@ -215,6 +221,17 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	*/
 
 	//DBG("delta " << delta);
+
+
+
+	// Run Neural Network
+
+
+
+
+	// Apply Correction to FIR Filters
+
+
 	// Uses own generate functions
 	if (wideband)
 		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band);

@@ -169,32 +169,22 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
 {
     auto bounds = getLocalBounds();
 
-    // Bright Point Plot
-    brightpointplot.setBounds(20, 20, 200, 200);
+    float plotsyoffset = 220;
+    float slideryoffset = 60;
 
-    // Beam Plot
-    beamvisualiser.setBounds(brightpointplot.getRight() + 20, brightpointplot.getY(), brightpointplot.getWidth(), brightpointplot.getHeight());
+    brightpointplot.setBounds(20, 20 + plotsyoffset, 200, 200);
+    beamvisualiser.setBounds(240, 20 + plotsyoffset, 200, 200);
 
-    // Sliders
-    int startX = beamvisualiser.getRight() + 20;
-    int endX = getRight() - 20;
+    gainSlider.setBounds(20, 60 + slideryoffset, 100, 100);
+    inpgainslider.setBounds(120, 60 + slideryoffset, 100, 100);
+    threshslider.setBounds(240, 60 + slideryoffset, 100, 100);
+    channelSlider.setBounds(340, 60 + slideryoffset, 100, 100);
 
-    std::vector<juce::Component*> s = { &gainSlider, &channelSlider, &threshslider };
+    bypassbutton.setBounds(13, 25, 50, 50);
+    outputtypebutton.setBounds(465, 440, 80, 50);
+    mtrackbutton.setBounds(555, 440, 80, 50);
 
-    float step = (float)(endX - startX - 100) / (s.size() - 1);
-
-    for (int i = 0; i < s.size(); i++)
-        s[i]->setBounds(startX + (int)(i * step), beamvisualiser.getY() + 20, 100, 100);
-
-    // Buttons
-    bypassbutton.setBounds(gainSlider.getX() + (gainSlider.getWidth() - 50) / 2, beamvisualiser.getBottom() - 50, 50, 50);
-    outputtypebutton.setBounds(channelSlider.getX() + (channelSlider.getWidth() - 80) / 2, beamvisualiser.getBottom() - 50, 80, 50);
-    mtrackbutton.setBounds(outputtypebutton.getX(), outputtypebutton.getBottom() + 35, 80, 50);
-
-    inputMeter.setBounds(threshslider.getX(), threshslider.getBottom() + 43, threshslider.getWidth(), 20);
-
-    // More Sliders
-    inpgainslider.setBounds(inputMeter.getX(), inputMeter.getBottom() + 40, inputMeter.getWidth(), 100);
+    inputMeter.setBounds(20, 470, 420, 20);
 }
 //==============================================================================
 // Timer Callback 
@@ -204,7 +194,6 @@ void BeamformingRTPluginAudioProcessorEditor::timerCallback()
     auto y = audioProcessor.apvts.getRawParameterValue("BrightY")->load();
     
     bool MTrack = audioProcessor.apvts.getRawParameterValue("MTrack")->load();
-
 
     if (MTrack) {
         beamvisualiser.setBrightPoint(audioProcessor.chainsettings.brightx, audioProcessor.chainsettings.brighty);

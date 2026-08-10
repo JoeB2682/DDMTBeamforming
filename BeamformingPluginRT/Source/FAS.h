@@ -16,6 +16,7 @@
 #include "DAS.h"
 #include "fracDelFIR.h"
 #include "MVDR.h"
+#include "NeuralNetworkHandler.h"
 //===============================================================================
 class FAS
 {
@@ -62,5 +63,10 @@ public:
 	std::unique_ptr<MVDR> mvdr;
 	std::shared_ptr<FFTProcessor> fftprocessor;
 	std::vector<std::unique_ptr<Oscillator>> lowoscbank, highoscbank;	
+
+	// Neural Network Handler
+	std::unique_ptr<NeuralNetworkHandler> networkhandler;
+
+	// 
 };
 //===============================================================================

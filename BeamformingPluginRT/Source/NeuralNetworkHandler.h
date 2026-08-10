@@ -30,6 +30,12 @@ public:
 	void loadModel(int modelno);
 	void checkModelIO(Ort::Session& session);
 
+	std::vector<float> runModel(std::vector<float>& room,
+								std::vector<float>& trajectory,
+								std::vector<float>& fir,
+								std::vector<float>& beam,
+								std::vector<float>& filteredBeam);
+
 private:
 
 	Ort::AllocatorWithDefaultOptions allocator;

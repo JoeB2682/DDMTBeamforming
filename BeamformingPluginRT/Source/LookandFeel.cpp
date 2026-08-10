@@ -26,8 +26,30 @@ void MainUIlookandFeel::drawmainUI(juce::Graphics& g, juce::Component& c)
     g.drawRoundedRectangle(bounds, cornerRadius, outlinethickness);
 
     float lineY = cornerRadius + outlinethickness * 0.5f;
-
     g.fillRect(0.0f, lineY - (outlinethickness / 2.0f), (float)c.getWidth(), outlinethickness);
+
+    // Draw line across full width
+    float liney = 85.f;
+    g.fillRect(0.0f, liney, (float)c.getWidth(), outlinethickness);
+
+    // More stupid UI lines
+    g.fillRect(455.0f, liney, outlinethickness, (float)c.getHeight() - liney);
+    g.fillRect(75.0f, lineY, outlinethickness, (float)c.getHeight() - 415);
+    g.fillRect(455.0f, 410.0f, 380.0f, outlinethickness);
+
+    // Title Box
+    g.setColour(juce::Colours::white);
+    g.setFont(juce::FontOptions("Cascadia Code", 28.0f, juce::Font::bold));
+
+    g.drawText(
+        "Neural Beamforming Optimiser",
+        0,
+        17,
+        c.getWidth(),
+        50,
+        juce::Justification::centred,
+        false
+    );
 }
 //==============================================================================
 // Slider Look
