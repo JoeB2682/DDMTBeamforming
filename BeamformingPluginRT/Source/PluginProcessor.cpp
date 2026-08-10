@@ -138,6 +138,7 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     float Height = chainsettings.Height;
     float MaxOrder = chainsettings.MaxOrder;
     float Absorption = chainsettings.Absorption;
+    float rt60 = chainsettings.rt60;
 
     //DBG("isBypass = " << (bypass ? "true" : "false"));
 
@@ -189,7 +190,8 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
         // Generate beamformer output (BE CAREFUL IF RADIUS IS WRONG GAIN WILL SPIKE!!!!!!)
         //DelayandSumBeamformer->processcircularDAS(buffer, brightX, brightY, 1000.f, 0.5f, gain);
 
-        FilterandSumBeamformer->processcircularFAS(buffer, micBuffer, brightX, brightY, 0.5f, gain, thresh, f0, f1, f2);
+        FilterandSumBeamformer->processcircularFAS(buffer, micBuffer, brightX, brightY, 0.5f, gain, thresh, 
+                                                   f0, f1, f2, Length, Width, Height, Absorption, MaxOrder, rt60, DelayandSumBeamformer->totalNoOutputChannels);
 
         //DBG("Raw BrightX: " << brightX);
         //DBG("Raw BrightY: " << brightY);
@@ -257,6 +259,7 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
     settings.Height = apvts.getRawParameterValue("Height")->load();
     settings.MaxOrder = apvts.getRawParameterValue("MaxOrder")->load();
     settings.Absorption = apvts.getRawParameterValue("Absorption")->load();
+    settings.rt60 = apvts.getRawParameterValue("RT60")->load();
 }
 
 // Abstracted parameter crap into helper file

@@ -40,14 +40,16 @@ private:
     // Sliders
     juce::Slider gainSlider, channelSlider, threshslider, inpgainslider,
         f0slider, f1slider, f2slider,
-        lengthslider, widthslider, heightslider, maxorderslider, absorptionslider;
+        lengthslider, widthslider, heightslider, maxorderslider, absorptionslider,
+        rt60slider;
 
     // Labels
     Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel,
         threshsliderlabel, inputmeterlabel, inpgainsliderlabel, mtrackbuttonlabel,
         f0sliderlabel, f1sliderlabel, f2sliderlabel,
         lengthsliderlabel, widthsliderlabel, heightsliderlabel,
-        maxordersliderlabel, absorptionsliderlabel;
+        maxordersliderlabel, absorptionsliderlabel,
+        rt60sliderlabel;
 
     // Parameter Attachments
     std::unique_ptr<EditorParameterHelper::SliderAttachment>
@@ -56,7 +58,7 @@ private:
         f0sliderattachment, f1sliderattachment, f2sliderattachment,
         lengthsliderattachment, widthsliderattachment,
         heightsliderattachment, maxordersliderattachment,
-        absorptionsliderattachment;
+        absorptionsliderattachment, rt60sliderattachment;
 
     std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment, mtrackbuttonattachment;
 

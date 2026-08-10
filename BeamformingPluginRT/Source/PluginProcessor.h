@@ -23,6 +23,7 @@ struct ChainSettings {
     float Length{  }, Width, Height{  };
     float MaxOrder{  };
     float Absorption{  };
+    float rt60{  };
 };
 //==================================================================================
 class BeamformingRTPluginAudioProcessor  : public juce::AudioProcessor

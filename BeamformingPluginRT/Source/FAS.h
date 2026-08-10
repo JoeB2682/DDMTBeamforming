@@ -51,7 +51,9 @@ public:
 							float f2);
 
 	void processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
-							float bright_x, float bright_y, float amplitude, float gain, float thresh, float f0, float f1, float f2);
+							float bright_x, float bright_y, float amplitude, float gain, float thresh, 
+							float f0, float f1, float f2, float Length, float Width, float Height,
+							float Absorption, float MaxOrder, float rt60, int NumSpeakers);
 
 	void setBandFreqs(const std::shared_ptr<FrequencyBand>& frequencyband, float f0, float f1, float f2);
 

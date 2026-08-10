@@ -252,6 +252,19 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
         absorptionsliderlabel.setText("A", juce::dontSendNotification);
         absorptionsliderlabel.setJustificationType(juce::Justification::left);
         absorptionsliderlabel.attachToComponent(&absorptionslider, true);
+
+        addAndMakeVisible(rt60slider);
+        rt60sliderattachment = EditorParameterHelper::createSliderAttachment(
+            audioProcessor.apvts, "RT60", rt60slider, &sliderlookandfeel);
+        rt60slider.setLookAndFeel(&sliderlookandfeel);
+        rt60slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+        rt60slider.setRange(0.1f, 2.0f, 0.01f);
+        rt60slider.setTextBoxStyle(juce::Slider::TextBoxAbove, false, 60, 30);
+        rt60slider.setNumDecimalPlacesToDisplay(2);
+
+        rt60sliderlabel.setText("RT60", juce::dontSendNotification);
+        rt60sliderlabel.setJustificationType(juce::Justification::centred);
+        rt60sliderlabel.attachToComponent(&rt60slider, false);
     }
 }
 
@@ -319,9 +332,11 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
 
     bypassbutton.setBounds(13, 25, 50, 50);
     outputtypebutton.setBounds(465, 440, 80, 50);
-    mtrackbutton.setBounds(555, 440, 80, 50);
+    mtrackbutton.setBounds(558, 440, 80, 50);
 
     inputMeter.setBounds(20, 470, 420, 20);
+
+    rt60slider.setBounds(645, 440, 80, 80);
 }
 //==============================================================================
 // Timer Callback 

@@ -43,6 +43,7 @@ void ParameterHelper::addParameters(
     layout.add(std::make_unique<juce::AudioParameterFloat>("Height", "Height", 2.5f, 3.5f, 2.5f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("MaxOrder", "MaxOrder", 5.0f, 19.08f, 8.0f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("Absorption", "Absorption", 0.2f, 0.8f, 0.5f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("RT60", "RT60", 0.1f, 2.0f, 0.5f));
 }
 //==============================================================================
 // Creates Slider Attachment
