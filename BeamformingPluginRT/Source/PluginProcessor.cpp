@@ -80,9 +80,15 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
     // FFT Processor
     fftprocessor = std::make_shared<FFTProcessor>(11, getSampleRate());
 
+    // Neural Network Handler
+    networkhandler = std::make_unique<NeuralNetworkHandler>();
+
     // Instanciate Beamformers
     DelayandSumBeamformer = std::make_shared<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
     FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 64, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, true, fftprocessor);
+
+    // Load NN
+    networkhandler->loadModel(3);
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources()

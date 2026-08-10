@@ -8,6 +8,7 @@
 #include "FAS.h"
 #include "FFTProcessor.h"
 #include "MotionTrackerHandler.h"
+#include "NeuralNetworkHandler.h"
 
 //==================================================================================
 // Chainsettings keeps track of parameter states 
@@ -93,6 +94,9 @@ public:
     std::shared_ptr<MotionTrackerHandler> motiontracker;
     Position position;
     float x, y, z;
+
+    // Neural Network Handler
+    std::unique_ptr<NeuralNetworkHandler> networkhandler;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)
