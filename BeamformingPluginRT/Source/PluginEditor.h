@@ -38,16 +38,25 @@ private:
     TextButton bypassbutton, outputtypebutton, mtrackbutton;
 
     // Sliders
-    juce::Slider gainSlider, channelSlider, threshslider, inpgainslider, f0slider, f1slider, f2slider;
+    juce::Slider gainSlider, channelSlider, threshslider, inpgainslider,
+        f0slider, f1slider, f2slider,
+        lengthslider, widthslider, heightslider, maxorderslider, absorptionslider;
 
     // Labels
     Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel,
-        threshsliderlabel, inputmeterlabel, inpgainsliderlabel, mtrackbuttonlabel, f0sliderlabel, f1sliderlabel, f2sliderlabel;
+        threshsliderlabel, inputmeterlabel, inpgainsliderlabel, mtrackbuttonlabel,
+        f0sliderlabel, f1sliderlabel, f2sliderlabel,
+        lengthsliderlabel, widthsliderlabel, heightsliderlabel,
+        maxordersliderlabel, absorptionsliderlabel;
 
     // Parameter Attachments
-    std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment, 
-                                                             threshsliderattachment, inpgainsliderattachment,
-                                                             f0sliderattachment, f1sliderattachment, f2sliderattachment;
+    std::unique_ptr<EditorParameterHelper::SliderAttachment>
+        gainAttachment, channelsliderattachment,
+        threshsliderattachment, inpgainsliderattachment,
+        f0sliderattachment, f1sliderattachment, f2sliderattachment,
+        lengthsliderattachment, widthsliderattachment,
+        heightsliderattachment, maxordersliderattachment,
+        absorptionsliderattachment;
 
     std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment, mtrackbuttonattachment;
 

@@ -20,6 +20,9 @@ struct ChainSettings {
     float Thresh{  };
     float inpgain{ 400.f };
     float f0{ 483.33f }, f1{ 1050.0f }, f2{ 1616.67f };
+    float Length{  }, Width, Height{  };
+    float MaxOrder{  };
+    float Absorption{  };
 };
 //==================================================================================
 class BeamformingRTPluginAudioProcessor  : public juce::AudioProcessor

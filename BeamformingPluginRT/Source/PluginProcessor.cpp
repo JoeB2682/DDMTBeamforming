@@ -133,6 +133,11 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     float f0 = chainsettings.f0;
     float f1 = chainsettings.f1;
     float f2 = chainsettings.f2;
+    float Length = chainsettings.Length;
+    float Width = chainsettings.Width;
+    float Height = chainsettings.Height;
+    float MaxOrder = chainsettings.MaxOrder;
+    float Absorption = chainsettings.Absorption;
 
     //DBG("isBypass = " << (bypass ? "true" : "false"));
 
@@ -247,6 +252,11 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
     settings.f0 = apvts.getRawParameterValue("F0")->load();
     settings.f1 = apvts.getRawParameterValue("F1")->load();
     settings.f2 = apvts.getRawParameterValue("F2")->load();
+    settings.Length = apvts.getRawParameterValue("Length")->load();
+    settings.Width = apvts.getRawParameterValue("Width")->load();
+    settings.Height = apvts.getRawParameterValue("Height")->load();
+    settings.MaxOrder = apvts.getRawParameterValue("MaxOrder")->load();
+    settings.Absorption = apvts.getRawParameterValue("Absorption")->load();
 }
 
 // Abstracted parameter crap into helper file

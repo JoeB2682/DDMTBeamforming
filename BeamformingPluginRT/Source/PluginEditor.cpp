@@ -185,6 +185,74 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
         f2sliderlabel.setJustificationType(juce::Justification::left);
         f2sliderlabel.attachToComponent(&f2slider, true);
     }
+
+    {
+        // Room Params
+        addAndMakeVisible(lengthslider);
+        lengthsliderattachment = EditorParameterHelper::createSliderAttachment(
+            audioProcessor.apvts, "Length", lengthslider, &whitesliderlookandfeel);
+        lengthslider.setLookAndFeel(&whitesliderlookandfeel);
+        lengthslider.setSliderStyle(juce::Slider::LinearHorizontal);
+        lengthslider.setRange(4.0f, 8.0f, 0.01f);
+        lengthslider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 30);
+        lengthslider.setNumDecimalPlacesToDisplay(2);
+
+        lengthsliderlabel.setText("L", juce::dontSendNotification);
+        lengthsliderlabel.setJustificationType(juce::Justification::left);
+        lengthsliderlabel.attachToComponent(&lengthslider, true);
+
+        addAndMakeVisible(widthslider);
+        widthsliderattachment = EditorParameterHelper::createSliderAttachment(
+            audioProcessor.apvts, "Width", widthslider, &whitesliderlookandfeel);
+        widthslider.setLookAndFeel(&whitesliderlookandfeel);
+        widthslider.setSliderStyle(juce::Slider::LinearHorizontal);
+        widthslider.setRange(4.0f, 8.0f, 0.01f);
+        widthslider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 30);
+        widthslider.setNumDecimalPlacesToDisplay(2);
+
+        widthsliderlabel.setText("W", juce::dontSendNotification);
+        widthsliderlabel.setJustificationType(juce::Justification::left);
+        widthsliderlabel.attachToComponent(&widthslider, true);
+
+        addAndMakeVisible(heightslider);
+        heightsliderattachment = EditorParameterHelper::createSliderAttachment(
+            audioProcessor.apvts, "Height", heightslider, &whitesliderlookandfeel);
+        heightslider.setLookAndFeel(&whitesliderlookandfeel);
+        heightslider.setSliderStyle(juce::Slider::LinearHorizontal);
+        heightslider.setRange(2.5f, 3.5f, 0.01f);
+        heightslider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 30);
+        heightslider.setNumDecimalPlacesToDisplay(2);
+
+        heightsliderlabel.setText("H", juce::dontSendNotification);
+        heightsliderlabel.setJustificationType(juce::Justification::left);
+        heightsliderlabel.attachToComponent(&heightslider, true);
+
+        addAndMakeVisible(maxorderslider);
+        maxordersliderattachment = EditorParameterHelper::createSliderAttachment(
+            audioProcessor.apvts, "MaxOrder", maxorderslider, &whitesliderlookandfeel);
+        maxorderslider.setLookAndFeel(&whitesliderlookandfeel);
+        maxorderslider.setSliderStyle(juce::Slider::LinearHorizontal);
+        maxorderslider.setRange(5.0f, 19.08f, 0.01f);
+        maxorderslider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 30);
+        maxorderslider.setNumDecimalPlacesToDisplay(2);
+
+        maxordersliderlabel.setText("MO.", juce::dontSendNotification);
+        maxordersliderlabel.setJustificationType(juce::Justification::left);
+        maxordersliderlabel.attachToComponent(&maxorderslider, true);
+
+        addAndMakeVisible(absorptionslider);
+        absorptionsliderattachment = EditorParameterHelper::createSliderAttachment(
+            audioProcessor.apvts, "Absorption", absorptionslider, &whitesliderlookandfeel);
+        absorptionslider.setLookAndFeel(&whitesliderlookandfeel);
+        absorptionslider.setSliderStyle(juce::Slider::LinearHorizontal);
+        absorptionslider.setRange(0.2f, 0.8f, 0.01f);
+        absorptionslider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 30);
+        absorptionslider.setNumDecimalPlacesToDisplay(2);
+
+        absorptionsliderlabel.setText("A", juce::dontSendNotification);
+        absorptionsliderlabel.setJustificationType(juce::Justification::left);
+        absorptionsliderlabel.attachToComponent(&absorptionslider, true);
+    }
 }
 
 BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEditor()
@@ -233,6 +301,21 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
 
     f2sliderlabel.setBounds(415 + xf0offset, 160 + slideryoffset + yf0offset, 25, 30);
     f2slider.setBounds(440 + xf0offset, 155 + slideryoffset + yf0offset, 300, 30);
+
+    lengthsliderlabel.setBounds(415 + xf0offset, 200 + slideryoffset + yf0offset, 25, 30);
+    lengthslider.setBounds(440 + xf0offset, 195 + slideryoffset + yf0offset, 300, 30);
+
+    widthsliderlabel.setBounds(415 + xf0offset, 240 + slideryoffset + yf0offset, 25, 30);
+    widthslider.setBounds(440 + xf0offset, 235 + slideryoffset + yf0offset, 300, 30);
+
+    heightsliderlabel.setBounds(415 + xf0offset, 280 + slideryoffset + yf0offset, 25, 30);
+    heightslider.setBounds(440 + xf0offset, 275 + slideryoffset + yf0offset, 300, 30);
+
+    maxordersliderlabel.setBounds(415 + xf0offset, 320 + slideryoffset + yf0offset, 25, 30);
+    maxorderslider.setBounds(440 + xf0offset, 315 + slideryoffset + yf0offset, 300, 30);
+
+    absorptionsliderlabel.setBounds(415 + xf0offset, 360 + slideryoffset + yf0offset, 25, 30);
+    absorptionslider.setBounds(440 + xf0offset, 355 + slideryoffset + yf0offset, 300, 30);
 
     bypassbutton.setBounds(13, 25, 50, 50);
     outputtypebutton.setBounds(465, 440, 80, 50);
