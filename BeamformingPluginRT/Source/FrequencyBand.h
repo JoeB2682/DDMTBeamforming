@@ -13,7 +13,7 @@
 //===============================================================================
 struct FrequencyBand
 {
-	double low, high;
+	double low, high, mid;
 
 	double lowerBandwidth() { return centreFrequency() - low; }
 	double upperBandwidth() { return high - centreFrequency(); }

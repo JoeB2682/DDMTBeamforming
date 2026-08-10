@@ -51,6 +51,14 @@ FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow,
 	networkhandler->loadModel(3);
 }
 //===============================================================================
+// Sets the band frequencies using parameter vals
+void FAS::setBandFreqs(const std::shared_ptr<FrequencyBand>& frequencyband, float f0, float f1, float f2)
+{
+	frequencyband->low = f0;
+	frequencyband->mid = f1;
+	frequencyband->high = f2;
+}
+//===============================================================================
 // Generates full narrowband signal for each source (calc correct offset prior)
 void FAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 						     std::vector<std::unique_ptr<fracDelFIR>>& filterbank,
@@ -103,8 +111,13 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	float amplitude,
 	std::vector<float>& tau,
 	float gain,
-	const std::shared_ptr<FrequencyBand>& frequencyband)
+	const std::shared_ptr<FrequencyBand>& frequencyband,
+	float f0,
+	float f1,
+	float f2)
 {
+	setBandFreqs(frequencyband, f0, f1, f2);
+
 	// Calculate max of time of arrival array
 	float tauMax = *std::max_element(tau.begin(), tau.end());
 
@@ -135,11 +148,12 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	// Calculate relative delays for each speaker and to be use in FIR filters
 	for (int speaker = 0; speaker < das->N; speaker++)
 	{
-		// Main Osc bank from DAS set at narrowband
-		oscbank[speaker]->setFrequency(freq);
-		oscbank[speaker]->setTargetAmplitude(amplitude);
-
 		if (frequencyband != nullptr) {
+
+			// mid bank low end of the band
+			oscbank[speaker]->setFrequency(frequencyband->mid);
+			oscbank[speaker]->setTargetAmplitude(amplitude);
+
 			// lower bank low end of the band
 			lowoscbank[speaker]->setFrequency(frequencyband->low);
 			lowoscbank[speaker]->setTargetAmplitude(amplitude);
@@ -157,7 +171,7 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 		for (int sample = 0; sample < buffer.getNumSamples(); sample++)
 		{
 			// Sum oscillators to generate chord smaple 
-			float input = ((das->oscbank[speaker]->incrementSample() +
+			float input = ((oscbank[speaker]->incrementSample() +
 							lowoscbank[speaker]->incrementSample()   +
 							highoscbank[speaker]->incrementSample()) / 3.0f) * gain;
 
@@ -183,7 +197,7 @@ float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float 
 }
 //===============================================================================
 void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
-							 float bright_x, float bright_y, float amplitude, float gain, float thresh) 
+							 float bright_x, float bright_y, float amplitude, float gain, float thresh, float f0, float f1, float f2) 
 {
 	if (!das->setPosflag)
 	{
@@ -234,7 +248,7 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 
 	// Uses own generate functions
 	if (wideband)
-		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band);
+		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band, f0, f1, f2);
 	else
 		generateNarrowband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain);
 	

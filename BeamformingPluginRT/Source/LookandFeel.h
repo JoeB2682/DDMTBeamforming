@@ -79,3 +79,23 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RoundedButtonLookandFeel)
 };
 //==============================================================================
+// Slider Look and Feel (not rotary dial)
+class WhiteSliderLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+    WhiteSliderLookAndFeel();
+
+    void drawLinearSlider(juce::Graphics& g,
+        int x,
+        int y,
+        int width,
+        int height,
+        float sliderPos,
+        float minSliderPos,
+        float maxSliderPos,
+        const juce::Slider::SliderStyle style,
+        juce::Slider& slider) override;
+
+    int getSliderThumbRadius(juce::Slider& slider) override;
+};
+//==============================================================================

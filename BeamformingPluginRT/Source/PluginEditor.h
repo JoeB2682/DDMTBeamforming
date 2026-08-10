@@ -32,20 +32,22 @@ private:
     SliderLookAndFeel        sliderlookandfeel;
     ButtonLookandFeel        buttonlookandfeel;
     RoundedButtonLookandFeel roundedbuttonlookandfeel;
+    WhiteSliderLookAndFeel   whitesliderlookandfeel;
 
     //Toggle Buttons 
     TextButton bypassbutton, outputtypebutton, mtrackbutton;
 
     // Sliders
-    juce::Slider gainSlider, channelSlider, threshslider, inpgainslider;
+    juce::Slider gainSlider, channelSlider, threshslider, inpgainslider, f0slider, f1slider, f2slider;
 
     // Labels
-    Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel, 
-          threshsliderlabel, inputmeterlabel, inpgainsliderlabel, mtrackbuttonlabel;
+    Label gainsliderlabel, channelsliderlabel, bypassbuttonlabel, outputtypebuttonlabel,
+        threshsliderlabel, inputmeterlabel, inpgainsliderlabel, mtrackbuttonlabel, f0sliderlabel, f1sliderlabel, f2sliderlabel;
 
     // Parameter Attachments
     std::unique_ptr<EditorParameterHelper::SliderAttachment> gainAttachment, channelsliderattachment, 
-                                                             threshsliderattachment, inpgainsliderattachment;
+                                                             threshsliderattachment, inpgainsliderattachment,
+                                                             f0sliderattachment, f1sliderattachment, f2sliderattachment;
 
     std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment, mtrackbuttonattachment;
 

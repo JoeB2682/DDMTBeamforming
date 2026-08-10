@@ -45,10 +45,15 @@ public:
 							float amplitude,
 							std::vector<float>& tau,
 							float gain,
-							const std::shared_ptr<FrequencyBand>& frequencyband);
+							const std::shared_ptr<FrequencyBand>& frequencyband, 
+							float f0,
+						    float f1,
+							float f2);
 
 	void processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
-							float bright_x, float bright_y, float amplitude, float gain, float thresh);
+							float bright_x, float bright_y, float amplitude, float gain, float thresh, float f0, float f1, float f2);
+
+	void setBandFreqs(const std::shared_ptr<FrequencyBand>& frequencyband, float f0, float f1, float f2);
 
 public:
 
@@ -66,7 +71,5 @@ public:
 
 	// Neural Network Handler
 	std::unique_ptr<NeuralNetworkHandler> networkhandler;
-
-	// 
 };
 //===============================================================================

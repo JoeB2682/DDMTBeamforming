@@ -219,3 +219,85 @@ void RoundedButtonLookandFeel::drawButtonBackground(juce::Graphics& g,
         3.0f);
 }
 //==============================================================================
+// Slider Look and Feel (not rotary dial)
+WhiteSliderLookAndFeel::WhiteSliderLookAndFeel()
+{
+    setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+    setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
+    setColour(juce::Slider::trackColourId, juce::Colours::white);
+}
+
+void WhiteSliderLookAndFeel::drawLinearSlider(juce::Graphics& g,
+    int x,
+    int y,
+    int width,
+    int height,
+    float sliderPos,
+    float /*minSliderPos*/,
+    float /*maxSliderPos*/,
+    const juce::Slider::SliderStyle /*style*/,
+    juce::Slider& /*slider*/)
+{
+    // --- Track ---
+    float trackY = y + height * 0.4f;
+    float trackHeight = height * 0.2f;
+
+    juce::Rectangle<float> trackBounds(
+        (float)x,
+        trackY,
+        (float)width,
+        trackHeight
+    );
+
+    g.setColour(juce::Colours::white.withAlpha(0.2f));
+    g.fillRect(trackBounds);
+
+    // --- Filled Track ---
+    juce::Rectangle<float> fill(trackBounds);
+
+    fill.setWidth(sliderPos - (float)x);
+
+    g.setColour(juce::Colours::white);
+    g.fillRect(fill);
+
+    // --- Thumb ---
+    const float maxThumbRadius = 12.0f;
+    const float thumbRadius = juce::jmin(height * 0.3f, maxThumbRadius);
+
+    const float cx = juce::jlimit(
+        x + thumbRadius,
+        x + width - thumbRadius,
+        sliderPos
+    );
+
+    const float cy = y + height * 0.5f;
+
+    // Outer white circle
+    g.setColour(juce::Colours::white);
+
+    g.fillEllipse(
+        cx - thumbRadius,
+        cy - thumbRadius,
+        thumbRadius * 2.0f,
+        thumbRadius * 2.0f
+    );
+
+    // Inner black circle
+    const float innerRadius = thumbRadius * 0.9f;
+
+    g.setColour(juce::Colours::black);
+
+    g.fillEllipse(
+        cx - innerRadius,
+        cy - innerRadius,
+        innerRadius * 2.0f,
+        innerRadius * 2.0f
+    );
+}
+
+int WhiteSliderLookAndFeel::getSliderThumbRadius(juce::Slider& /*slider*/)
+{
+    return 12;
+}
+//==============================================================================

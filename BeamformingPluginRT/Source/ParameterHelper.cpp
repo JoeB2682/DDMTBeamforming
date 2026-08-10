@@ -32,6 +32,10 @@ void ParameterHelper::addParameters(
     layout.add(std::make_unique<juce::AudioParameterFloat>("BrightX","BrightX", -1.0f, 1.0f, 0.0f));
     layout.add(std::make_unique<juce::AudioParameterFloat>( "BrightY", "BrightY", -1.0f, 1.0f, 0.0f));
 
+    // Tone Freqs
+    layout.add(std::make_unique<juce::AudioParameterFloat>("F0", "F0", 200.0f, 766.67f, 483.33f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("F1", "F1", 766.67f, 1333.33f, 1050.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("F2", "F2", 1333.33f, 1900.0f, 1616.67f));
 }
 //==============================================================================
 // Creates Slider Attachment
@@ -49,7 +53,6 @@ EditorParameterHelper::createSliderAttachment(
         slider
     );
 }
-
 //==============================================================================
 // Creates Button Attachment
 std::unique_ptr<EditorParameterHelper::ButtonAttachment>

@@ -130,6 +130,9 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     float thresh = chainsettings.Thresh;
     float inpgain = chainsettings.inpgain;
     bool MTrack = chainsettings.MTrack;
+    float f0 = chainsettings.f0;
+    float f1 = chainsettings.f1;
+    float f2 = chainsettings.f2;
 
     //DBG("isBypass = " << (bypass ? "true" : "false"));
 
@@ -181,7 +184,7 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
         // Generate beamformer output (BE CAREFUL IF RADIUS IS WRONG GAIN WILL SPIKE!!!!!!)
         //DelayandSumBeamformer->processcircularDAS(buffer, brightX, brightY, 1000.f, 0.5f, gain);
 
-        FilterandSumBeamformer->processcircularFAS(buffer, micBuffer, brightX, brightY, 0.5f, gain, thresh);
+        FilterandSumBeamformer->processcircularFAS(buffer, micBuffer, brightX, brightY, 0.5f, gain, thresh, f0, f1, f2);
 
         //DBG("Raw BrightX: " << brightX);
         //DBG("Raw BrightY: " << brightY);
@@ -241,6 +244,9 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
     settings.Thresh = apvts.getRawParameterValue("thresh")->load();
     settings.inpgain = apvts.getRawParameterValue("inpgain")->load();
     settings.MTrack = apvts.getRawParameterValue("MTrack")->load();
+    settings.f0 = apvts.getRawParameterValue("F0")->load();
+    settings.f1 = apvts.getRawParameterValue("F1")->load();
+    settings.f2 = apvts.getRawParameterValue("F2")->load();
 }
 
 // Abstracted parameter crap into helper file
