@@ -72,6 +72,24 @@ void NNWorker::run()
 
             //DBG("NN inference finished. Output size: " << result.size());
 
+            /*
+            DBG("NN output size: " << result.size());
+
+            if (!result.empty())
+            {
+                DBG("NN output[0]: " << result[0]);
+                DBG("NN output[1]: " << result[1]);
+                DBG("NN output[2]: " << result[2]);
+                DBG("NN output[10]: " << result[10]);
+                DBG("NN output[100]: " << result[100]);
+            }
+
+            float minVal = *std::min_element(result.begin(), result.end());
+            float maxVal = *std::max_element(result.begin(), result.end());
+
+            DBG("NN correction min: " << minVal);
+            DBG("NN correction max: " << maxVal);
+            */
             // ============================================================
             // Store result
             {

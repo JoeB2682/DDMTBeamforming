@@ -41,10 +41,13 @@ const std::vector<float> fracDelFIR::getCoeficients() const
 // Apply NN Correction to Coefficients
 void fracDelFIR::setCorrection(const std::vector<float>& correction)
 {
-	if (correction.size() != nnCorrection.size())
+	if (correction.size() < N)
 		return;
 
-	nnCorrection = correction;
+	nnCorrection.resize(N);
+
+	for (int i = 0; i < N; ++i)
+		nnCorrection[i] = correction[i];
 }
 //===============================================================================
 // Calculate fractional delay (interpolation)
@@ -150,8 +153,18 @@ float fracDelFIR::process(float tau, float tauMax, float x)
 	// Apply NN correctiom if bool is triggered
 	if (applyNN)
 	{
+		// Multiply Affect of Coefficients and apply
 		for (size_t i = 0; i < b.size(); ++i)
+		{
 			correctedB[i] = b[i] + nnCorrection[i];
+
+			/*
+			DBG("Tap " << i
+				<< " | Original: " << b[i]
+				<< " | Correction: " << nnCorrection[i]
+				<< " | Corrected: " << correctedB[i]);
+				*/
+		}
 	}
 	else
 	{

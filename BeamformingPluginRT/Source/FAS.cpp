@@ -273,6 +273,10 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 		//DBG("NN correction received: " << latestCorrection.size());
 
 		// Apply FIR Correction 
+		for (int speaker = 0; speaker < das->N; ++speaker)
+		{
+			filterBank[speaker]->setCorrection(latestCorrection);
+		}
 	}
 	// ================================================================
 	// PREPARE NN INPUT
