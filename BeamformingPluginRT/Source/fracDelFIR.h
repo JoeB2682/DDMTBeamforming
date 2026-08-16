@@ -34,8 +34,11 @@ public:
 
     //float process(std::vector<float> tauvec, float x);
     float process(float tau, float tauMax, float x);
-
     inline float simdInnerProduct(float* in, float* kernel, int numSamples, float y = 0.0f);
+
+    const std::vector<float> getCoeficients() const;
+    void getNNBool(bool ApplyNN) { applyNN = ApplyNN; }
+    void setCorrection(const std::vector<float>& correction);
 
 public:
 
@@ -49,8 +52,8 @@ private:
     float currentU = -1.0f;
     int Fs, ntaps, ArraySize;
     float fc, wc;
-    bool windowgenerationflag, iswideband;
-    std::vector<float> tau, b, Out, z, win, h;
+    bool windowgenerationflag, iswideband, applyNN = false;
+    std::vector<float> tau, b, Out, z, win, h, nnCorrection, correctedB;;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(fracDelFIR)
 };

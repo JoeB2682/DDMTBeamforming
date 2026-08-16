@@ -44,11 +44,15 @@ FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow,
 	mvdr = std::make_unique<MVDR>(dasObject, 1, dasObject->sampleRate, fftprocessor);
 	//mvdr = std::make_unique<MVDR>(dasObject, ADD NO MICS WHEN ARRAY EXTENDED!, dasObject->sampleRate, fftprocessor);
 
-	// Neural Network Handler
-	networkhandler = std::make_unique<NeuralNetworkHandler>();
+	// Preallocate Neural Network tensors
+	room.resize(7, 0.0f);
+	trajectory.resize(35, 0.0f);
+	fircoeffs.resize(1 * 1 * 100 * 8 * 64, 0.0f);
+	beam.resize(1 * 1 * 72 * 100, 0.0f);
+	filteredBeam.resize(1 * 1 * 72 * 100, 0.0f);
 
-	// Load NN
-	networkhandler->loadModel(3);
+	// Make NN Worker thread instance
+	nnWorker = std::make_unique<NNWorker>();
 }
 //===============================================================================
 // Sets the band frequencies using parameter vals
@@ -66,7 +70,8 @@ void FAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 							 float freq,
 							 float amplitude,
 							 std::vector<float>& tau,
-							 float gain)
+							 float gain,
+							 bool ApplyNN)
 {
 	// Calculate max of time of arrival array
 	float tauMax = *std::max_element(tau.begin(), tau.end());
@@ -97,6 +102,7 @@ void FAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 		for (int sample = 0; sample < buffer.getNumSamples(); sample++)
 		{
 			// Normalise to prevent insane gain levels
+			filterBank[speaker]->getNNBool(ApplyNN);
 			channel[sample] = filterbank[speaker]->process(tau[speaker], tauMax, das->oscbank[speaker]->incrementSample() * gain / das->N);
 			//DBG(channel[sample]);
 		}
@@ -114,7 +120,8 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	const std::shared_ptr<FrequencyBand>& frequencyband,
 	float f0,
 	float f1,
-	float f2)
+	float f2,
+	bool ApplyNN)
 {
 	setBandFreqs(frequencyband, f0, f1, f2);
 
@@ -175,6 +182,7 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 							lowoscbank[speaker]->incrementSample()   +
 							highoscbank[speaker]->incrementSample()) / 3.0f) * gain;
 
+			filterBank[speaker]->getNNBool(ApplyNN);
 			channel[sample] = gamma * filterbank[speaker]->process(tau[speaker], tauMax, input);
 		}
 	}
@@ -199,7 +207,7 @@ float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float 
 void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
 							 float bright_x, float bright_y, float amplitude, float gain, float thresh, 
 						     float f0, float f1, float f2, float Length, float Width, float Height, float Absorption, 
-							 float MaxOrder, float rt60, int NumSpeakers) 
+							 float MaxOrder, float rt60, int NumSpeakers, bool ApplyNN) 
 {
 	if (!das->setPosflag)
 	{
@@ -238,21 +246,13 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 
 	//DBG("delta " << delta);
 
-
-
-	// Run Neural Network
-
-
-
-
-	// Apply Correction to FIR Filters
-
+	// ================================================================
 
 	// Uses own generate functions
 	if (wideband)
-		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band, f0, f1, f2);
+		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band, f0, f1, f2, ApplyNN);
 	else
-		generateNarrowband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain);
+		generateNarrowband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, ApplyNN);
 	
 	if (isMVDR)
 	{
@@ -261,5 +261,39 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 		// Process MVDR Receiver Algorithm
 		mvdr->processCircularMVDR(micbuffer, tauRXCorrected);
 	}
+
+	// ================================================================
+	// Get NN Output
+	std::vector<float> newCorrection;
+
+	if (nnWorker->getLatestCorrection(newCorrection))
+	{
+		latestCorrection = std::move(newCorrection);
+
+		//DBG("NN correction received: " << latestCorrection.size());
+
+		// Apply FIR Correction 
+	}
+	// ================================================================
+	// PREPARE NN INPUT
+	std::vector<float> room =
+	{
+		Length,
+		Width,
+		Height,
+		Absorption,
+		rt60,
+		MaxOrder,
+		static_cast<float>(NumSpeakers)
+	};
+	// ================================================================
+	// Submit NN job
+	nnWorker->submit(
+		room,
+		trajectory,
+		fircoeffs,
+		beam,
+		filteredBeam
+	);
 }
 //===============================================================================

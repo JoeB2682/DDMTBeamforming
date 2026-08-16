@@ -139,8 +139,10 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     float MaxOrder = chainsettings.MaxOrder;
     float Absorption = chainsettings.Absorption;
     float rt60 = chainsettings.rt60;
+    bool ApplyNN = chainsettings.ApplyNN;
 
     //DBG("isBypass = " << (bypass ? "true" : "false"));
+    //DBG("isBypass = " << (ApplyNN ? "true" : "false"));
 
     // Safety check stops out of bounds indexing
     if (Channel < 0 || Channel >= buffer.getNumChannels()) return;
@@ -191,7 +193,7 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
         //DelayandSumBeamformer->processcircularDAS(buffer, brightX, brightY, 1000.f, 0.5f, gain);
 
         FilterandSumBeamformer->processcircularFAS(buffer, micBuffer, brightX, brightY, 0.5f, gain, thresh, 
-                                                   f0, f1, f2, Length, Width, Height, Absorption, MaxOrder, rt60, DelayandSumBeamformer->totalNoOutputChannels);
+                                                   f0, f1, f2, Length, Width, Height, Absorption, MaxOrder, rt60, DelayandSumBeamformer->totalNoOutputChannels, ApplyNN);
 
         //DBG("Raw BrightX: " << brightX);
         //DBG("Raw BrightY: " << brightY);
@@ -259,6 +261,8 @@ void BeamformingRTPluginAudioProcessor::getChainSettings(ChainSettings& settings
     settings.Height = apvts.getRawParameterValue("Height")->load();
     settings.MaxOrder = apvts.getRawParameterValue("MaxOrder")->load();
     settings.Absorption = apvts.getRawParameterValue("Absorption")->load();
+    settings.rt60 = apvts.getRawParameterValue("RT60")->load();
+    settings.ApplyNN = apvts.getRawParameterValue("ApplyNN")->load();
     settings.rt60 = apvts.getRawParameterValue("RT60")->load();
 }
 

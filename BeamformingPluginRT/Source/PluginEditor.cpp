@@ -117,6 +117,24 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
             };
 
         addAndMakeVisible(mtrackbutton);
+
+        applyNNbutton.setClickingTogglesState(true);
+        applyNNbuttonattachment = EditorParameterHelper::createButtonAttachment
+        (audioProcessor.apvts, "ApplyNN", applyNNbutton, &roundedbuttonlookandfeel);
+
+        applyNNbutton.setLookAndFeel(&roundedbuttonlookandfeel);
+        applyNNbutton.setButtonText("OFF");
+
+        applyNNbuttonlabel.setText("NN", juce::dontSendNotification);
+        applyNNbuttonlabel.setJustificationType(juce::Justification::centred);
+        applyNNbuttonlabel.attachToComponent(&applyNNbutton, false);
+
+        applyNNbutton.onClick = [this]
+            {
+                applyNNbutton.setButtonText(applyNNbutton.getToggleState() ? "ON" : "OFF");
+            };
+
+        addAndMakeVisible(applyNNbutton);
     }
 
     // Bright Point Plot
@@ -271,11 +289,24 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
 BeamformingRTPluginAudioProcessorEditor::~BeamformingRTPluginAudioProcessorEditor()
 {
     gainSlider.setLookAndFeel(nullptr);
-    bypassbutton.setLookAndFeel(nullptr);
+    inpgainslider.setLookAndFeel(nullptr);
     channelSlider.setLookAndFeel(nullptr);
     threshslider.setLookAndFeel(nullptr);
+    rt60slider.setLookAndFeel(nullptr);
+
+    bypassbutton.setLookAndFeel(nullptr);
     outputtypebutton.setLookAndFeel(nullptr);
     mtrackbutton.setLookAndFeel(nullptr);
+
+    f0slider.setLookAndFeel(nullptr);
+    f1slider.setLookAndFeel(nullptr);
+    f2slider.setLookAndFeel(nullptr);
+
+    lengthslider.setLookAndFeel(nullptr);
+    widthslider.setLookAndFeel(nullptr);
+    heightslider.setLookAndFeel(nullptr);
+    maxorderslider.setLookAndFeel(nullptr);
+    absorptionslider.setLookAndFeel(nullptr);
 
     setLookAndFeel(nullptr);
 }
@@ -337,6 +368,7 @@ void BeamformingRTPluginAudioProcessorEditor::resized()
     inputMeter.setBounds(20, 470, 420, 20);
 
     rt60slider.setBounds(645, 440, 80, 80);
+    applyNNbutton.setBounds(725, 440, 50, 50);
 }
 //==============================================================================
 // Timer Callback 

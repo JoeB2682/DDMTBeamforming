@@ -35,7 +35,7 @@ private:
     WhiteSliderLookAndFeel   whitesliderlookandfeel;
 
     //Toggle Buttons 
-    TextButton bypassbutton, outputtypebutton, mtrackbutton;
+    TextButton bypassbutton, outputtypebutton, mtrackbutton, applyNNbutton;
 
     // Sliders
     juce::Slider gainSlider, channelSlider, threshslider, inpgainslider,
@@ -49,7 +49,7 @@ private:
         f0sliderlabel, f1sliderlabel, f2sliderlabel,
         lengthsliderlabel, widthsliderlabel, heightsliderlabel,
         maxordersliderlabel, absorptionsliderlabel,
-        rt60sliderlabel;
+        rt60sliderlabel, applyNNbuttonlabel;
 
     // Parameter Attachments
     std::unique_ptr<EditorParameterHelper::SliderAttachment>
@@ -60,7 +60,7 @@ private:
         heightsliderattachment, maxordersliderattachment,
         absorptionsliderattachment, rt60sliderattachment;
 
-    std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment, mtrackbuttonattachment;
+    std::unique_ptr<EditorParameterHelper::ButtonAttachment> bypassAttachment, outputtypeattachment, mtrackbuttonattachment, applyNNbuttonattachment;
 
     // XY Bright Point Mover
     BrightPointPlot brightpointplot;

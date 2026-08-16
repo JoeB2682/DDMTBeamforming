@@ -17,6 +17,8 @@ fracDelFIR::fracDelFIR(int ntaps, int ArraySize, int srate, float freq, bool isw
 	z.resize(N, 0.0f);
 	win.resize(N, 0.0f);
 	h.resize(N, 0.0f);
+	nnCorrection.resize(N, 0.0f);
+	correctedB.resize(N, 0.0f);
 
 	Out.resize(ArraySize, 0.0f);
 
@@ -28,6 +30,21 @@ fracDelFIR::fracDelFIR(int ntaps, int ArraySize, int srate, float freq, bool isw
 	fc = (iswideband && freqband != nullptr) ? freqband->bandwidth() : freq;
 
 	wc = 2.0f * juce::MathConstants<float>::pi * fc / Fs;
+}
+//===============================================================================
+// Return Coefficients
+const std::vector<float> fracDelFIR::getCoeficients() const
+{
+	return b;
+}
+//===============================================================================
+// Apply NN Correction to Coefficients
+void fracDelFIR::setCorrection(const std::vector<float>& correction)
+{
+	if (correction.size() != nnCorrection.size())
+		return;
+
+	nnCorrection = correction;
 }
 //===============================================================================
 // Calculate fractional delay (interpolation)
@@ -130,6 +147,17 @@ float fracDelFIR::process(float tau, float tauMax, float x)
 		}
 	}
 
+	// Apply NN correctiom if bool is triggered
+	if (applyNN)
+	{
+		for (size_t i = 0; i < b.size(); ++i)
+			correctedB[i] = b[i] + nnCorrection[i];
+	}
+	else
+	{
+		correctedB = b;
+	}
+
 	// Shift samples through FIR delay line
 	for (int i = z.size() - 1; i > 0; i--) {
 		z[i] = z[i - 1];
@@ -139,10 +167,10 @@ float fracDelFIR::process(float tau, float tauMax, float x)
 	z[0] = x;
 
 	// Apply filter to sample using SIMD function
-	float y = simdInnerProduct(z.data(), b.data(), N);
+	float y = simdInnerProduct(z.data(), correctedB.data(), N);
 
 	//DBG(y);
-
+	//DBG("ApplyNN = " << (applyNN ? "true" : "false"));
 	// Return output sample
 	return y;
 }

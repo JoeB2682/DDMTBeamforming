@@ -145,7 +145,7 @@ std::vector<float> NeuralNetworkHandler::runModel(std::vector<float>& room,
         filtered_beam_shape.data(),
         filtered_beam_shape.size());
 
-    // I/P names
+    // I/O names
     const char* input_names[] = {"room", "trajectory", "fir", "beam", "filtered_beam"};
     const char* output_names[] = { "output" };
 

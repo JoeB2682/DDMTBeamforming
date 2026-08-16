@@ -16,7 +16,7 @@
 #include "DAS.h"
 #include "fracDelFIR.h"
 #include "MVDR.h"
-#include "NeuralNetworkHandler.h"
+#include "NNWorker.h"
 //===============================================================================
 class FAS
 {
@@ -36,7 +36,8 @@ public:
 							float freq,
 							float amplitude,
 							std::vector<float>& tau,
-							float gain);
+							float gain,
+							bool ApplyNN);
 
 	void generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 							std::vector<std::unique_ptr<fracDelFIR>>& filterbank,
@@ -48,12 +49,13 @@ public:
 							const std::shared_ptr<FrequencyBand>& frequencyband, 
 							float f0,
 						    float f1,
-							float f2);
+							float f2, 
+							bool ApplyNN);
 
 	void processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
 							float bright_x, float bright_y, float amplitude, float gain, float thresh, 
 							float f0, float f1, float f2, float Length, float Width, float Height,
-							float Absorption, float MaxOrder, float rt60, int NumSpeakers);
+							float Absorption, float MaxOrder, float rt60, int NumSpeakers, bool ApplyNN);
 
 	void setBandFreqs(const std::shared_ptr<FrequencyBand>& frequencyband, float f0, float f1, float f2);
 
@@ -62,6 +64,13 @@ public:
 	int numTaps;
 	float freq;
 	bool wideband, isMVDR;
+
+	// Neural Network input tensors
+	std::vector<float> room;
+	std::vector<float> trajectory;
+	std::vector<float> fircoeffs;
+	std::vector<float> beam;
+	std::vector<float> filteredBeam;
 
 	// Objects
 	DAS* das;
@@ -72,6 +81,7 @@ public:
 	std::vector<std::unique_ptr<Oscillator>> lowoscbank, highoscbank;	
 
 	// Neural Network Handler
-	std::unique_ptr<NeuralNetworkHandler> networkhandler;
+	std::unique_ptr<NNWorker> nnWorker;
+	std::vector<float> latestCorrection;
 };
 //===============================================================================

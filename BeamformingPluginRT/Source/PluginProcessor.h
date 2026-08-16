@@ -14,7 +14,7 @@
 struct ChainSettings {
 
     float Gain{ 1.0f };
-    bool bypass{ }, outtype{ }, MTrack;
+    bool bypass{ }, outtype{ }, MTrack, ApplyNN;
     int Channel{ 1 };
     float brightx{  }, brighty{  };
     float Thresh{  };
