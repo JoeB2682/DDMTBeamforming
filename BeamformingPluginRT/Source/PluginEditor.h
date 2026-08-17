@@ -8,7 +8,8 @@
 #include "LevelMeter.h"
 
 //==================================================================================
-class BeamformingRTPluginAudioProcessorEditor : public juce::AudioProcessorEditor, public juce::Timer
+class BeamformingRTPluginAudioProcessorEditor : public juce::AudioProcessorEditor, public juce::Timer,
+                                                public juce::KeyListener
 {
 public:
     BeamformingRTPluginAudioProcessorEditor(BeamformingRTPluginAudioProcessor&);
@@ -20,6 +21,11 @@ public:
 
     // Timer Callbacks for Updates
     void timerCallback() override;
+    //void visibilityChanged() override;
+
+    // Key press listener
+    bool keyPressed(const juce::KeyPress& key, juce::Component* originatingComponent) override;
+    bool loggingEnabled = false;
 
 private:
     //==============================================================================

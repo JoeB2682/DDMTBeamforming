@@ -19,11 +19,22 @@ trajectoryWorker::trajectoryWorker(std::shared_ptr<MotionTrackerHandler> mtrackh
 
     // Initialise trajectory vector
     trajectory.resize(frameSize, 0.0f);
+
+    // Instanciate csv ogger
+    trajectoryLogger = std::make_unique<TrajectoryLogger>();
+
+    startThread();
 }
 //===============================================================================
 trajectoryWorker::~trajectoryWorker()
 {
     stopThread(1000);
+}
+//===============================================================================
+// Start Data Logging
+void trajectoryWorker::setLoggingEnabled(bool enabled)
+{
+    dataLogBool.store(enabled);
 }
 //===============================================================================
 // Trajectory vector Getter
@@ -34,8 +45,21 @@ std::vector<float> trajectoryWorker::getTrajectory()
 //===============================================================================
 void trajectoryWorker::run()
 {
+    //DBG("Trajectory worker started");
+    bool previousLoggingState = false;
+
     while (!threadShouldExit())
     {
+        bool currentLoggingState = dataLogBool.load();
+
+        // Detect logging state change
+        if (currentLoggingState != previousLoggingState)
+        {
+            DBG("Logging enabled: " << (currentLoggingState ? "true" : "false"));
+            trajectoryLogger->setEnabled(currentLoggingState);
+            previousLoggingState = currentLoggingState;
+        }
+
         // Get current motion tracking position
         float x = trackerhandler->x.load();
         float y = trackerhandler->y.load();
@@ -153,6 +177,9 @@ void trajectoryWorker::run()
             trajectory[12] = svx;
             trajectory[13] = svy;
             trajectory[14] = svz;
+
+            // Use logger to log data to .csv
+            trajectoryLogger->logTrajectory(trajectory);
 
             // Clear buffers for next trajectory
             xBuff.clear();

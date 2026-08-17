@@ -67,6 +67,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     void getChainSettings(ChainSettings& settings);
+    void setLoggingEnabled(bool enabled);
 
     static juce::AudioProcessorValueTreeState::ParameterLayout
         createParameterLayout();
@@ -97,6 +98,8 @@ public:
     std::shared_ptr<MotionTrackerHandler> motiontracker;
     Position position;
     float x, y, z;
+    
+    std::atomic<bool> loggingEnabled{ false };
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)

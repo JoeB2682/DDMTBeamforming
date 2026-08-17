@@ -194,7 +194,8 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
         //DelayandSumBeamformer->processcircularDAS(buffer, brightX, brightY, 1000.f, 0.5f, gain);
 
         FilterandSumBeamformer->processcircularFAS(buffer, micBuffer, brightX, brightY, 0.5f, gain, thresh, 
-                                                   f0, f1, f2, Length, Width, Height, Absorption, MaxOrder, rt60, DelayandSumBeamformer->totalNoOutputChannels, ApplyNN);
+                                                   f0, f1, f2, Length, Width, Height, Absorption, MaxOrder, rt60, DelayandSumBeamformer->totalNoOutputChannels, 
+                                                   ApplyNN, loggingEnabled);
 
         //DBG("Raw BrightX: " << brightX);
         //DBG("Raw BrightY: " << brightY);
@@ -274,6 +275,15 @@ BeamformingRTPluginAudioProcessor::createParameterLayout()
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     ParameterHelper::addParameters(layout);
     return layout;
+}
+//==============================================================================
+// Enable data logging
+void BeamformingRTPluginAudioProcessor::setLoggingEnabled(bool enabled)
+{
+    loggingEnabled = enabled;
+
+    if (FilterandSumBeamformer != nullptr)
+        FilterandSumBeamformer->setloggingEnabled(enabled);
 }
 //==============================================================================
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter(){ return new BeamformingRTPluginAudioProcessor(); }

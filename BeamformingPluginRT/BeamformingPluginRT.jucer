@@ -5,6 +5,13 @@
               companyWebsite="JABAudio" pluginFormats="buildStandalone,buildVST3"
               pluginVST3Category="Spatial">
   <MAINGROUP id="Rhl5bl" name="BeamformingPluginRT">
+    <GROUP id="{D0F1599B-8259-9FB1-10C5-ABAB0BCF0F1D}" name="DataLoggers">
+      <GROUP id="{EB475F4D-01CD-7C64-B9FB-F344CF52DD76}" name="TrajectoryCSVs"/>
+      <FILE id="xJGos7" name="TrajectoryLogger.cpp" compile="1" resource="0"
+            file="Source/TrajectoryLogger.cpp"/>
+      <FILE id="MEKpxC" name="TrajectoryLogger.h" compile="0" resource="0"
+            file="Source/TrajectoryLogger.h"/>
+    </GROUP>
     <GROUP id="{AB02B076-30EE-D574-EC44-124082C04864}" name="Models">
       <FILE id="WyFeSn" name="BeamNet_ONNX_00001.onnx" compile="0" resource="0"
             file="../MachineLearning/Models/BeamNet_ONNX_00001.onnx"/>

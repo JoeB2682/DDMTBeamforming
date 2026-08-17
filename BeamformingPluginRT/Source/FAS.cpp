@@ -209,7 +209,7 @@ float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float 
 void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
 							 float bright_x, float bright_y, float amplitude, float gain, float thresh, 
 						     float f0, float f1, float f2, float Length, float Width, float Height, float Absorption, 
-							 float MaxOrder, float rt60, int NumSpeakers, bool ApplyNN) 
+							 float MaxOrder, float rt60, int NumSpeakers, bool ApplyNN, bool log) 
 {
 	if (!das->setPosflag)
 	{
@@ -318,5 +318,11 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 		beam,
 		filteredBeam
 	);
+}
+//===============================================================================
+// Another stupid bool passing function
+void FAS::setloggingEnabled(bool enabled)
+{
+	trajectoryworker->setLoggingEnabled(enabled);
 }
 //===============================================================================

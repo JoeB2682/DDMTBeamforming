@@ -58,15 +58,17 @@ public:
 	void processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& micbuffer,
 							float bright_x, float bright_y, float amplitude, float gain, float thresh, 
 							float f0, float f1, float f2, float Length, float Width, float Height,
-							float Absorption, float MaxOrder, float rt60, int NumSpeakers, bool ApplyNN);
+							float Absorption, float MaxOrder, float rt60, int NumSpeakers, bool ApplyNN, bool log);
 
 	void setBandFreqs(const std::shared_ptr<FrequencyBand>& frequencyband, float f0, float f1, float f2);
+
+	void setloggingEnabled(bool enabled);
 
 public:
 
 	int numTaps;
 	float freq;
-	bool wideband, isMVDR;
+	bool wideband, isMVDR, log;
 
 	// Neural Network input tensors
 	std::vector<float> room;

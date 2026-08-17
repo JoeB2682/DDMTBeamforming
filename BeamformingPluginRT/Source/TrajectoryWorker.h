@@ -15,6 +15,7 @@
 
 #include <JuceHeader.h>
 #include "MotionTrackerHandler.h"
+#include "TrajectoryLogger.h"
 
 //===============================================================================
 class trajectoryWorker : public juce::Thread 
@@ -25,6 +26,8 @@ public:
     ~trajectoryWorker() override;
 
     std::vector<float> getTrajectory();
+    void getLogbool(bool logbool) { dataLogBool = logbool; }
+    void setLoggingEnabled(bool enabled);
 
     void run() override;
 
@@ -42,9 +45,12 @@ public:
 
     const float updaterate;
 
+    std::atomic<bool> dataLogBool{ false };
+
 private:
 
     const int frameSize;
     std::shared_ptr<MotionTrackerHandler> trackerhandler;
+    std::unique_ptr<TrajectoryLogger> trajectoryLogger;
 };
 //===============================================================================

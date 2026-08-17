@@ -12,6 +12,13 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     // Start Callcback
     startTimerHz(30);
 
+    // Add Keypress listener
+    addKeyListener(this);
+    setWantsKeyboardFocus(true);
+
+    if (isVisible())
+        grabKeyboardFocus();
+
     // Attach Params and make visible
     addAndMakeVisible(gainSlider);
     gainAttachment = EditorParameterHelper::createSliderAttachment
@@ -394,5 +401,24 @@ void BeamformingRTPluginAudioProcessorEditor::timerCallback()
     beamvisualiser.setTau(audioProcessor.DelayandSumBeamformer->tau);
 
     inputMeter.setLevel(audioProcessor.miclevel);
+}
+//==============================================================================
+// Keyboard input handler
+bool BeamformingRTPluginAudioProcessorEditor::keyPressed(
+    const juce::KeyPress& key,
+    juce::Component* originatingComponent)
+{
+    if (key.getTextCharacter() == 'i' ||
+        key.getTextCharacter() == 'I')
+    {
+        loggingEnabled = !loggingEnabled;
+        audioProcessor.setLoggingEnabled(loggingEnabled);
+
+        //DBG("Logging: " << (loggingEnabled ? "ON" : "OFF"));
+
+        return true;
+    }
+
+    return false;
 }
 //==============================================================================
