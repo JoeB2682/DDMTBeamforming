@@ -16,7 +16,7 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
 #endif
 {
     // Instanciate and Connect Motion Tracker
-    motiontracker = std::make_unique<MotionTrackerHandler>();
+    motiontracker = std::make_shared<MotionTrackerHandler>();
 
     if(motiontracker)
         motiontracker->connect();
@@ -24,8 +24,8 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
 
 BeamformingRTPluginAudioProcessor::~BeamformingRTPluginAudioProcessor()
 {
+    // You've learnt well boy keep using those smart pointers!!!!!
 }
-
 //==============================================================================
 // Setup
 const juce::String BeamformingRTPluginAudioProcessor::getName() const { 
@@ -82,11 +82,12 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
 
     // Instanciate Beamformers
     DelayandSumBeamformer = std::make_shared<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
-    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 64, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, true, fftprocessor);
+    FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 64, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, true, fftprocessor, motiontracker);
 }
 
 void BeamformingRTPluginAudioProcessor::releaseResources()
 {
+    // Frees up memory when the plugin is idle
     fftprocessor->releaseResources();
 }
 
@@ -161,7 +162,7 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     //DBG(position.x << position.y << position.z);
     //DBG("MTrack " << (MTrack ? "true" : "false"));
 
-    // map motion track data
+    // map motion track data (THIS NEEDS TWEAKING/ CALIBRATING!!!!)
     float MtrackXMapped = juce::jmap(position.x, -1.24f, 0.551f, -ArrayRadius, ArrayRadius);
     float MtrackYMapped = juce::jmap(position.y, 0.0f, 0.52f, -ArrayRadius, ArrayRadius);
 

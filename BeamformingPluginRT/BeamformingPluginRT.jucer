@@ -58,6 +58,10 @@
       <FILE id="QGiUEI" name="MoveableXY.h" compile="0" resource="0" file="Source/MoveableXY.h"/>
     </GROUP>
     <GROUP id="{DC108D3B-02ED-FE33-A8E7-FA2BA907EDF0}" name="Source">
+      <FILE id="WqNK5v" name="TrajectoryWorker.cpp" compile="1" resource="0"
+            file="Source/TrajectoryWorker.cpp"/>
+      <FILE id="LfjC2w" name="TrajectoryWorker.h" compile="0" resource="0"
+            file="Source/TrajectoryWorker.h"/>
       <FILE id="EUX7rr" name="NNWorker.cpp" compile="1" resource="0" file="Source/NNWorker.cpp"/>
       <FILE id="oM3A9I" name="NNWorker.h" compile="0" resource="0" file="Source/NNWorker.h"/>
       <FILE id="oNLHis" name="PluginProcessor.cpp" compile="1" resource="0"

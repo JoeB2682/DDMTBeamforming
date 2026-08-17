@@ -17,6 +17,8 @@
 #include "fracDelFIR.h"
 #include "MVDR.h"
 #include "NNWorker.h"
+#include "MotionTrackerHandler.h"
+#include "TrajectoryWorker.h"
 //===============================================================================
 class FAS
 {
@@ -24,7 +26,8 @@ public:
 
 	FAS(DAS* dasPtr, int numtaps, int bufferlen, float freq, float bandlow, 
 					 float bandhigh, bool iswideband, bool useMVDR, 
-					 std::shared_ptr<FFTProcessor> fftProcessor);
+					 std::shared_ptr<FFTProcessor> fftProcessor,
+					 std::shared_ptr<MotionTrackerHandler> motionTrackerHandler);
 
 	~FAS() = default;
 
@@ -78,10 +81,14 @@ public:
 	std::shared_ptr<FrequencyBand> band;
 	std::unique_ptr<MVDR> mvdr;
 	std::shared_ptr<FFTProcessor> fftprocessor;
+	std::shared_ptr<MotionTrackerHandler> motiontrackerhandler;
 	std::vector<std::unique_ptr<Oscillator>> lowoscbank, highoscbank;	
 
 	// Neural Network Handler
 	std::unique_ptr<NNWorker> nnWorker;
 	std::vector<float> latestCorrection;
+
+	// Trajectory Worker Thread
+	std::unique_ptr<trajectoryWorker> trajectoryworker;
 };
 //===============================================================================

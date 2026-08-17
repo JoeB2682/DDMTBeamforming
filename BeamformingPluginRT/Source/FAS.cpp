@@ -3,10 +3,11 @@
 //===============================================================================
 FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow, 
 								 float bandhigh, bool iswideband, bool useMVDR, 
-								 std::shared_ptr<FFTProcessor> fftProcessor)
+								 std::shared_ptr<FFTProcessor> fftProcessor,
+								 std::shared_ptr<MotionTrackerHandler> motionTrackerHandler)
 
     : das(dasObject), numTaps(numtaps), freq(freq), wideband(iswideband), 
-	  isMVDR(useMVDR), fftprocessor(fftProcessor)
+	  isMVDR(useMVDR), fftprocessor(fftProcessor), motiontrackerhandler(motionTrackerHandler)
 {
 	// Initialise wideband signal
 	band = std::make_shared<FrequencyBand>();
@@ -53,6 +54,9 @@ FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow,
 
 	// Make NN Worker thread instance
 	nnWorker = std::make_unique<NNWorker>();
+
+	// Make Trajectory Worker Thread Instance
+	trajectoryworker = std::make_unique<trajectoryWorker>(motiontrackerhandler);
 }
 //===============================================================================
 // Sets the band frequencies using parameter vals
@@ -81,9 +85,7 @@ void FAS::generateNarrowband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 	{
 		for (int i = 0; i < oscbank.size(); i++)
 		{
-			oscbank[i]->setupOscillator(das->sampleRate,
-				buffer.getNumSamples(),
-				false);
+			oscbank[i]->setupOscillator(das->sampleRate, buffer.getNumSamples(), false);
 		}
 		das->setoscbankflag = true;
 	}
@@ -279,7 +281,9 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 		}
 	}
 	// ================================================================
-	// PREPARE NN INPUT
+	// Prep NN Input
+
+	// populate room vector from parameters
 	std::vector<float> room =
 	{
 		Length,
@@ -290,6 +294,21 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 		MaxOrder,
 		static_cast<float>(NumSpeakers)
 	};
+
+	// Get Trajectory from worker thread
+	trajectory = trajectoryworker->getTrajectory();
+
+	// Populate fircoeffs with b from current fir
+	for (int speaker = 0; speaker < das->N; speaker++)
+	{
+		const auto& coeffs = filterBank[speaker]->getCoeficients();
+
+		for (int tap = 0; tap < numTaps; tap++)
+		{
+			fircoeffs[speaker * numTaps + tap] = coeffs[tap];
+		}
+	}
+
 	// ================================================================
 	// Submit NN job
 	nnWorker->submit(
