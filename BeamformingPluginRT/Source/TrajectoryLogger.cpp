@@ -24,8 +24,7 @@ void TrajectoryLogger::setEnabled(bool shouldEnable)
 void TrajectoryLogger::createNewFile()
 {
     // Get the directory containing TrajectoryLogger.cpp
-    auto outputFolder = juce::File(
-        "C:/Users/josep/Desktop/TrajectoryCSVs");
+    auto outputFolder = juce::File("C:/Users/josep/Desktop/TrajectoryCSVs");
 
     DBG("Output folder: " << outputFolder.getFullPathName());
 
@@ -45,13 +44,13 @@ void TrajectoryLogger::createNewFile()
         juce::String(recordingNumber).paddedLeft('0', 3) +
         ".csv");
 
-    DBG("CSV path: " << file.getFullPathName());
+    //DBG("CSV path: " << file.getFullPathName());
 
     outputStream = std::make_unique<juce::FileOutputStream>(file);
 
     if (outputStream->openedOk())
     {
-        DBG("CSV OPENED");
+        DBG("TRAJECTORY CSV OPENED");
 
         outputStream->writeString(
             "start_x,start_y,start_z,"
@@ -64,21 +63,16 @@ void TrajectoryLogger::createNewFile()
     }
     else
     {
-        DBG("CSV FAILED TO OPEN");
+        DBG("TAJECTORY CSV FAILED TO OPEN");
     }
 }
 //===============================================================================
 void TrajectoryLogger::logTrajectory(
     const std::vector<float>& trajectory)
 {
-    if (!enabled)
-        return;
-
-    if (outputStream == nullptr || !outputStream->openedOk())
-        return;
-
-    if (trajectory.size() < 15)
-        return;
+    if (!enabled) return;
+    if (outputStream == nullptr || !outputStream->openedOk()) return;
+    if (trajectory.size() < 15) return;
 
     juce::String row;
 
@@ -86,8 +80,7 @@ void TrajectoryLogger::logTrajectory(
     {
         row += juce::String(trajectory[i], 6);
 
-        if (i < 14)
-            row += ",";
+        if (i < 14) row += ",";
     }
 
     row += "\n";

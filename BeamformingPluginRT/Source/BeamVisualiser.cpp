@@ -25,7 +25,7 @@ float BeamVisualizer::calculateBeam(float x, float y)
 
         // arrival time from this direction
         float testTau = distance / 343.0f;
-        float steeringPhase = -2.0f * juce::MathConstants<float>::pi * frequency * (tauMax - tau[i]);
+        float steeringPhase = 2.0f * juce::MathConstants<float>::pi * frequency * (tauMax - tau[i]);
 
         // phase of incoming wave at this point
         float arrivalPhase = 2.0f * juce::MathConstants<float>::pi * frequency * testTau;

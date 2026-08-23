@@ -19,12 +19,16 @@ class TrajectoryLogger
 {
 public:
     TrajectoryLogger() {};
+    ~TrajectoryLogger() = default;
 
     void setEnabled(bool enabled);
     void logTrajectory(const std::vector<float>& trajectory);
 
+protected:
+
+    virtual void createNewFile();
+
 private:
-    void createNewFile();
 
     std::unique_ptr<juce::FileOutputStream> outputStream;
 

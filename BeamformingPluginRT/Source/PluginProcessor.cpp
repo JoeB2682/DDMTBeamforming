@@ -17,9 +17,10 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
 {
     // Instanciate and Connect Motion Tracker
     motiontracker = std::make_shared<MotionTrackerHandler>();
+    if(motiontracker) motiontracker->connect();
 
-    if(motiontracker)
-        motiontracker->connect();
+    // Signal Logger
+    signalLogger = std::make_unique<SignalLogger>();
 }
 
 BeamformingRTPluginAudioProcessor::~BeamformingRTPluginAudioProcessor()
@@ -106,11 +107,6 @@ bool BeamformingRTPluginAudioProcessor::isBusesLayoutSupported
 #endif
     return true;
 }
-//==============================================================================
-// SNR Functions
-
-
-
 //==============================================================================
 // Main Processing
 void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -231,6 +227,18 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     // Get input level after processing (threshold)
     miclevel = micBuffer.getMagnitude(0, 0, micBuffer.getNumSamples());
     //DBG(miclevel);
+
+    // Signal Logging
+    if (loggingEnabled && !wasLoggingEnabled)
+    {
+        signalLogger->createNewFile();
+    }
+
+    signalLogger->setEnabled(loggingEnabled);
+
+    if (loggingEnabled) signalLogger->logBuffer(buffer);
+
+    wasLoggingEnabled = loggingEnabled;
 }
 
 //==============================================================================

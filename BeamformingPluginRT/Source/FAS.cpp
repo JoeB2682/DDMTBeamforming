@@ -57,6 +57,9 @@ FAS::FAS(DAS* dasObject, int numtaps, int bufferlen, float freq, float bandlow,
 
 	// Make Trajectory Worker Thread Instance
 	trajectoryworker = std::make_unique<trajectoryWorker>(motiontrackerhandler);
+
+	// Instanciate logger
+	coefficientlogger = std::make_unique<CoefficientLogger>();
 }
 //===============================================================================
 // Sets the band frequencies using parameter vals
@@ -187,6 +190,20 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 			filterBank[speaker]->getNNBool(ApplyNN);
 			channel[sample] = gamma * filterbank[speaker]->process(tau[speaker], tauMax, input);
 		}
+
+		// Log Data For current filter
+		coefficientlogger->setEnabled(log);
+
+		if (log)
+		{
+			coefficientlogger->logCoefficients(
+				speaker,
+				filterBank[speaker]->getnncorrection(),
+				filterBank[speaker]->getcorrecteddB(),
+				filterBank[speaker]->getb());
+		}
+
+		wasLoggingEnabled = log;
 	}
 }
 //===============================================================================
@@ -211,13 +228,40 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 						     float f0, float f1, float f2, float Length, float Width, float Height, float Absorption, 
 							 float MaxOrder, float rt60, int NumSpeakers, bool ApplyNN, bool log) 
 {
+	//===========================================================================
+	// IMPORTANT!!!!!!!!!!!
+	//===========================================================================
+	//
+	// This needs changing depending on whether using a circular or Horizontal 
+	// ULA I am not rewriting big processing functions at this stage just comment
+	// or uncomment the required block!
+
+	
 	if (!das->setPosflag)
 	{
 		das->setsourcePositions(das->r, das->speakers);
 		das->setreceiverPositions(das->r, das->receivers);
 		das->setPosflag = true;
 	}
+	
+	/*
+	if (!das->setPosflag)
+	{
+		float spacing = 0.15f;
+		float yOffset = 0.0f;
 
+		das->setninearhSourcePositions(
+			spacing,
+			yOffset,
+			Length,
+			Width,
+			das->speakers);
+
+		das->setreceiverPositions(das->r, das->receivers);
+		das->setPosflag = true;
+	}
+	*/
+	//===========================================================================
 	das->setbrightPoint(das->b, bright_x, bright_y);
 	das->calcsourceTOI(das->tau, das->speakers, das->b);
 	das->calcReceiverTOI(das->tau_rx, das->speakers, das->receivers);

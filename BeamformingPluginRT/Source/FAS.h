@@ -19,6 +19,7 @@
 #include "NNWorker.h"
 #include "MotionTrackerHandler.h"
 #include "TrajectoryWorker.h"
+#include "CoefficientLogger.h"
 //===============================================================================
 class FAS
 {
@@ -69,6 +70,8 @@ public:
 	int numTaps;
 	float freq;
 	bool wideband, isMVDR, log;
+	std::atomic<bool> loggingEnabled{ false };
+	bool wasLoggingEnabled = false;
 
 	// Neural Network input tensors
 	std::vector<float> room;
@@ -92,5 +95,8 @@ public:
 
 	// Trajectory Worker Thread
 	std::unique_ptr<trajectoryWorker> trajectoryworker;
+
+	// Coefficient Logger
+	std::unique_ptr<CoefficientLogger> coefficientlogger;
 };
 //===============================================================================

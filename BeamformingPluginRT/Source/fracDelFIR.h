@@ -24,8 +24,14 @@ public:
     fracDelFIR(int ntaps, int ArraySize, int srate, float freq, bool iswideband, std::shared_ptr<FrequencyBand> band);
     ~fracDelFIR() = default;
 
+    // These are Really setters but I cannot be bothered to rename
     inline void getSampleRate(int samplerate) { Fs = samplerate; }
     inline void getTau(std::vector<float> Tau) { tau = Tau; }
+
+    // Actual Getters and not your daft naming
+    inline std::vector<float> getb() { return b; }
+    inline std::vector<float> getcorrecteddB() { return correctedB; }
+    inline std::vector<float> getnncorrection() { return nnCorrection; }
 
     //float calculateCurrentU(std::vector<float> tau);
     float calculateCurrentU(float tau, float tauMax);

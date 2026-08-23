@@ -144,7 +144,7 @@ sensor_field.record = {'p'};
 
 % Creates speaker signals
 %[beamformer_output] = DASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy);
-%[beamformer_output] = FASNarrowTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, 512, Fs);
+%[beamformer_output] = FASNarrowTD(num_elements, 500, 1, kgrid, b, x_positions, y_positions, dx, dy, 64, Fs);
 [beamformer_output] = FASWideTD(num_elements, 1000, 1, kgrid, b, x_positions, y_positions, dx, dy, 512, Fs);
 %==========================================================================
 %% Combine Source Signals
@@ -221,7 +221,7 @@ disp("SNR Average Across Receiver Array: " + SNRdB_avg);
 
 
 MovingAnimation(20, field_data.p, Nx, Ny, x_positions, y_positions,...
-                                                        b, plot_scale, 'pm', ...
+                                                        b, plot_scale, 'rms', ...
                                                         sensor.mask);
 
 %==========================================================================

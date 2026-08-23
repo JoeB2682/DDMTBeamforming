@@ -8,6 +8,7 @@
 #include "FAS.h"
 #include "FFTProcessor.h"
 #include "MotionTrackerHandler.h"
+#include "SignalLogger.h"
 
 //==================================================================================
 // Chainsettings keeps track of parameter states 
@@ -99,7 +100,10 @@ public:
     Position position;
     float x, y, z;
     
+    // Signal Logging
     std::atomic<bool> loggingEnabled{ false };
+    bool wasLoggingEnabled = false;
+    std::unique_ptr<SignalLogger> signalLogger;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeamformingRTPluginAudioProcessor)
