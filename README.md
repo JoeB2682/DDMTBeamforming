@@ -46,17 +46,55 @@ answering of greater research enquiries.
 ## Features
 
 - MATLAB Simulations of DAS, FAS and MVDR beamforming algorithms using kwave
+- Real time Neural optimiser beamformer plugin supporting horizontal and uniform linear arrays.
+- Python dataset creator using Pyroom Acoustics.
+- Motion tracking support for optitrack systems.
 
 ---
 
 ## Installation
 
+The presented work and this repository is a prototype framework/ pipeline for the Neural-Optimisation of geometry-based beamforming algorithms. Due to this (and storage requirements) I have not supplied the network models within this repository and in sharing this project I intend for it to be seen as just that, a framework. Therefore the plugin can be used as a beamforming demonstration in of itself but it is recommended to regenerate Neural-Network configurations and expand and conduct other investigations using the presented pipeline. 
+
+I am more than happy to send the final written thesis to anyone upon request.
+
 ### Requirements
-- Python 3.x / MATLAB / JUCE / etc.
-- Other dependencies
+
+- MATLAB
+- K-Wave Toolbox
+- JUCE (inc. DSP Module)
+- Visual Studio (Not Xcode supported)
+- OptiTrack Motive 1.8.0
+- NatNet SDK 2.8.0 (for OptiTrack integration)
+- Eigen library
+- ONNX Runtime API
+
+#### Python Modules
+
+- os
+- csv
+- Pytorch
+- Torchvision
+- numpy
+- Pandas
+- Pyroomacoustics
+- Scipy
+- random
+- Soundfile
+- matplotlib
+
+
+### Development Environment
+
+- **IDE:** Microsoft Visual Studio 2022 Community
+- **Compiler:** MSVC
+- **C++ Standard:** C++20
+- **Project Management:** JUCE Projucer / Visual Studio
+- **Plugin Format:** VST3
+- **Operating System:** Windows
 
 ### Setup
 ```bash
 git clone https://github.com/JoeB2682/DDMTBeamforming.git
 cd DDMTBeamforming
-pip install -r requirements.txt
+
