@@ -188,6 +188,14 @@ void FAS::generateWideband(std::vector<std::unique_ptr<Oscillator>>& oscbank,
 							highoscbank[speaker]->incrementSample()) / 3.0f) * gain;
 
 			filterBank[speaker]->getNNBool(ApplyNN);
+
+			/*
+			DBG("FAS speaker " << speaker
+				<< " tau=" << tau[speaker]
+				<< " tauMax=" << tauMax
+				<< " delay=" << (tauMax - tau[speaker]));
+			*/
+
 			channel[sample] = gamma * filterbank[speaker]->process(tau[speaker], tauMax, input);
 		}
 
@@ -213,13 +221,18 @@ float FAS::estimateMicTOA(juce::AudioBuffer<float>& micbuffer, int srate, float 
 	// Eventually loop for all receivers
 	const float* x = micbuffer.getReadPointer(0);
 	int N = micbuffer.getNumSamples();
-
+	//float maxLevel = 0.0f;
 	for (int i = 0; i < N; i++)
 	{
 		//DBG(x[i]);
 		if (std::abs(x[i]) > thresh)
 			return (float)i / srate;
 	}
+
+	/*
+	DBG("NO TOA: maxLevel = " << maxLevel
+		<< " threshold = " << thresh);
+	*/
 	return -1.0f;
 }
 //===============================================================================
@@ -236,15 +249,15 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	// ULA I am not rewriting big processing functions at this stage just comment
 	// or uncomment the required block!
 
-	
+	/*
 	if (!das->setPosflag)
 	{
 		das->setsourcePositions(das->r, das->speakers);
 		das->setreceiverPositions(das->r, das->receivers);
 		das->setPosflag = true;
 	}
+	*/
 	
-	/*
 	if (!das->setPosflag)
 	{
 		float spacing = 0.15f;
@@ -259,11 +272,33 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 
 		das->setreceiverPositions(das->r, das->receivers);
 		das->setPosflag = true;
+
+		/*
+		for (int i = 0; i < das->N; ++i)
+		{
+			DBG("Speaker " << i
+				<< " x=" << das->speakers[i].x
+				<< " y=" << das->speakers[i].y);
+		}
+		*/
 	}
-	*/
+	
 	//===========================================================================
 	das->setbrightPoint(das->b, bright_x, bright_y);
 	das->calcsourceTOI(das->tau, das->speakers, das->b);
+
+	/*
+	DBG("Bright point: x=" << das->b.x << " y=" << das->b.y);
+
+	for (int i = 0; i < das->N; ++i)
+	{
+		DBG("Speaker " << i
+			<< " x=" << das->speakers[i].x
+			<< " y=" << das->speakers[i].y
+			<< " distance=" << das->vDistance[i]
+			<< " tau=" << das->tau[i]);
+	}
+	*/
 	das->calcReceiverTOI(das->tau_rx, das->speakers, das->receivers);
 
 	// Calculates tau using estimate + receiver arrival
@@ -273,6 +308,7 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	for (int i = 0; i < das->N; i++) predictedMicArrival = std::max(predictedMicArrival, das->tau[i] + das->tau_rx[i]);
 
 	// measured mic arrival 
+	//float measuredMicArrival = estimateMicTOA(micbuffer, das->sampleRate, thresh);
 	float measuredMicArrival = estimateMicTOA(micbuffer, das->sampleRate, thresh);
 	float delta = measuredMicArrival - predictedMicArrival;
 
@@ -285,10 +321,10 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 		tauRXCorrected[i] = delta;
 	}
 
-	/*
-	DBG("predicted " << predictedMicArrival);
-	DBG("measured " << measuredMicArrival);
-	*/
+	
+	//DBG("predicted " << predictedMicArrival);
+	//DBG("measured " << measuredMicArrival);
+	
 
 	//DBG("delta " << delta);
 
@@ -297,6 +333,7 @@ void FAS::processcircularFAS(juce::AudioBuffer<float>& buffer, juce::AudioBuffer
 	// Uses own generate functions
 	if (wideband)
 		generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, band, f0, f1, f2, ApplyNN);
+		//generateWideband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau, gain, band, f0, f1, f2, ApplyNN);
 	else
 		generateNarrowband(das->oscbank, filterBank, buffer, freq, 0.5f, das->tau_Corrected, gain, ApplyNN);
 	

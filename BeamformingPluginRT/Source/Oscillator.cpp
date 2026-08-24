@@ -4,7 +4,7 @@
 Oscillator::Oscillator() :
 
     Amplitude(0.0f), frequency(0.0f),
-    buffersize(NULL), samplerate(44100),
+    buffersize(NULL), samplerate(44800),
     Phi(0.0f), phase(0.0f), Offset(false),
     sample(0.0)
 {

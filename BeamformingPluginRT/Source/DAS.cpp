@@ -8,7 +8,7 @@ DAS::DAS(int samplerate, int N, float r, int totalNoOutputChannels) :
 	r(r),
 	setPosflag(false),
 	setoscbankflag(false),
-	totalNoOutputChannels(8)
+	totalNoOutputChannels(16)
 {
 	// Overwrites default value with actual sr
 	sampleRate = samplerate;

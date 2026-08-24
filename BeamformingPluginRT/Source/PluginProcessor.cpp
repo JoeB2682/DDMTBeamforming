@@ -8,9 +8,9 @@ BeamformingRTPluginAudioProcessor::BeamformingRTPluginAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth // MODIFY CHANNEL LAYOUT DEPENDING UPON ARRAY!!!
-                       .withInput  ("Input",  juce::AudioChannelSet::discreteChannels(8), true)
+                       .withInput  ("Input",  juce::AudioChannelSet::discreteChannels(16), true)
                       #endif
-                       .withOutput ("Output", juce::AudioChannelSet::discreteChannels(8), true)
+                       .withOutput ("Output", juce::AudioChannelSet::discreteChannels(16), true)
                      #endif
                        ) 
 #endif
@@ -79,10 +79,10 @@ void BeamformingRTPluginAudioProcessor::prepareToPlay (double sampleRate, int sa
     DBG("Main Buffer Size = " << samplesPerBlock);
 
     // FFT Processor
-    fftprocessor = std::make_shared<FFTProcessor>(11, getSampleRate());
+    fftprocessor = std::make_shared<FFTProcessor>(4, getSampleRate());
 
     // Instanciate Beamformers
-    DelayandSumBeamformer = std::make_shared<DAS>(getSampleRate(), 8, ArrayRadius, getTotalNumOutputChannels());
+    DelayandSumBeamformer = std::make_shared<DAS>(getSampleRate(), 16, ArrayRadius, getTotalNumOutputChannels());
     FilterandSumBeamformer = std::make_unique<FAS>(DelayandSumBeamformer.get(), 64, samplesPerBlock, 833.33f, 666.67f, 1000.f, true, true, fftprocessor, motiontracker);
 }
 
@@ -98,7 +98,7 @@ bool BeamformingRTPluginAudioProcessor::isBusesLayoutSupported
 {
     auto outputLayout = layouts.getMainOutputChannelSet();
 
-    if (outputLayout != juce::AudioChannelSet::discreteChannels(8))
+    if (outputLayout != juce::AudioChannelSet::discreteChannels(16))
         return false;
 
 #if !JucePlugin_IsSynth
@@ -229,6 +229,7 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     //DBG(miclevel);
 
     // Signal Logging
+    /*
     if (loggingEnabled && !wasLoggingEnabled)
     {
         signalLogger->createNewFile();
@@ -239,6 +240,7 @@ void BeamformingRTPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& b
     if (loggingEnabled) signalLogger->logBuffer(buffer);
 
     wasLoggingEnabled = loggingEnabled;
+    */
 }
 
 //==============================================================================

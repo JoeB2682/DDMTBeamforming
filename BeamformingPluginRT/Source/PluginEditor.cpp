@@ -37,7 +37,7 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     (audioProcessor.apvts, "inpgain", inpgainslider, &sliderlookandfeel);
     inpgainslider.setLookAndFeel(&sliderlookandfeel);
     inpgainslider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    inpgainslider.setRange(0.0f, 1000.f, 0.1f);
+    inpgainslider.setRange(0.0f, 1.0f, 0.001f);
     inpgainslider.setNumDecimalPlacesToDisplay(1);
 
     inpgainsliderlabel.setText("InpGain", juce::dontSendNotification);
@@ -49,7 +49,7 @@ BeamformingRTPluginAudioProcessorEditor::BeamformingRTPluginAudioProcessorEditor
     (audioProcessor.apvts, "Channel", channelSlider, &sliderlookandfeel);
     channelSlider.setLookAndFeel(&sliderlookandfeel);
     channelSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    channelSlider.setRange(0, 8, 1);
+    channelSlider.setRange(0, 16, 1);
     channelSlider.setNumDecimalPlacesToDisplay(0);
 
     channelsliderlabel.setText("ChannelOut", juce::dontSendNotification);
